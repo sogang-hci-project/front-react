@@ -1,25 +1,23 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import "./index.css";
-import App from "./App";
-import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
-import reportWebVitals from "./reportWebVitals";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Interact from "./pages/interact";
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import './index.css';
+import App from './App';
+import * as serviceWorkerRegistration from './serviceWorkerRegistration';
+import reportWebVitals from './reportWebVitals';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import Interact from './pages/interact';
 
-const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement
-);
+const root = createRoot(document.getElementById('root') as HTMLElement);
 
 const router = createBrowserRouter([
-  { path: "/", element: <App /> },
-  { path: "interact/", element: <Interact /> },
+	{ path: '/', element: <App /> },
+	{ path: 'interact/', element: <Interact /> },
 ]);
 
 root.render(
-  <React.StrictMode>
-    <RouterProvider router={router} />
-  </React.StrictMode>
+	<React.StrictMode>
+		<RouterProvider router={router} />
+	</React.StrictMode>
 );
 
 // If you want your app to work offline and load faster, you can change

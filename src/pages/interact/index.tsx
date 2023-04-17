@@ -1,7 +1,7 @@
-import React from "react";
+import React from 'react';
 
 function Interact() {
-  return <div>Main Interact Page</div>;
+	return <div>Main Interact Page</div>;
 }
 
 export default Interact;
