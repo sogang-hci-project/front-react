@@ -6,12 +6,14 @@ import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Interact from './pages/interact';
+import Setting from './pages/setting';
 
 const root = createRoot(document.getElementById('root') as HTMLElement);
 
 const router = createBrowserRouter([
 	{ path: '/', element: <App /> },
 	{ path: 'interact/', element: <Interact /> },
+	{ path: 'setting/', element: <Setting /> },
 ]);
 
 root.render(
