@@ -19,6 +19,13 @@ export const ToolbarButton = styled('button')`
 	height: 6rem;
 	font-size: 2rem;
 	color: #000;
+
+	-webkit-transition-duration: 0.4s;
+	transition-duration: 0.4s;
+
+	:active {
+		filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.2));
+	}
 `;
 
 export const Body = styled('div')`
@@ -29,12 +36,12 @@ export const Body = styled('div')`
 	width: 100%;
 	height: calc(100vh - 22rem);
 
-	background-color: black;
+	background-color: white;
 `;
 
 export const MessageContainer = styled('div')`
 	width: 100%;
-	height: 6rem;
+	height: 8rem;
 	padding: 0 2rem;
 	position: relative;
 
@@ -74,39 +81,22 @@ export const Message = styled('p')`
 	text-align: center;
 `;
 
-export const CharacterContainer = styled('div')`
+export const ButtonContainer = styled('p')`
+	height: 8rem;
 	width: 100%;
-	height: 10rem;
-	padding-left: 2rem;
-	padding-right: 2rem;
-	padding-bottom: 2rem;
-
-	display: flex;
-	flex-direction: row;
-	align-items: flex-end;
-	justify-content: space-between;
-	gap: 1rem;
+	padding: 2rem;
 `;
 
-export const CharacterCell = styled('div')`
-	width: 7rem;
-	height: 7rem;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-`;
+export const ActivateButton = styled('button')`
+	width: 100%;
+	height: 4rem;
+	background-color: white;
+	border: 1px solid black;
+	font-size: 1rem;
 
-export const CharacterName = styled('div')`
-	margin-top: 0.3rem;
-	height: 1rem;
-	font-size: 0.8rem;
-`;
-
-export const CharacterImage = styled('img')`
-	width: 5rem;
-	height: 5rem;
-	object-fit: cover;
-	border-radius: 50%;
-	overflow: hidden;
+	-webkit-transition-duration: 0.4s;
+	transition-duration: 0.4s;
+	:active {
+		background-color: rgba(220, 220, 220, 1);
+	}
 `;

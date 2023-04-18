@@ -4,46 +4,19 @@ import {
 	Toolbar,
 	ToolbarButton,
 	Body,
-	CharacterContainer,
 	MessageContainer,
 	Message,
 	MessageCover,
-	CharacterCell,
-	CharacterImage,
-	CharacterName,
+	ButtonContainer,
+	ActivateButton,
 } from './style';
-import { RxTokens, RxAccessibility } from 'react-icons/rx';
+import { VoiceCanvas } from '../../components/interact';
+import { RxTokens, RxAccessibility, RxShadow } from 'react-icons/rx';
 
 const dummy =
-	'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime iste eveniet aut inventore, esse alias consequuntur labore, doloribus, voluptates id consequatur. Corporis consectetur impedit harum alias a asperiores repellat sapiente?';
+	'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto odio eum sit, obcaecati tempora distinctio consequuntur, quisquam vitae a expedita omnis placeat. Accusantium id a eum unde vel voluptatem nemo odio, illo perferendis quaerat reiciendis distinctio accusamus ducimus ex eligendi impedit excepturi nisi qui est autem reprehenderit atque aliquid esse.';
 
-interface CharacterActor {
-	id: number;
-	image: string;
-	name: string;
-	gender: string;
-}
-
-const dummyCharacterList = new Array<CharacterActor>(
-	{
-		id: 0,
-		image: '/image/byron-mckeeby.png',
-		name: 'Byron Mckeeby',
-		gender: 'male',
-	},
-	{
-		id: 1,
-		image: '/image/grant-wood.jpg',
-		name: 'Grand Wood',
-		gender: 'male',
-	},
-	{
-		id: 2,
-		image: '/image/nan-graham.png',
-		name: 'Nan Graham',
-		gender: 'female',
-	}
-);
+const dummyTitle = 'american gothics';
 
 function Interact() {
 	return (
@@ -53,29 +26,20 @@ function Interact() {
 					<ToolbarButton>
 						<RxAccessibility />
 					</ToolbarButton>
-					<div>dorian-gray</div>
+					<div>{dummyTitle}</div>
 					<ToolbarButton>
 						<RxTokens />
 					</ToolbarButton>
 				</Toolbar>
 				<Body>
-					<canvas></canvas>
+					<VoiceCanvas></VoiceCanvas>
 				</Body>
 				<MessageContainer>
 					<Message>{dummy}</Message>
 				</MessageContainer>
-				<CharacterContainer>
-					{dummyCharacterList.map((character, i) => {
-						return (
-							<CharacterCell key={i}>
-								<CharacterImage
-									src={process.env.PUBLIC_URL + character.image}
-								/>
-								<CharacterName>{character.name}</CharacterName>
-							</CharacterCell>
-						);
-					})}
-				</CharacterContainer>
+				<ButtonContainer>
+					<ActivateButton>engage</ActivateButton>
+				</ButtonContainer>
 			</Viewport>
 		</Container>
 	);
