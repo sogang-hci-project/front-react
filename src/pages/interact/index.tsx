@@ -9,6 +9,8 @@ import {
 	MessageCover,
 	ButtonContainer,
 	ActivateButton,
+	MessageContent,
+	Divider,
 } from './style';
 import { VoiceCanvas } from '../../components/interact';
 import { RxTokens, RxAccessibility, RxShadow } from 'react-icons/rx';
@@ -34,9 +36,14 @@ function Interact() {
 				<Body>
 					<VoiceCanvas></VoiceCanvas>
 				</Body>
+				<Divider></Divider>
 				<MessageContainer>
-					<Message>{dummy}</Message>
+					<MessageCover></MessageCover>
+					<MessageContent>
+						<Message>{dummy}</Message>
+					</MessageContent>
 				</MessageContainer>
+
 				<ButtonContainer>
 					<ActivateButton>engage</ActivateButton>
 				</ButtonContainer>

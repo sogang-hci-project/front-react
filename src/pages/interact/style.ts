@@ -34,15 +34,19 @@ export const Body = styled('div')`
 	justify-content: center;
 
 	width: 100%;
-	height: calc(100vh - 22rem);
+	height: calc(100vh - 24rem);
 
 	background-color: white;
+`;
+
+export const Divider = styled('div')`
+	height: 2rem;
+	width: 100%;
 `;
 
 export const MessageContainer = styled('div')`
 	width: 100%;
 	height: 8rem;
-	padding: 0 2rem;
 	position: relative;
 
 	background-color: white;
@@ -51,33 +55,34 @@ export const MessageContainer = styled('div')`
 	::-webkit-scrollbar {
 		display: none;
 	}
-
-	::after {
-		width: 100%;
-		height: 100%;
-		content: '';
-		position: absolute;
-		/* position: sticky; */
-		top: 0;
-		left: 0;
-		box-shadow: inset 0 0 30px 30px rgba(255, 255, 255, 1);
-		background-color: rgba(0, 0, 0, 0);
-	}
+	box-shadow: inset 0 0 30px 30px rgba(255, 255, 255, 1);
 `;
 
 export const MessageCover = styled('div')`
 	width: 100%;
-	height: 6rem;
+	height: 8rem;
 	position: sticky;
-	background-color: white;
+	top: 0;
+	left: 0;
+	/* background-color: rgba(0, 0, 0, 0.1); */
+	box-shadow: inset 0 0 30px 30px rgba(255, 255, 255, 1);
+	pointer-events: none;
+	z-index: 1;
+`;
+
+export const MessageContent = styled('div')`
+	width: 100%;
+	height: 100%;
+	padding: 0 2rem;
+	position: absolute;
+	z-index: 0;
+	left: 0;
 `;
 
 export const Message = styled('p')`
 	font-size: 1.2rem;
 	width: 100%;
 	/* line-height: 100%; */
-	padding: 0;
-	margin: 0;
 	text-align: center;
 `;
 
