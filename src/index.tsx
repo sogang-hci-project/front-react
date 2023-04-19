@@ -1,21 +1,25 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import './index.css';
+import globalStyle from './globalStyle';
 import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Interact from './pages/interact';
+import Setting from './pages/setting';
+import { Global } from '@emotion/react';
 
 const root = createRoot(document.getElementById('root') as HTMLElement);
 
 const router = createBrowserRouter([
 	{ path: '/', element: <App /> },
 	{ path: 'interact/', element: <Interact /> },
+	{ path: 'setting/', element: <Setting /> },
 ]);
 
 root.render(
 	<React.StrictMode>
+		<Global styles={globalStyle} />
 		<RouterProvider router={router} />
 	</React.StrictMode>
 );
