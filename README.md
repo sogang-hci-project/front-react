@@ -1,15 +1,10 @@
-# front-react
+# Getting Started
 
+도커 서버 설치 및 실행
+- https://www.docker.com/ 에서 도커 데스크탑을 설치
+- 다운받은 도커 서버 실행
 
-## 깃 컨벤션
-
-- 개별 브랜치에서 개발 후 main 으로 PR 
-- 코드 리뷰 후 머지
-
-
-## Getting Started
-
-
+명령어 실행
 ```bash
 $ npm i
 $ docker-compose up --build
