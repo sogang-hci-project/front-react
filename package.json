@@ -40,7 +40,8 @@
 		"test": "react-scripts test",
 		"eject": "react-scripts eject",
 		"lint": "tsc --noEmit && eslint src/**/*.ts{,x} --cache",
-		"lint:fix": "eslint src/**/*.ts{,x} --fix"
+		"lint:fix": "eslint src/**/*.ts{,x} --fix",
+		"prepare": "husky install"
 	},
 	"eslintConfig": {
 		"extends": [
