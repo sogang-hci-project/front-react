@@ -1,5 +1,7 @@
 # Getting Started
 
+## Docker Server
+
 도커 서버 설치 및 실행
 - https://www.docker.com/ 에서 도커 데스크탑을 설치
 - 다운받은 도커 서버 실행
@@ -25,3 +27,21 @@ crawler_1  |
 crawler_1  | webpack compiled successfully
 crawler_1  | No issues found.
 ```
+
+## Branch and Commit Format
+
+우선 이슈를 생성한 뒤, 이슈 넘버를 참조하여 알맞는 브랜치를 생성한다<br>
+
+### 형태
+카테고리/이슈-브랜치명<br>
+(예) develop/#12-text-sentiment-analysis
+
+### 브랜치명 종류
+- (1) feature/ : 기능
+- (2) fix/ : 버그 픽스
+- (3) develop/ : 개발 단위 (대단위 기능) 목표
+- (4) project/ : 프로젝트 세팅 관련
+
+### 커밋 형태
+[브랜치 명] 커밋 메시지 (자유)<br>
+(예) [feature/#23-deep-learning-api-integration] 모델의 파라미터를 수정
