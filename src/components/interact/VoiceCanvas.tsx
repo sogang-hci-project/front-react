@@ -13,12 +13,14 @@ import { Vector3, SphereGeometry } from 'three';
 import { useControls } from 'leva';
 import * as THREE from 'three';
 
-interface EmptySphereProps {
+interface ActionSphereProps {
 	speed: number;
 	color: THREE.Color;
+	position: Vector3;
+	radius: number;
 }
 
-function EmptySphere({ speed, color }: EmptySphereProps) {
+function ActionSphere({ speed, color, position, radius }: ActionSphereProps) {
 	const meshRef =
 		useRef<THREE.Mesh<THREE.BufferGeometry, THREE.Material | THREE.Material[]>>(
 			null
@@ -26,16 +28,17 @@ function EmptySphere({ speed, color }: EmptySphereProps) {
 	useFrame((state, delta) => {
 		const currentTime = state.clock.elapsedTime;
 		if (meshRef.current) {
-			const cx = 0.3 * Math.cos(currentTime * speed);
-			const cy = 0.3 * Math.sin(currentTime * speed);
-			meshRef.current.position.set(cx, cy, -5);
+			const cx = position.x + 0.3 * Math.cos(currentTime * speed);
+			const cy = position.y + 0.3 * Math.sin(currentTime * speed);
+			const cz = position.z;
+			meshRef.current.position.set(cx, cy, cz);
 		}
 	});
 
 	return (
 		<Center>
 			<mesh ref={meshRef} castShadow>
-				<sphereGeometry args={[0.5, 32, 32]} />
+				<sphereGeometry args={[radius, 32, 32]} />
 				<meshStandardMaterial color={color} />
 			</mesh>
 		</Center>
@@ -74,7 +77,6 @@ function Sphere() {
 		<Center>
 			<mesh castShadow>
 				<sphereGeometry ref={geometryRef} args={[1, 64, 64]} />
-				{/* <meshStandardMaterial metalness={0.8} roughness={roughness} /> */}
 				<MeshTransmissionMaterial {...transmissionConfig} />
 			</mesh>
 		</Center>
@@ -94,21 +96,29 @@ function Env() {
 function VoiceCanvas() {
 	return (
 		<Canvas shadows camera={{ position: [0, 0, 3], fov: 50 }}>
+			<ambientLight intensity={1} />
 			<group position={new Vector3(0, 0, 0)}>
 				<Sphere />
-				<ambientLight intensity={1} />
-				<group position={new Vector3(0, 0, 1)}>
-					<EmptySphere
-						speed={1}
-						color={new THREE.Color('rgb(255, 255, 255)')}
-					/>
-				</group>
-				<group position={new Vector3(1, 1, 1)}>
-					<EmptySphere
-						speed={2}
-						color={new THREE.Color('rgb(255, 255, 255)')}
-					/>
-				</group>
+			</group>
+			<group>
+				<ActionSphere
+					speed={1}
+					color={new THREE.Color('rgb(255, 255, 0)')}
+					position={new Vector3(-0.1, -0.1, -0)}
+					radius={0.4}
+				/>
+				<ActionSphere
+					speed={1}
+					color={new THREE.Color('rgb(255, 0, 255)')}
+					position={new Vector3(0.1, 0.1, -0)}
+					radius={0.4}
+				/>
+				<ActionSphere
+					speed={1}
+					color={new THREE.Color('rgb(0, 255, 255)')}
+					position={new Vector3(-0.1, 0.1, -0)}
+					radius={0.4}
+				/>
 			</group>
 			{/* <Environment
 				files="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/dancing_hall_1k.hdr"

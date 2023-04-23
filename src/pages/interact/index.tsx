@@ -43,7 +43,6 @@ function Interact() {
 						<Message>{dummy}</Message>
 					</MessageContent>
 				</MessageContainer>
-
 				<ButtonContainer>
 					<ActivateButton>engage</ActivateButton>
 				</ButtonContainer>
