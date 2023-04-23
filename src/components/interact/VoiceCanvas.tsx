@@ -13,7 +13,12 @@ import { Vector3, SphereGeometry } from 'three';
 import { useControls } from 'leva';
 import * as THREE from 'three';
 
-function EmptySphere() {
+interface EmptySphereProps {
+	speed: number;
+	color: THREE.Color;
+}
+
+function EmptySphere({ speed, color }: EmptySphereProps) {
 	const meshRef =
 		useRef<THREE.Mesh<THREE.BufferGeometry, THREE.Material | THREE.Material[]>>(
 			null
@@ -21,8 +26,8 @@ function EmptySphere() {
 	useFrame((state, delta) => {
 		const currentTime = state.clock.elapsedTime;
 		if (meshRef.current) {
-			const cx = 0.3 * Math.cos(currentTime * 1);
-			const cy = 0.3 * Math.sin(currentTime * 1);
+			const cx = 0.3 * Math.cos(currentTime * speed);
+			const cy = 0.3 * Math.sin(currentTime * speed);
 			meshRef.current.position.set(cx, cy, -5);
 		}
 	});
@@ -31,7 +36,7 @@ function EmptySphere() {
 		<Center>
 			<mesh ref={meshRef} castShadow>
 				<sphereGeometry args={[0.5, 32, 32]} />
-				<meshStandardMaterial color={new THREE.Color('rgb(150, 255, 100)')} />
+				<meshStandardMaterial color={color} />
 			</mesh>
 		</Center>
 	);
@@ -93,13 +98,22 @@ function VoiceCanvas() {
 				<Sphere />
 				<ambientLight intensity={1} />
 				<group position={new Vector3(0, 0, 1)}>
-					<EmptySphere />
+					<EmptySphere
+						speed={1}
+						color={new THREE.Color('rgb(255, 255, 255)')}
+					/>
+				</group>
+				<group position={new Vector3(1, 1, 1)}>
+					<EmptySphere
+						speed={2}
+						color={new THREE.Color('rgb(255, 255, 255)')}
+					/>
 				</group>
 			</group>
-			<Environment
+			{/* <Environment
 				files="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/dancing_hall_1k.hdr"
 				blur={1}
-			/>
+			/> */}
 			<OrbitControls />
 		</Canvas>
 	);
