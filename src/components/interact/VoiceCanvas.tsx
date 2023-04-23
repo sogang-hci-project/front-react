@@ -2,20 +2,19 @@
 import React, { useState, useTransition } from 'react';
 import { Canvas } from '@react-three/fiber';
 import {
-	AccumulativeShadows,
 	RandomizedLight,
 	Center,
 	Environment,
 	OrbitControls,
 } from '@react-three/drei';
-import { Vector3 } from 'three';
+import { Color, Vector3 } from 'three';
 
 function Sphere() {
 	const roughness = 0.8;
 	return (
-		<Center top>
+		<Center>
 			<mesh castShadow>
-				<sphereGeometry args={[0.75, 64, 64]} />
+				<sphereGeometry args={[1, 64, 64]} />
 				<meshStandardMaterial metalness={0.8} roughness={roughness} />
 			</mesh>
 		</Center>
@@ -34,18 +33,33 @@ function Env() {
 
 function VoiceCanvas() {
 	return (
-		<Canvas shadows camera={{ position: [0, 0, 4.5], fov: 50 }}>
-			<group position={new Vector3(0, -0.65, 0)}>
+		<Canvas shadows camera={{ position: [0, 0, 3], fov: 50 }}>
+			<group position={new Vector3(0, 0, 0)}>
 				<Sphere />
-				<RandomizedLight
-					amount={8}
-					radius={5}
-					ambient={0.5}
-					position={[0, 3, 2]}
-					bias={0.001}
+				<spotLight
+					intensity={1}
+					angle={0.2}
+					penumbra={1}
+					position={[0, 0, 10]}
+					color={new Color(0, 0, 1)}
 				/>
+				<spotLight
+					intensity={1}
+					angle={0.2}
+					penumbra={1}
+					position={[10, 10, 10]}
+					color={new Color(0, 1, 0)}
+				/>
+				<spotLight
+					intensity={1}
+					angle={0.2}
+					penumbra={1}
+					position={[-10, 10, 10]}
+					color={new Color(1, 0, 0)}
+				/>
+				<ambientLight intensity={0.3} />
 			</group>
-			<Env />
+			{/* <Env /> */}
 			<OrbitControls />
 		</Canvas>
 	);

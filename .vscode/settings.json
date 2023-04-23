@@ -1,0 +1,16 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.inlineSuggest.enabled": true,
+  "prettier.trailingComma": "es5",
+  "prettier.requireConfig": false,
+  "prettier.singleQuote": true,
+  "prettier.useTabs": true,
+  "prettier.tabWidth": 2,
+  "prettier.printWidth": 80,
+  "editor.tabSize": 2,
+  "editor.codeActionsOnSave": [
+    "source.formatDocument",
+    "source.fixAll.eslint"
+  ],
+}
