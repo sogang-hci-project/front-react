@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Container, Viewport } from '../../components/common';
 import {
 	Toolbar,
@@ -21,6 +21,8 @@ const dummy =
 const dummyTitle = 'american gothics';
 
 function Interact() {
+	const [voiceActive, setVoiceActive] = useState<boolean>(false);
+
 	return (
 		<Container>
 			<Viewport>
@@ -34,7 +36,7 @@ function Interact() {
 					</ToolbarButton>
 				</Toolbar>
 				<Body>
-					<VoiceCanvas></VoiceCanvas>
+					<VoiceCanvas voiceActive={voiceActive}></VoiceCanvas>
 				</Body>
 				<Divider></Divider>
 				<MessageContainer>
@@ -44,7 +46,13 @@ function Interact() {
 					</MessageContent>
 				</MessageContainer>
 				<ButtonContainer>
-					<ActivateButton>engage</ActivateButton>
+					<ActivateButton
+						onClick={() => {
+							setVoiceActive(!voiceActive);
+						}}
+					>
+						{voiceActive ? 'disengage' : 'engage'}
+					</ActivateButton>
 				</ButtonContainer>
 			</Viewport>
 		</Container>
