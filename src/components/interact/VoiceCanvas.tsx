@@ -1,18 +1,16 @@
 /* eslint-disable react/no-unknown-property */
-import React, { useState, useTransition, useRef } from 'react';
+import React, { useState, useTransition, useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import {
-	RandomizedLight,
 	Center,
-	Environment,
 	OrbitControls,
 	MeshTransmissionMaterial,
-	AccumulativeShadows,
-	MeshWobbleMaterial,
+	Line,
 } from '@react-three/drei';
 import { Vector3, SphereGeometry } from 'three';
 import { useControls } from 'leva';
 import * as THREE from 'three';
+import { EffectComposer, Bloom } from '@react-three/postprocessing';
 
 interface ActionSphereProps {
 	speed: number;
@@ -125,6 +123,56 @@ function MainSphere({ voiceActive, voiceLevel }: MainSphereProps) {
 	);
 }
 
+// Idea source: https://github.com/Domenicobrz/Blurry/blob/master/libs/scenes/codrops-article/v2.js
+
+function CircularMesh() {
+	const groupRef = useRef<THREE.Group>(null);
+	const rotationEuler = new THREE.Euler(0, 0, 0);
+	const rotationSpeed = 0.05;
+
+	useFrame((state, delta) => {
+		const timeIncrement = state.clock.elapsedTime * rotationSpeed;
+		rotationEuler.x = 1.5708 * timeIncrement;
+		rotationEuler.y = 1.5708;
+		rotationEuler.z = 1.5708 * timeIncrement;
+		groupRef.current?.setRotationFromEuler(rotationEuler);
+	});
+
+	const lineArray = useMemo(() => {
+		const lines = [];
+		const r1 = 35;
+		const r2 = 17;
+		let keyId = 0;
+
+		for (let j = 0; j < r2; j++) {
+			for (let i = 0; i < r1; i++) {
+				keyId++;
+				const phi1 = ((j + i * 0.075) / r2) * Math.PI * 2;
+				const theta1 = (i / r1) * Math.PI - Math.PI * 0.5;
+
+				const phi2 = ((j + (i + 1) * 0.075) / r2) * Math.PI * 2;
+				const theta2 = ((i + 1) / r1) * Math.PI - Math.PI * 0.5;
+
+				const x1 = Math.sin(phi1) * Math.cos(theta1);
+				const y1 = Math.sin(theta1);
+				const z1 = Math.cos(phi1) * Math.cos(theta1);
+
+				const x2 = Math.sin(phi2) * Math.cos(theta2);
+				const y2 = Math.sin(theta2);
+				const z2 = Math.cos(phi2) * Math.cos(theta2);
+
+				const v1 = new Vector3(x1, z1, y1).multiplyScalar(0.5);
+				const v2 = new Vector3(x2, z2, y2).multiplyScalar(0.5);
+
+				lines.push(<Line key={keyId} points={[v1, v2]} color="white" />);
+			}
+		}
+		return lines;
+	}, []);
+
+	return <group ref={groupRef}>{lineArray}</group>;
+}
+
 interface RigProps {
 	voiceActive: boolean;
 }
@@ -161,6 +209,7 @@ function VoiceCanvas({ voiceActive }: VoiceCanvasProps) {
 
 	return (
 		<Canvas shadows camera={{ position: [0, 0, 3], fov: 50 }}>
+			<CircularMesh />
 			<Rig voiceActive={voiceActive} />
 			<LightGroup voiceActive={voiceActive} voiceLevel={voiceLevel} />
 			<MainSphere voiceActive={voiceActive} voiceLevel={voiceLevel} />
@@ -193,6 +242,9 @@ function VoiceCanvas({ voiceActive }: VoiceCanvasProps) {
 				blur={1}
 			/> */}
 			<OrbitControls />
+			<EffectComposer>
+				<Bloom luminanceThreshold={0} luminanceSmoothing={0.9} height={300} />
+			</EffectComposer>
 		</Canvas>
 	);
 }
