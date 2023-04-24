@@ -48,10 +48,10 @@ export const Dot = styled('p')`
 		0% {
 			opacity: 0;
 		}
-		30% {
+		40% {
 			opacity: 1;
 		}
-		70% {
+		60% {
 			opacity: 1;
 		}
 		100% {
