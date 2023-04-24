@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, Dispatch, SetStateAction } from 'react';
 import { Container, Viewport } from '../../components/common';
 import {
 	Toolbar,
@@ -8,11 +8,10 @@ import {
 	Message,
 	MessageCover,
 	ButtonContainer,
-	ActivateButton,
 	MessageContent,
 	Divider,
 } from './style';
-import { VoiceCanvas } from '../../components/interact';
+import { VoiceCanvas, ActivateButtonWrapper } from '../../components/interact';
 import { RxTokens, RxAccessibility, RxShadow } from 'react-icons/rx';
 
 const dummy =
@@ -21,6 +20,8 @@ const dummy =
 const dummyTitle = 'american gothics';
 
 function Interact() {
+	const [voiceActive, setVoiceActive] = useState<boolean>(false);
+
 	return (
 		<Container>
 			<Viewport>
@@ -34,7 +35,7 @@ function Interact() {
 					</ToolbarButton>
 				</Toolbar>
 				<Body>
-					<VoiceCanvas></VoiceCanvas>
+					<VoiceCanvas voiceActive={voiceActive}></VoiceCanvas>
 				</Body>
 				<Divider></Divider>
 				<MessageContainer>
@@ -43,9 +44,11 @@ function Interact() {
 						<Message>{dummy}</Message>
 					</MessageContent>
 				</MessageContainer>
-
 				<ButtonContainer>
-					<ActivateButton>engage</ActivateButton>
+					<ActivateButtonWrapper
+						voiceActive={voiceActive}
+						setVoiceActive={setVoiceActive}
+					/>
 				</ButtonContainer>
 			</Viewport>
 		</Container>
