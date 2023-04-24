@@ -91,17 +91,3 @@ export const ButtonContainer = styled('p')`
 	width: 100%;
 	padding: 2rem;
 `;
-
-export const ActivateButton = styled('button')`
-	width: 100%;
-	height: 4rem;
-	background-color: white;
-	border: 1px solid black;
-	font-size: 1rem;
-
-	-webkit-transition-duration: 0.4s;
-	transition-duration: 0.4s;
-	:active {
-		background-color: rgba(220, 220, 220, 1);
-	}
-`;
