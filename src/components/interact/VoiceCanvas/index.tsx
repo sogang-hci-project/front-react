@@ -13,11 +13,12 @@ import ActionSphere from './ActionSphere';
 
 interface RigProps {
 	voiceActive: boolean;
+	voiceVolume: number;
 }
 
-function Rig({ voiceActive }: RigProps) {
+function Rig({ voiceActive, voiceVolume }: RigProps) {
 	return useFrame(({ camera }) => {
-		const nz = voiceActive ? 3 : 4;
+		const nz = voiceActive ? 3.5 - voiceVolume / 100 : 4;
 		const vec = new Vector3(0, 0, nz);
 		camera.position.lerp(vec, 0.125);
 		camera.lookAt(0, 0, 0);
@@ -47,7 +48,7 @@ function VoiceCanvas({ voiceActive, voiceVolume }: VoiceCanvasProps) {
 	return (
 		<Canvas shadows camera={{ position: [0, 0, 3], fov: 50 }}>
 			{/* <CircularMesh /> */}
-			<Rig voiceActive={voiceActive} />
+			<Rig voiceActive={voiceActive} voiceVolume={voiceVolume} />
 			<LightGroup voiceActive={voiceActive} voiceVolume={voiceVolume} />
 			<MainSphere voiceActive={voiceActive} voiceVolume={voiceVolume} />
 			<group>
