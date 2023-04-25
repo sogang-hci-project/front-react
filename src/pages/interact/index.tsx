@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { useState, Dispatch, SetStateAction } from 'react';
 import { Container, Viewport } from '../../components/common';
 import {
@@ -13,14 +14,40 @@ import {
 } from './style';
 import { VoiceCanvas, ActivateButtonWrapper } from '../../components/interact';
 import { RxTokens, RxAccessibility, RxShadow } from 'react-icons/rx';
-
-const dummy =
-	'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto odio eum sit, obcaecati tempora distinctio consequuntur, quisquam vitae a expedita omnis placeat. Accusantium id a eum unde vel voluptatem nemo odio, illo perferendis quaerat reiciendis distinctio accusamus ducimus ex eligendi impedit excepturi nisi qui est autem reprehenderit atque aliquid esse.';
+import useRecording from '../../hooks/useRecording';
 
 const dummyTitle = 'american gothics';
 
+const SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
+const recognition = new SpeechRecognition();
+
 function Interact() {
 	const [voiceActive, setVoiceActive] = useState<boolean>(false);
+	const [transcript, setTranscript] = useState<string>('');
+	const { volume: voiceVolume } = useRecording({
+		active: voiceActive,
+	});
+
+	recognition.lang = 'en-US';
+	recognition.interimResults = true;
+	// recognition.continuous = true;
+
+	recognition.onresult = (event) => {
+		setTranscript(event.results[0][0].transcript);
+		// console.log(event.results);
+	};
+
+	const handleActivateButton = () => {
+		if (voiceActive) {
+			console.log('recognition deactivate');
+			recognition.stop();
+			setVoiceActive(false);
+		} else {
+			console.log('recognition activate');
+			recognition.start();
+			setVoiceActive(true);
+		}
+	};
 
 	return (
 		<Container>
@@ -35,19 +62,22 @@ function Interact() {
 					</ToolbarButton>
 				</Toolbar>
 				<Body>
-					<VoiceCanvas voiceActive={voiceActive}></VoiceCanvas>
+					<VoiceCanvas
+						voiceActive={voiceActive}
+						voiceVolume={voiceVolume}
+					></VoiceCanvas>
 				</Body>
 				<Divider></Divider>
 				<MessageContainer>
 					<MessageCover></MessageCover>
 					<MessageContent>
-						<Message>{dummy}</Message>
+						<Message>{transcript}</Message>
 					</MessageContent>
 				</MessageContainer>
 				<ButtonContainer>
 					<ActivateButtonWrapper
 						voiceActive={voiceActive}
-						setVoiceActive={setVoiceActive}
+						handleActivateButton={handleActivateButton}
 					/>
 				</ButtonContainer>
 			</Viewport>

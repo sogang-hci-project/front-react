@@ -26,10 +26,10 @@ function Rig({ voiceActive }: RigProps) {
 
 interface LightGroupProps {
 	voiceActive: boolean;
-	voiceLevel: number;
+	voiceVolume: number;
 }
 
-function LightGroup({ voiceActive, voiceLevel }: LightGroupProps) {
+function LightGroup({ voiceActive, voiceVolume }: LightGroupProps) {
 	const lightIntensity = voiceActive ? 1 : 0.5;
 	return (
 		<group>
@@ -40,17 +40,16 @@ function LightGroup({ voiceActive, voiceLevel }: LightGroupProps) {
 
 interface VoiceCanvasProps {
 	voiceActive: boolean;
+	voiceVolume: number;
 }
 
-function VoiceCanvas({ voiceActive }: VoiceCanvasProps) {
-	const voiceLevel = 0;
-
+function VoiceCanvas({ voiceActive, voiceVolume }: VoiceCanvasProps) {
 	return (
 		<Canvas shadows camera={{ position: [0, 0, 3], fov: 50 }}>
-			<CircularMesh />
+			{/* <CircularMesh /> */}
 			<Rig voiceActive={voiceActive} />
-			<LightGroup voiceActive={voiceActive} voiceLevel={voiceLevel} />
-			<MainSphere voiceActive={voiceActive} voiceLevel={voiceLevel} />
+			<LightGroup voiceActive={voiceActive} voiceVolume={voiceVolume} />
+			<MainSphere voiceActive={voiceActive} voiceVolume={voiceVolume} />
 			<group>
 				<ActionSphere
 					speed={1}
