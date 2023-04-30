@@ -26,7 +26,7 @@ recognition.interimResults = true;
 function Interact() {
 	const [voiceActive, setVoiceActive] = useState<boolean>(false);
 	const [transcript, setTranscript] = useState<string>('');
-	const { volume: voiceVolume } = useRecording({
+	const { volume: voiceVolume, transcript: voiceTranscript } = useRecording({
 		active: voiceActive,
 	});
 
@@ -36,6 +36,10 @@ function Interact() {
 		const [[{ transcript: recognitionResult }]] = event.results;
 		setTranscript(recognitionResult);
 	};
+
+	useEffect(() => {
+		setTranscript(voiceTranscript);
+	}, [voiceTranscript]);
 
 	// useEffect(() => {}, [volume]);
 

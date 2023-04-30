@@ -1,11 +1,21 @@
-import React, { useCallback, useEffect, useState, useRef } from 'react';
+import React, {
+	useCallback,
+	useEffect,
+	useState,
+	useRef,
+	Dispatch,
+	SetStateAction,
+} from 'react';
 import { blobToBase64, getGoogleTranscript } from '../utils/googleTranscript';
 
 async function getStream() {
 	return navigator.mediaDevices.getUserMedia({ audio: true });
 }
 
-function createMediaRecorder(stream: MediaStream) {
+function createMediaRecorder(
+	stream: MediaStream,
+	setTranscript: Dispatch<SetStateAction<string>>
+) {
 	const newMediaRecorder = new MediaRecorder(stream);
 	const chunks: Blob[] = [];
 
@@ -14,11 +24,11 @@ function createMediaRecorder(stream: MediaStream) {
 			chunks.push(event.data);
 		}
 	};
-	newMediaRecorder.onstop = async (event) => {
+	newMediaRecorder.onstop = async () => {
 		const blob = new Blob(chunks, { type: 'audio/ogg; codecs=opus' });
 		const blobBase64 = await blobToBase64(blob);
-		const res = await getGoogleTranscript(blobBase64);
-		console.log(res);
+		const transcript = await getGoogleTranscript(blobBase64);
+		setTranscript(transcript);
 		// [DEBUG] Download the blob as ogg file
 		// const url = URL.createObjectURL(blob);
 		// downloadFromBlobUrl(url);
@@ -37,6 +47,7 @@ function useRecording({ active }: UseRecordingProps) {
 	);
 	const volumeIntervalRef = useRef<NodeJS.Timer | null>(null);
 	const [volume, setVolume] = useState<number>(0);
+	const [transcript, setTranscript] = useState<string>('');
 	const VOLUME_ANALYSIS_INTERVAL = 100;
 
 	const onFrame = useCallback((analyserNode: AnalyserNode) => {
@@ -61,7 +72,7 @@ function useRecording({ active }: UseRecordingProps) {
 				);
 
 				// recording part
-				const newMediaRecorder = createMediaRecorder(newStream);
+				const newMediaRecorder = createMediaRecorder(newStream, setTranscript);
 				newMediaRecorder.start();
 				setMediaRecorder(newMediaRecorder);
 			});
@@ -75,7 +86,7 @@ function useRecording({ active }: UseRecordingProps) {
 		}
 	}, [active]);
 
-	return { volume };
+	return { volume, transcript };
 }
 
 export default useRecording;

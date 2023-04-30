@@ -71,23 +71,19 @@ export async function getGoogleTranscript(blobString: string) {
 				body: JSON.stringify({
 					config: transcriptConfig,
 					audio: {
-						// uri: transcriptSampleUri,
 						content: blobString,
 					},
 				}),
 			}
 		);
-		// const {
-		// 	results: [
-		// 		{
-		// 			alternatives: [{ transcript }],
-		// 		},
-		// 	],
-		// } = (await res.json()) as IGoogleTranscriptResponse;
-		console.log(await res.json());
-		return '';
-
-		// return transcript;
+		const {
+			results: [
+				{
+					alternatives: [{ transcript }],
+				},
+			],
+		} = (await res.json()) as IGoogleTranscriptResponse;
+		return transcript;
 	} catch (error) {
 		return Promise.reject(error);
 	}
