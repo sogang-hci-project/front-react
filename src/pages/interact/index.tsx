@@ -16,6 +16,7 @@ import { VoiceCanvas, ActivateButtonWrapper } from '../../components/interact';
 import { RxTokens, RxAccessibility, RxShadow } from 'react-icons/rx';
 import useRecording from '../../hooks/useRecording';
 import { LANG } from '../../constants/setting';
+import { requestChatCompletion } from '../../utils/openai';
 
 const dummyTitle = 'american gothics';
 
@@ -23,6 +24,11 @@ const SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
 recognition.lang = LANG;
 recognition.interimResults = true;
+
+const triggerQuestion = async (question: string) => {
+	const res = await requestChatCompletion(question);
+	console.log(res);
+};
 
 function Interact() {
 	const [voiceActive, setVoiceActive] = useState<boolean>(false);
@@ -40,6 +46,7 @@ function Interact() {
 
 	useEffect(() => {
 		setTranscript(voiceTranscript);
+		// void triggerQuestion(voiceTranscript);
 	}, [voiceTranscript]);
 
 	// useEffect(() => {}, [volume]);
@@ -53,6 +60,7 @@ function Interact() {
 			console.log('recognition activate');
 			recognition.start();
 			setVoiceActive(true);
+			// void triggerQuestion();
 		}
 	};
 

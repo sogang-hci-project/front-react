@@ -1,4 +1,5 @@
 import { LANG } from '../constants/setting';
+import { getQueryString } from './api';
 
 const transcriptConfig = {
 	encoding: 'WEBM_OPUS',
@@ -15,14 +16,6 @@ const transcriptHeader = {
 const transcriptQueries = {
 	key: process.env.REACT_APP_GCLOUD_API_KEY || '',
 };
-
-function getQueryString(queries: { [key: string]: string }): string {
-	const res: string[] = [];
-	for (const [key, value] of Object.entries(queries)) {
-		res.push(`${key}=${encodeURIComponent(value)}`);
-	}
-	return res.join('&');
-}
 
 interface IGoogleTranscriptResponse {
 	requestId: string;
