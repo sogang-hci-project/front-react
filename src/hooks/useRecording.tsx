@@ -1,25 +1,8 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react';
+import { blobToBase64, getGoogleTranscript } from '../utils/googleTranscript';
 
 async function getStream() {
 	return navigator.mediaDevices.getUserMedia({ audio: true });
-}
-
-function downloadFromBlobUrl(url: string) {
-	const link = document.createElement('a');
-	link.href = url;
-	link.download = 'recording.ogg';
-
-	document.body.appendChild(link);
-
-	link.dispatchEvent(
-		new MouseEvent('click', {
-			bubbles: true,
-			cancelable: true,
-			view: window,
-		})
-	);
-
-	document.body.removeChild(link);
 }
 
 function createMediaRecorder(stream: MediaStream) {
@@ -31,10 +14,13 @@ function createMediaRecorder(stream: MediaStream) {
 			chunks.push(event.data);
 		}
 	};
-	newMediaRecorder.onstop = (event) => {
+	newMediaRecorder.onstop = async (event) => {
 		const blob = new Blob(chunks, { type: 'audio/ogg; codecs=opus' });
-		const url = URL.createObjectURL(blob);
+		const blobBase64 = await blobToBase64(blob);
+		const res = await getGoogleTranscript(blobBase64);
+		console.log(res);
 		// [DEBUG] Download the blob as ogg file
+		// const url = URL.createObjectURL(blob);
 		// downloadFromBlobUrl(url);
 	};
 	return newMediaRecorder;
