@@ -15,12 +15,13 @@ import {
 import { VoiceCanvas, ActivateButtonWrapper } from '../../components/interact';
 import { RxTokens, RxAccessibility, RxShadow } from 'react-icons/rx';
 import useRecording from '../../hooks/useRecording';
+import { LANG } from '../../constants/setting';
 
 const dummyTitle = 'american gothics';
 
 const SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
-recognition.lang = 'en-US';
+recognition.lang = LANG;
 recognition.interimResults = true;
 
 function Interact() {

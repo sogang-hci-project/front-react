@@ -1,8 +1,10 @@
+import { LANG } from '../constants/setting';
+
 const transcriptConfig = {
 	encoding: 'WEBM_OPUS',
 	sampleRateHertz: 48000,
 	audioChannelCount: 1,
-	languageCode: 'en-US',
+	languageCode: LANG,
 	enableWordTimeOffsets: false,
 };
 
@@ -12,14 +14,6 @@ const transcriptHeader = {
 
 const transcriptQueries = {
 	key: process.env.REACT_APP_GCLOUD_API_KEY || '',
-};
-
-const transcriptSampleUri =
-	'gs://cloud-samples-data/speech/brooklyn_bridge.flac';
-
-const transcriptSampleConfig = {
-	encoding: 'FLAC',
-	languageCode: 'en-US',
 };
 
 function getQueryString(queries: { [key: string]: string }): string {
