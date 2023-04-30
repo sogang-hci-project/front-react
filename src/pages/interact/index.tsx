@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import React, { useState, Dispatch, SetStateAction } from 'react';
+import React, { useState, Dispatch, SetStateAction, useEffect } from 'react';
 import { Container, Viewport } from '../../components/common';
 import {
 	Toolbar,
@@ -20,6 +20,8 @@ const dummyTitle = 'american gothics';
 
 const SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
+recognition.lang = 'en-US';
+recognition.interimResults = true;
 
 function Interact() {
 	const [voiceActive, setVoiceActive] = useState<boolean>(false);
@@ -28,14 +30,14 @@ function Interact() {
 		active: voiceActive,
 	});
 
-	recognition.lang = 'en-US';
-	recognition.interimResults = true;
 	// recognition.continuous = true;
 
 	recognition.onresult = (event) => {
-		setTranscript(event.results[0][0].transcript);
-		// console.log(event.results);
+		const [[{ transcript: recognitionResult }]] = event.results;
+		setTranscript(recognitionResult);
 	};
+
+	// useEffect(() => {}, [volume]);
 
 	const handleActivateButton = () => {
 		if (voiceActive) {
