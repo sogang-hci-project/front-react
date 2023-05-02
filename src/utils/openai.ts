@@ -27,6 +27,10 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 export async function requestChatCompletion(query: string) {
+	const modifiedQuery =
+		'this is role play. answer to following question as a Claude Monet, question: ' +
+		query;
+
 	const res = await fetch('https://api.openai.com/v1/chat/completions', {
 		method: 'POST',
 		headers: {
@@ -35,8 +39,8 @@ export async function requestChatCompletion(query: string) {
 		},
 		body: JSON.stringify({
 			model: 'gpt-3.5-turbo',
-			messages: [{ role: 'user', content: query }],
-			max_tokens: 256,
+			messages: [{ role: 'user', content: modifiedQuery }],
+			max_tokens: 64,
 		}),
 	});
 

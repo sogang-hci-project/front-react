@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { blobToBase64, getGoogleTranscript } from '../utils/googleTranscript';
+import { blobToBase64, getGoogleTranscript } from '../utils/googlecloud';
 
 const chunks: Blob[] = [];
 

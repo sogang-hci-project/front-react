@@ -18,19 +18,28 @@ import { LANG } from '../../constants/setting';
 import { requestChatCompletion } from '../../utils/openai';
 import useAudioStream from '../../hooks/useAudioStream';
 import useGoogleRecognition from '../../hooks/useGoogleRecognition';
-import { getGoogleTranscript } from '../../utils/googleTranscript';
 import useRecognition from '../../hooks/useRecognition';
+import { base64ToAudio, getGoogleTextToSpeech } from '../../utils/googlecloud';
 
 const dummyTitle = 'american gothics';
 
-async function triggerQuestion(question: string) {
+async function replyAnAnswer(question: string) {
 	const res = await requestChatCompletion(question);
-	console.log(res);
+	const content = res.choices[0].message.content;
+	console.log('openai answer: ', content);
+	if (content.length > 100) {
+		// console.log('length limit reached');
+		// return;
+	}
+	const audioString = await getGoogleTextToSpeech(content);
+	const audio = base64ToAudio(audioString);
+	await audio.play();
 }
 
 function Interact() {
 	const [voiceActive, setVoiceActive] = useState<boolean>(false);
 	const [message, setMessage] = useState<string>('');
+	const [reply, setReply] = useState<string>('');
 	const { volume: voiceVolume, stream: voiceStream } = useAudioStream({
 		active: voiceActive,
 	});
@@ -45,6 +54,7 @@ function Interact() {
 	useEffect(() => {
 		if (googleTranscript) {
 			setMessage(googleTranscript);
+			void replyAnAnswer(googleTranscript);
 		}
 	}, [googleTranscript]);
 
@@ -53,11 +63,8 @@ function Interact() {
 	}, [localTranscript]);
 
 	const handleActivateButton = () => {
-		if (voiceActive) {
-			setVoiceActive(false);
-		} else {
-			setVoiceActive(true);
-		}
+		if (voiceActive) setVoiceActive(false);
+		else setVoiceActive(true);
 	};
 
 	return (
