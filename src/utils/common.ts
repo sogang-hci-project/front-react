@@ -5,3 +5,6 @@ export function getQueryString(queries: { [key: string]: string }): string {
 	}
 	return res.join('&');
 }
+
+export const isChrome = navigator.userAgent.indexOf('Chrome') !== -1;
+export const isSafari = navigator.userAgent.indexOf('Safari') !== -1;

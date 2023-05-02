@@ -1,5 +1,5 @@
 import { LANG } from '../constants/setting';
-import { getQueryString } from './api';
+import { getQueryString } from './common';
 
 const transcriptConfig = {
 	encoding: 'WEBM_OPUS',
