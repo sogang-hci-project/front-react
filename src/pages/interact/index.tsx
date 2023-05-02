@@ -14,9 +14,11 @@ import {
 } from './style';
 import { VoiceCanvas, ActivateButtonWrapper } from '../../components/interact';
 import { RxTokens, RxAccessibility, RxShadow } from 'react-icons/rx';
-import useRecording from '../../hooks/useRecording';
 import { LANG } from '../../constants/setting';
 import { requestChatCompletion } from '../../utils/openai';
+import useAudioStream from '../../hooks/useAudioStream';
+import useAudioRecorder from '../../hooks/useAudioRecorder';
+import { getGoogleTranscript } from '../../utils/googleTranscript';
 
 const dummyTitle = 'american gothics';
 
@@ -24,40 +26,41 @@ const SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
 recognition.lang = LANG;
 recognition.interimResults = true;
+recognition.continuous = true;
 
-const triggerQuestion = async (question: string) => {
+async function triggerQuestion(question: string) {
 	const res = await requestChatCompletion(question);
 	console.log(res);
-};
+}
 
 function Interact() {
 	const [voiceActive, setVoiceActive] = useState<boolean>(false);
 	const [transcript, setTranscript] = useState<string>('');
-	const { volume: voiceVolume, transcript: voiceTranscript } = useRecording({
+	const { volume: voiceVolume, stream: voiceStream } = useAudioStream({
 		active: voiceActive,
 	});
-
-	// recognition.continuous = true;
+	const { record: voiceRecord } = useAudioRecorder({
+		stream: voiceStream,
+		active: voiceActive,
+	});
 
 	recognition.onresult = (event) => {
 		const [[{ transcript: recognitionResult }]] = event.results;
 		setTranscript(recognitionResult);
 	};
-
 	useEffect(() => {
-		setTranscript(voiceTranscript);
-		// void triggerQuestion(voiceTranscript);
-	}, [voiceTranscript]);
-
-	// useEffect(() => {}, [volume]);
+		if (voiceRecord) {
+			void getGoogleTranscript(voiceRecord).then((script) =>
+				setTranscript(script)
+			);
+		}
+	}, [voiceRecord]);
 
 	const handleActivateButton = () => {
 		if (voiceActive) {
-			console.log('recognition deactivate');
 			recognition.stop();
 			setVoiceActive(false);
 		} else {
-			console.log('recognition activate');
 			recognition.start();
 			setVoiceActive(true);
 			// void triggerQuestion();
