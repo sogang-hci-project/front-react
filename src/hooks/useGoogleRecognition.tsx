@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
-import { blobToBase64 } from '../utils/googleTranscript';
+import { blobToBase64, getGoogleTranscript } from '../utils/googleTranscript';
 
 const chunks: Blob[] = [];
 
-interface IUseAudioRecorderProps {
+interface IUseGoogleRecognitionProps {
 	stream: MediaStream | null;
 	active: boolean;
 }
 
-function useAudioRecorder({ stream, active }: IUseAudioRecorderProps) {
-	const [record, setRecord] = useState<string>('');
+function useGoogleRecognition({ stream, active }: IUseGoogleRecognitionProps) {
+	const [transcript, setTranscript] = useState<string>('');
 	const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
 		null
 	);
@@ -23,7 +23,8 @@ function useAudioRecorder({ stream, active }: IUseAudioRecorderProps) {
 			newRecorder.onstop = async () => {
 				const blob = new Blob(chunks, { type: 'audio/webm;codecs=opus' });
 				const blobBase64 = await blobToBase64(blob);
-				setRecord(blobBase64);
+				const script = await getGoogleTranscript(blobBase64);
+				setTranscript(script);
 			};
 			setMediaRecorder(newRecorder);
 		} else {
@@ -35,14 +36,14 @@ function useAudioRecorder({ stream, active }: IUseAudioRecorderProps) {
 		if (active && mediaRecorder?.state === 'inactive') {
 			chunks.splice(0);
 			mediaRecorder.start();
-			setRecord('');
+			setTranscript('');
 		} else if (!active && mediaRecorder?.state === 'recording') {
 			mediaRecorder.stop();
 			chunks.splice(0);
 		}
 	}, [active]);
 
-	return { record };
+	return { transcript };
 }
 
-export default useAudioRecorder;
+export default useGoogleRecognition;

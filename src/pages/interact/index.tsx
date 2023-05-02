@@ -17,16 +17,11 @@ import { RxTokens, RxAccessibility, RxShadow } from 'react-icons/rx';
 import { LANG } from '../../constants/setting';
 import { requestChatCompletion } from '../../utils/openai';
 import useAudioStream from '../../hooks/useAudioStream';
-import useAudioRecorder from '../../hooks/useAudioRecorder';
+import useGoogleRecognition from '../../hooks/useGoogleRecognition';
 import { getGoogleTranscript } from '../../utils/googleTranscript';
+import useRecognition from '../../hooks/useRecognition';
 
 const dummyTitle = 'american gothics';
-
-const SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
-const recognition = new SpeechRecognition();
-recognition.lang = LANG;
-recognition.interimResults = true;
-recognition.continuous = true;
 
 async function triggerQuestion(question: string) {
 	const res = await requestChatCompletion(question);
@@ -35,35 +30,33 @@ async function triggerQuestion(question: string) {
 
 function Interact() {
 	const [voiceActive, setVoiceActive] = useState<boolean>(false);
-	const [transcript, setTranscript] = useState<string>('');
+	const [message, setMessage] = useState<string>('');
 	const { volume: voiceVolume, stream: voiceStream } = useAudioStream({
 		active: voiceActive,
 	});
-	const { record: voiceRecord } = useAudioRecorder({
+	const { transcript: googleTranscript } = useGoogleRecognition({
 		stream: voiceStream,
 		active: voiceActive,
 	});
+	const { transcript: localTranscript } = useRecognition({
+		voiceActive,
+	});
 
-	recognition.onresult = (event) => {
-		const [[{ transcript: recognitionResult }]] = event.results;
-		setTranscript(recognitionResult);
-	};
 	useEffect(() => {
-		if (voiceRecord) {
-			void getGoogleTranscript(voiceRecord).then((script) =>
-				setTranscript(script)
-			);
+		if (googleTranscript) {
+			setMessage(googleTranscript);
 		}
-	}, [voiceRecord]);
+	}, [googleTranscript]);
+
+	useEffect(() => {
+		setMessage(localTranscript);
+	}, [localTranscript]);
 
 	const handleActivateButton = () => {
 		if (voiceActive) {
-			recognition.stop();
 			setVoiceActive(false);
 		} else {
-			recognition.start();
 			setVoiceActive(true);
-			// void triggerQuestion();
 		}
 	};
 
@@ -89,7 +82,7 @@ function Interact() {
 				<MessageContainer>
 					<MessageCover></MessageCover>
 					<MessageContent>
-						<Message>{transcript}</Message>
+						<Message>{message}</Message>
 					</MessageContent>
 				</MessageContainer>
 				<ButtonContainer>
