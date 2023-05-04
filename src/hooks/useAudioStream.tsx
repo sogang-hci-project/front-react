@@ -25,6 +25,8 @@ function useAudioStream({ active }: UseAudioStreamProps) {
 
 	useEffect(() => {
 		if (!active) {
+			if (stream !== null) stream.removeTrack(stream.getAudioTracks()[0]);
+
 			void getStream().then((newStream) => {
 				const context = new AudioContext();
 				const sourceNode = context.createMediaStreamSource(newStream);
