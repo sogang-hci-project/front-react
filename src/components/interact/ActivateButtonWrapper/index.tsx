@@ -15,7 +15,7 @@ const activeMessage = (
 
 interface ActivateButtonWrapperProps {
 	voiceActive: boolean;
-	handleActivateButton: () => void;
+	handleActivateButton?: () => void;
 }
 
 export default function ActivateButtonWrapper({

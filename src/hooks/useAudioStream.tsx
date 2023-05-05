@@ -55,7 +55,7 @@ function useAudioStream({ active }: UseAudioStreamProps) {
 	}, [streamAnchor, active]);
 
 	useEffect(() => {
-		if (stream) {
+		if (stream?.active) {
 			const sourceNode = new MediaStreamAudioSourceNode(audioContext, {
 				mediaStream: stream,
 			});

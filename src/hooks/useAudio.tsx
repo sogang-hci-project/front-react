@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-
 const audio = new Audio();
 
 export function playAudio(src: string) {

@@ -1,5 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import React, { useState, Dispatch, SetStateAction, useEffect } from 'react';
+import React, {
+	useState,
+	Dispatch,
+	SetStateAction,
+	useEffect,
+	useRef,
+} from 'react';
 import { Container, Viewport } from '../../components/common';
 import {
 	Toolbar,
@@ -50,7 +56,7 @@ function Interact() {
 	const { transcript: localTranscript } = useRecognition({
 		voiceActive,
 	});
-	// const { playAudio } = useAudio({ active: voiceActive });
+	const voiceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
 	useEffect(() => {
 		if (googleTranscript) {
@@ -63,14 +69,43 @@ function Interact() {
 		setMessage(localTranscript);
 	}, [localTranscript]);
 
-	const handleActivateButton = () => {
-		if (voiceActive) {
-			setVoiceActive(false);
-		} else {
+	useEffect(() => {
+		// console.log(voiceVolume);
+		if (voiceVolume > 80 && voiceActive === false) {
+			console.log('activated: ', voiceVolume);
 			setVoiceActive(true);
 			stopAudio();
+		} else if (
+			voiceVolume < 20 &&
+			voiceActive === true &&
+			voiceTimeoutRef.current === null
+		) {
+			console.log('deactivate-ready: ', voiceVolume);
+			voiceTimeoutRef.current = setTimeout(() => {
+				setVoiceActive(false);
+				if (voiceTimeoutRef.current) {
+					console.log('deactivated: ');
+					clearTimeout(voiceTimeoutRef.current);
+					voiceTimeoutRef.current = null;
+				}
+			}, 1000);
+		} else if (voiceVolume > 20 && voiceActive === true) {
+			if (voiceTimeoutRef.current) {
+				console.log('deactivation cancelled');
+				clearTimeout(voiceTimeoutRef.current);
+				voiceTimeoutRef.current = null;
+			}
 		}
-	};
+	}, [voiceVolume]);
+
+	// const handleActivateButton = () => {
+	// 	if (voiceActive) {
+	// 		setVoiceActive(false);
+	// 	} else {
+	// 		setVoiceActive(true);
+	// 		stopAudio();
+	// 	}
+	// };
 
 	return (
 		<Container>
@@ -100,7 +135,7 @@ function Interact() {
 				<ButtonContainer>
 					<ActivateButtonWrapper
 						voiceActive={voiceActive}
-						handleActivateButton={handleActivateButton}
+						// handleActivateButton={handleActivateButton}
 					/>
 				</ButtonContainer>
 			</Viewport>
