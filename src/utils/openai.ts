@@ -27,6 +27,8 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 export async function requestChatCompletion(query: string) {
+	if (query.length === 0) return;
+
 	const modifiedQuery =
 		'this is role play. answer to following question as a Claude Monet, question: ' +
 		query;

@@ -25,7 +25,7 @@ const dummyTitle = 'american gothics';
 
 async function replyAnAnswer(question: string) {
 	const res = await requestChatCompletion(question);
-	const content = res.choices[0].message.content;
+	const content = res?.choices[0].message.content || '';
 	console.log('openai answer: ', content);
 	if (content.length > 100) {
 		// console.log('length limit reached');

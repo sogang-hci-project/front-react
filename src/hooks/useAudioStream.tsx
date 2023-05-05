@@ -1,5 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 
+const audioContext = new AudioContext();
+void audioContext.suspend();
+const analyserNode = new AnalyserNode(audioContext);
+
 async function getStream() {
 	return navigator.mediaDevices.getUserMedia({ audio: true });
 }
@@ -21,30 +25,44 @@ function useAudioStream({ active }: UseAudioStreamProps) {
 	const volumeIntervalRef = useRef<NodeJS.Timer | null>(null);
 	const [volume, setVolume] = useState<number>(0);
 	const [stream, setStream] = useState<MediaStream | null>(null);
-	const [anchor, setAnchor] = useState<object>({});
+	const [streamAnchor, setStreamAnchor] = useState<object>({});
 
 	useEffect(() => {
+		if (volumeIntervalRef.current) clearInterval(volumeIntervalRef.current);
+		volumeIntervalRef.current = setInterval(() => {
+			setVolume(getVolume(analyserNode));
+		}, VOLUME_ANALYSIS_INTERVAL);
+		const anchorInterval = setTimeout(() => {
+			setStreamAnchor({});
+			clearTimeout(anchorInterval);
+		}, STREAM_REFRESH_INTERVAL);
+	}, []);
+
+	useEffect(() => {
+		if (audioContext.state === 'suspended') void audioContext.resume();
 		if (!active) {
-			if (stream !== null) stream.removeTrack(stream.getAudioTracks()[0]);
-
+			if (stream !== null) {
+				stream.getAudioTracks().forEach((track) => {
+					track.stop();
+					stream.removeTrack(track);
+				});
+				setStream(null);
+			}
 			void getStream().then((newStream) => {
-				const context = new AudioContext();
-				const sourceNode = context.createMediaStreamSource(newStream);
-				const analyserNode = context.createAnalyser();
-				sourceNode.connect(analyserNode);
 				setStream(newStream);
-
-				volumeIntervalRef.current = setInterval(
-					() => setVolume(getVolume(analyserNode)),
-					VOLUME_ANALYSIS_INTERVAL
-				);
 			});
-			const anchorInterval = setTimeout(() => {
-				setAnchor({});
-				clearTimeout(anchorInterval);
-			}, STREAM_REFRESH_INTERVAL);
 		}
-	}, [anchor, active]);
+	}, [streamAnchor, active]);
+
+	useEffect(() => {
+		if (stream) {
+			const sourceNode = new MediaStreamAudioSourceNode(audioContext, {
+				mediaStream: stream,
+			});
+			sourceNode.connect(analyserNode);
+			setStream(stream);
+		}
+	}, [stream]);
 
 	return { volume, stream };
 }

@@ -48,9 +48,8 @@ export async function blobToBase64(blob: Blob) {
 		const reader = new FileReader();
 		reader.onloadend = () => {
 			if (typeof reader.result === 'string') {
-				const comma = /,\s*(.*)(?=,|$)/;
-				const v = reader.result.match(comma);
-				if (v?.length == 2) resolve(v[1]);
+				const [, body] = reader.result.split(',');
+				resolve(body);
 			} else reject();
 		};
 		reader.readAsDataURL(blob);
@@ -58,6 +57,7 @@ export async function blobToBase64(blob: Blob) {
 }
 
 export async function getGoogleTranscript(blobString: string) {
+	if (blobString.length === 0) return '';
 	try {
 		const res = await fetch(
 			`https://speech.googleapis.com/v1/speech:recognize?${getQueryString(
@@ -88,23 +88,16 @@ export async function getGoogleTranscript(blobString: string) {
 }
 
 export function base64ToAudio(audioString: string) {
-	// Convert the base64 string to a binary string
 	const binaryString = atob(audioString);
 
-	// Convert the binary string to an ArrayBuffer
 	const arrayBuffer = new ArrayBuffer(binaryString.length);
 	const uint8Array = new Uint8Array(arrayBuffer);
 	for (let i = 0; i < binaryString.length; i++) {
 		uint8Array[i] = binaryString.charCodeAt(i);
 	}
 
-	// Create a Blob object from the ArrayBuffer
 	const blob = new Blob([uint8Array], { type: 'audio/mpeg' });
-
-	// Create a URL object from the Blob
 	const url = URL.createObjectURL(blob);
-
-	// Create a new Audio object from the URL
 	const audio = new Audio(url);
 
 	return audio;
