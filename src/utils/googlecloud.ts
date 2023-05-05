@@ -19,12 +19,13 @@ const transcriptQueries = {
 
 interface IGoogleTranscriptResponse {
 	requestId: string;
-	results: [
+	results?: [
 		{
 			alternatives: [{ confidence: number; transcript: string }];
 			languageCode: string;
 		}
 	];
+	totalBilledTIme: string;
 	error?: {
 		code: number;
 		message: string;
@@ -74,13 +75,9 @@ export async function getGoogleTranscript(blobString: string) {
 				}),
 			}
 		);
-		const {
-			results: [
-				{
-					alternatives: [{ transcript }],
-				},
-			],
-		} = (await res.json()) as IGoogleTranscriptResponse;
+		const { results } = (await res.json()) as IGoogleTranscriptResponse;
+		const [{ alternatives }] = results ? results : [{ alternatives: null }];
+		const [{ transcript }] = alternatives ? alternatives : [{ transcript: '' }];
 		return transcript;
 	} catch (error) {
 		return Promise.reject(error);
