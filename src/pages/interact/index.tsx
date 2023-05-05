@@ -19,7 +19,8 @@ import { requestChatCompletion } from '../../utils/openai';
 import useAudioStream from '../../hooks/useAudioStream';
 import useGoogleRecognition from '../../hooks/useGoogleRecognition';
 import useRecognition from '../../hooks/useRecognition';
-import { base64ToAudio, getGoogleTextToSpeech } from '../../utils/googlecloud';
+import { base64ToBlob, getGoogleTextToSpeech } from '../../utils/googlecloud';
+import { playAudio, stopAudio } from '../../hooks/useAudio';
 
 const dummyTitle = 'american gothics';
 
@@ -32,14 +33,13 @@ async function replyAnAnswer(question: string) {
 		// return;
 	}
 	const audioString = await getGoogleTextToSpeech(content);
-	const audio = base64ToAudio(audioString);
-	await audio.play();
+	const audioBlob = base64ToBlob(audioString);
+	playAudio(audioBlob);
 }
 
 function Interact() {
 	const [voiceActive, setVoiceActive] = useState<boolean>(false);
 	const [message, setMessage] = useState<string>('');
-	const [reply, setReply] = useState<string>('');
 	const { volume: voiceVolume, stream: voiceStream } = useAudioStream({
 		active: voiceActive,
 	});
@@ -50,6 +50,7 @@ function Interact() {
 	const { transcript: localTranscript } = useRecognition({
 		voiceActive,
 	});
+	// const { playAudio } = useAudio({ active: voiceActive });
 
 	useEffect(() => {
 		if (googleTranscript) {
@@ -63,8 +64,12 @@ function Interact() {
 	}, [localTranscript]);
 
 	const handleActivateButton = () => {
-		if (voiceActive) setVoiceActive(false);
-		else setVoiceActive(true);
+		if (voiceActive) {
+			setVoiceActive(false);
+		} else {
+			setVoiceActive(true);
+			stopAudio();
+		}
 	};
 
 	return (

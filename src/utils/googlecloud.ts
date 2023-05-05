@@ -45,6 +45,15 @@ interface IGoogleTextToSpeechResponse {
 }
 
 export async function blobToBase64(blob: Blob) {
+	// [DEBUG] audio file download
+	// const a = document.createElement('a');
+	// document.body.appendChild(a);
+	// a.style.display = 'none';
+	// const url = window.URL.createObjectURL(blob);
+	// a.href = url;
+	// a.download = 'audio.webm';
+	// a.click();
+
 	return new Promise<string>((resolve, reject) => {
 		const reader = new FileReader();
 		reader.onloadend = () => {
@@ -75,7 +84,8 @@ export async function getGoogleTranscript(blobString: string) {
 				}),
 			}
 		);
-		const { results } = (await res.json()) as IGoogleTranscriptResponse;
+		const data = (await res.json()) as IGoogleTranscriptResponse;
+		const results = data.results;
 		const [{ alternatives }] = results ? results : [{ alternatives: null }];
 		const [{ transcript }] = alternatives ? alternatives : [{ transcript: '' }];
 		return transcript;
@@ -84,7 +94,7 @@ export async function getGoogleTranscript(blobString: string) {
 	}
 }
 
-export function base64ToAudio(audioString: string) {
+export function base64ToBlob(audioString: string) {
 	const binaryString = atob(audioString);
 
 	const arrayBuffer = new ArrayBuffer(binaryString.length);
@@ -95,9 +105,8 @@ export function base64ToAudio(audioString: string) {
 
 	const blob = new Blob([uint8Array], { type: 'audio/mpeg' });
 	const url = URL.createObjectURL(blob);
-	const audio = new Audio(url);
 
-	return audio;
+	return url;
 }
 
 export async function getGoogleTextToSpeech(inputText: string) {

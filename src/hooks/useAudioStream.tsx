@@ -60,7 +60,6 @@ function useAudioStream({ active }: UseAudioStreamProps) {
 				mediaStream: stream,
 			});
 			sourceNode.connect(analyserNode);
-			setStream(stream);
 		}
 	}, [stream]);
 
