@@ -15,17 +15,13 @@ const activeMessage = (
 
 interface ActivateButtonWrapperProps {
 	voiceActive: boolean;
-	setVoiceActive: Dispatch<SetStateAction<boolean>>;
+	handleActivateButton: () => void;
 }
 
 export default function ActivateButtonWrapper({
 	voiceActive,
-	setVoiceActive,
+	handleActivateButton,
 }: ActivateButtonWrapperProps) {
-	const handleActivateButton = () => {
-		setVoiceActive(!voiceActive);
-	};
-
 	return (
 		<ActivateButton onClick={handleActivateButton}>
 			<Text>{voiceActive ? activeMessage : inactiveMessage}</Text>

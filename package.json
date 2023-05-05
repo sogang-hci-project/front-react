@@ -70,11 +70,13 @@
 	},
 	"devDependencies": {
 		"@types/babel__core": "^7.20.0",
+		"@types/dom-speech-recognition": "^0.0.1",
 		"@types/jest": "^29.5.1",
 		"@types/node": "^18.15.12",
 		"@types/react": "^18.0.37",
 		"@types/react-dom": "^18.0.11",
 		"@types/three": "^0.150.2",
+		"@types/webrtc": "^0.0.35",
 		"@typescript-eslint/eslint-plugin": "^5.58.0",
 		"@typescript-eslint/parser": "^5.58.0",
 		"eslint": "^8.38.0",

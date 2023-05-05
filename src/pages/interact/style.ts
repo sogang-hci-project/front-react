@@ -50,6 +50,8 @@ export const MessageContainer = styled('div')`
 	position: relative;
 
 	background-color: white;
+	display: flex;
+	align-items: center;
 
 	overflow-y: scroll;
 	::-webkit-scrollbar {
@@ -72,7 +74,6 @@ export const MessageCover = styled('div')`
 
 export const MessageContent = styled('div')`
 	width: 100%;
-	height: 100%;
 	padding: 0 2rem;
 	position: absolute;
 	z-index: 0;

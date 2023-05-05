@@ -7,12 +7,12 @@ import { Vector3, SphereGeometry } from 'three';
 
 interface MainSphereProps {
 	voiceActive: boolean;
-	voiceLevel: number;
+	voiceVolume: number;
 }
 
 export default function MainSphere({
 	voiceActive,
-	voiceLevel,
+	voiceVolume,
 }: MainSphereProps) {
 	const geometryRef = useRef<SphereGeometry | null>(null);
 
@@ -39,7 +39,7 @@ export default function MainSphere({
 	// 	bg: '#ffffff',
 	// });
 
-	const variableDistortion = voiceActive ? 0.5 : 0;
+	const variableDistortion = voiceActive ? voiceVolume / 100 : 0;
 
 	const transmissionCofig = {
 		meshPhysicalMaterial: false,
