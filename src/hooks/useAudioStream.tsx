@@ -16,7 +16,7 @@ function getVolume(node: AnalyserNode) {
 }
 
 const VOLUME_ANALYSIS_INTERVAL = 100;
-const STREAM_REFRESH_INTERVAL = 1000;
+const STREAM_REFRESH_INTERVAL = 1500;
 
 interface UseAudioStreamProps {
 	systemStatus: SystemStatus;

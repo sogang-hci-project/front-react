@@ -1,12 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import React, {
-	useState,
-	Dispatch,
-	SetStateAction,
-	useEffect,
-	useRef,
-	useCallback,
-} from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Viewport } from '../../components/common';
 import {
 	Toolbar,
@@ -22,16 +15,13 @@ import {
 	MessageWrapper,
 } from '../../components/interact';
 import { RxTokens, RxAccessibility, RxShadow } from 'react-icons/rx';
-import { LANG } from '../../constants/setting';
 import { requestChatCompletion } from '../../api/openai';
 import useAudioStream from '../../hooks/useAudioStream';
 import useGoogleRecognition from '../../hooks/useGoogleRecognition';
 import useRecognition from '../../hooks/useRecognition';
-import { getGoogleTextToSpeech } from '../../api/googlecloud';
 import {
-	base64ToAudioBlob,
 	checkMute,
-	playAudio,
+	playTextToAudio,
 	stopAudio,
 	toggleSystemStatusOnVolume,
 } from '../../utils/audio';
@@ -44,13 +34,6 @@ async function generateAnswer(question: string) {
 	const content = res?.choices[0].message.content || '';
 	console.log('openai answer: ', content);
 	return content;
-}
-
-async function playTextToAudio(text: string) {
-	const audioString = await getGoogleTextToSpeech(text);
-	const audioBlob = base64ToAudioBlob(audioString);
-	await playAudio(audioBlob);
-	return;
 }
 
 async function answerQuestion(

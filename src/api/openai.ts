@@ -24,7 +24,7 @@ interface IChoice {
 
 const MAX_QUERY_COUNT = 50;
 const MAX_TOKEN_COUNT = (() => {
-	if ((LANG as LANGUAGE) === LANGUAGE.KR) return 128;
+	if ((LANG as LANGUAGE) === LANGUAGE.KR) return 256;
 	else if ((LANG as LANGUAGE) === LANGUAGE.US) return 64;
 	else return 64;
 })();

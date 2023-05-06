@@ -1,9 +1,10 @@
 import React from 'react';
 import { SystemStatus } from '../types/common';
+import { getGoogleTextToSpeech } from '../api/googlecloud';
 
 const ACTIVATION_VOLUME = 80;
 const DEACTIVATION_VOLUME = 40;
-const VOICE_DEACTIVATION_TIME = 1000;
+const VOICE_DEACTIVATION_TIME = 600;
 
 interface ITimeoutRef {
 	current: null | NodeJS.Timeout;
@@ -94,4 +95,11 @@ export function base64ToAudioBlob(audioString: string) {
 	const url = URL.createObjectURL(blob);
 
 	return url;
+}
+
+export async function playTextToAudio(text: string) {
+	const audioString = await getGoogleTextToSpeech(text);
+	const audioBlob = base64ToAudioBlob(audioString);
+	await playAudio(audioBlob);
+	return;
 }

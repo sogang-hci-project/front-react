@@ -61,7 +61,6 @@ export async function getGoogleTranscript(blobString: string) {
 		alert('maximum speech length reached');
 		return '';
 	}
-	console.log(blobString.length);
 	try {
 		const res = await fetch(
 			`https://speech.googleapis.com/v1/speech:recognize?${getQueryString(
