@@ -28,7 +28,7 @@ function useGoogleRecognition({
 				chunks.push(event.data);
 			};
 			newRecorder.onstop = async () => {
-				setSystemStatus(checkMute(SystemStatus.PROCESS));
+				setSystemStatus(checkMute(SystemStatus.TRANSCRIBE));
 				const blob = new Blob(chunks, { type: 'audio/webm;codecs=opus' });
 				const blobBase64 = await blobToAudioBase64(blob);
 				const script = await getGoogleTranscript(blobBase64);
@@ -41,7 +41,7 @@ function useGoogleRecognition({
 	}, [stream]);
 
 	useEffect(() => {
-		if (systemStatus !== SystemStatus.PROCESS) setTranscript('');
+		if (systemStatus !== SystemStatus.GENERATE) setTranscript('');
 		if (
 			systemStatus === SystemStatus.LISTEN &&
 			mediaRecorder?.state === 'inactive'

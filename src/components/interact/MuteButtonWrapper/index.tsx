@@ -1,20 +1,11 @@
 import React, { useState, Dispatch, SetStateAction } from 'react';
-import { MuteButton, Dot } from './style';
+import { MuteButton } from './style';
 import { Text } from '../../atom/Text';
 import { RxEyeOpen, RxEyeClosed } from 'react-icons/rx';
 import { SystemStatus } from '../../../types/common';
 
 const activeMessage = <RxEyeOpen />;
 const inactiveMessage = <RxEyeClosed />;
-// const activeMessage = (
-// 	<>
-// 		<Dot className="one" />
-// 		<Dot className="two" />
-// 		<Dot className="three" />
-// 		<Dot className="four" />
-// 		<Dot className="five" />
-// 	</>
-// );
 
 interface MuteButtonWrapperProps {
 	systemStatus: SystemStatus;
@@ -27,7 +18,7 @@ export default function MuteButtonWrapper({
 }: MuteButtonWrapperProps) {
 	return (
 		<MuteButton onClick={handleMuteButton}>
-			<Text>
+			<Text size={1.2}>
 				{systemStatus === SystemStatus.MUTE ? inactiveMessage : activeMessage}
 			</Text>
 		</MuteButton>

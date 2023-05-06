@@ -13,13 +13,14 @@ import {
 	ToolbarButton,
 	Body,
 	MessageContainer,
-	Message,
-	MessageCover,
 	ButtonContainer,
-	MessageContent,
 	Divider,
 } from './style';
-import { VoiceCanvas, MuteButtonWrapper } from '../../components/interact';
+import {
+	VoiceCanvas,
+	MuteButtonWrapper,
+	MessageWrapper,
+} from '../../components/interact';
 import { RxTokens, RxAccessibility, RxShadow } from 'react-icons/rx';
 import { LANG } from '../../constants/setting';
 import { requestChatCompletion } from '../../api/openai';
@@ -54,8 +55,11 @@ async function playTextToAudio(text: string) {
 
 async function answerQuestion(
 	question: string,
+	systemStatus: SystemStatus,
 	setSystemState: React.Dispatch<React.SetStateAction<SystemStatus>>
 ) {
+	if (systemStatus !== SystemStatus.TRANSCRIBE) return;
+	setSystemState(checkMute(SystemStatus.GENERATE));
 	const answer = await generateAnswer(question);
 	setSystemState(checkMute(SystemStatus.SPEAK));
 	await playTextToAudio(answer);
@@ -80,10 +84,10 @@ function Interact() {
 	});
 
 	useEffect(() => {
-		if (googleTranscript !== '') {
-			setMessage(googleTranscript);
-			void answerQuestion(googleTranscript, setSystemStatus);
-		}
+		console.log(googleTranscript);
+		setMessage(googleTranscript);
+		if (googleTranscript !== '')
+			void answerQuestion(googleTranscript, systemStatus, setSystemStatus);
 	}, [googleTranscript]);
 
 	useEffect(() => {
@@ -99,9 +103,12 @@ function Interact() {
 	}, [voiceVolume]);
 
 	const handleMuteButton = () => {
-		if (systemStatus === SystemStatus.MUTE)
+		if (systemStatus === SystemStatus.MUTE) {
 			setSystemStatus(SystemStatus.HIBERNATE);
-		else setSystemStatus(SystemStatus.MUTE);
+		} else {
+			setSystemStatus(SystemStatus.MUTE);
+			stopAudio();
+		}
 	};
 
 	return (
@@ -124,10 +131,7 @@ function Interact() {
 				</Body>
 				<Divider></Divider>
 				<MessageContainer>
-					<MessageCover></MessageCover>
-					<MessageContent>
-						<Message>{message}</Message>
-					</MessageContent>
+					<MessageWrapper message={message} systemStatus={systemStatus} />
 				</MessageContainer>
 				<ButtonContainer>
 					<MuteButtonWrapper

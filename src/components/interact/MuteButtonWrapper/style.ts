@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 export const MuteButton = styled('button')`
-	width: 100%;
+	width: 12rem;
 	height: 4rem;
 	background-color: white;
 	border: 1px solid black;
@@ -15,47 +15,5 @@ export const MuteButton = styled('button')`
 	transition-duration: 0.4s;
 	:active {
 		background-color: rgba(220, 220, 220, 1);
-	}
-`;
-
-export const Dot = styled('p')`
-	/* display: inline; */
-	height: 100%;
-	margin: 5px;
-	height: 5px;
-	width: 5px;
-	border-radius: 10px;
-	opacity: 0;
-	animation: showHideDot 1s ease-in-out infinite;
-	background-color: black;
-	&.one {
-		animation-delay: 0s;
-	}
-	&.two {
-		animation-delay: 0.1s;
-	}
-	&.three {
-		animation-delay: 0.2s;
-	}
-	&.four {
-		animation-delay: 0.3s;
-	}
-	&.five {
-		animation-delay: 0.4s;
-	}
-
-	@keyframes showHideDot {
-		0% {
-			opacity: 0;
-		}
-		40% {
-			opacity: 1;
-		}
-		60% {
-			opacity: 1;
-		}
-		100% {
-			opacity: 0;
-		}
 	}
 `;
