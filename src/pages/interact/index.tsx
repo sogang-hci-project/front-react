@@ -5,6 +5,7 @@ import React, {
 	SetStateAction,
 	useEffect,
 	useRef,
+	useCallback,
 } from 'react';
 import { Container, Viewport } from '../../components/common';
 import {
@@ -21,27 +22,44 @@ import {
 import { VoiceCanvas, MuteButtonWrapper } from '../../components/interact';
 import { RxTokens, RxAccessibility, RxShadow } from 'react-icons/rx';
 import { LANG } from '../../constants/setting';
-import { requestChatCompletion } from '../../utils/openai';
+import { requestChatCompletion } from '../../api/openai';
 import useAudioStream from '../../hooks/useAudioStream';
 import useGoogleRecognition from '../../hooks/useGoogleRecognition';
 import useRecognition from '../../hooks/useRecognition';
-import { base64ToBlob, getGoogleTextToSpeech } from '../../utils/googlecloud';
-import { playAudio, stopAudio, toggleVoice } from '../../utils/audio';
+import { getGoogleTextToSpeech } from '../../api/googlecloud';
+import {
+	base64ToAudioBlob,
+	checkMute,
+	playAudio,
+	stopAudio,
+	toggleSystemStatusOnVolume,
+} from '../../utils/audio';
 import { SystemStatus } from '../../types/common';
 
 const dummyTitle = 'american gothics';
 
-async function replyAnAnswer(question: string) {
+async function generateAnswer(question: string) {
 	const res = await requestChatCompletion(question);
 	const content = res?.choices[0].message.content || '';
 	console.log('openai answer: ', content);
-	if (content.length > 100) {
-		// console.log('length limit reached');
-		// return;
-	}
-	const audioString = await getGoogleTextToSpeech(content);
-	const audioBlob = base64ToBlob(audioString);
-	playAudio(audioBlob);
+	return content;
+}
+
+async function playTextToAudio(text: string) {
+	const audioString = await getGoogleTextToSpeech(text);
+	const audioBlob = base64ToAudioBlob(audioString);
+	await playAudio(audioBlob);
+	return;
+}
+
+async function answerQuestion(
+	question: string,
+	setSystemState: React.Dispatch<React.SetStateAction<SystemStatus>>
+) {
+	const answer = await generateAnswer(question);
+	setSystemState(checkMute(SystemStatus.SPEAK));
+	await playTextToAudio(answer);
+	setSystemState(checkMute(SystemStatus.HIBERNATE));
 }
 
 function Interact() {
@@ -55,15 +73,16 @@ function Interact() {
 	const { transcript: googleTranscript } = useGoogleRecognition({
 		stream: voiceStream,
 		systemStatus,
+		setSystemStatus,
 	});
 	const { transcript: localTranscript } = useRecognition({
 		systemStatus,
 	});
 
 	useEffect(() => {
-		if (googleTranscript) {
+		if (googleTranscript !== '') {
 			setMessage(googleTranscript);
-			void replyAnAnswer(googleTranscript);
+			void answerQuestion(googleTranscript, setSystemStatus);
 		}
 	}, [googleTranscript]);
 
@@ -72,7 +91,11 @@ function Interact() {
 	}, [localTranscript]);
 
 	useEffect(() => {
-		toggleVoice({ voiceVolume, systemStatus, setSystemStatus });
+		toggleSystemStatusOnVolume({
+			voiceVolume,
+			systemStatus,
+			setSystemStatus,
+		});
 	}, [voiceVolume]);
 
 	const handleMuteButton = () => {

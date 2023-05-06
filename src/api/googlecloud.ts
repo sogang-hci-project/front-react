@@ -1,5 +1,5 @@
 import { LANG } from '../constants/setting';
-import { getQueryString } from './common';
+import { getQueryString } from '../utils/common';
 
 const transcriptConfig = {
 	encoding: 'WEBM_OPUS',
@@ -44,28 +44,6 @@ interface IGoogleTextToSpeechResponse {
 	audioContent: string;
 }
 
-export async function blobToBase64(blob: Blob) {
-	// [DEBUG] audio file download
-	// const a = document.createElement('a');
-	// document.body.appendChild(a);
-	// a.style.display = 'none';
-	// const url = window.URL.createObjectURL(blob);
-	// a.href = url;
-	// a.download = 'audio.webm';
-	// a.click();
-
-	return new Promise<string>((resolve, reject) => {
-		const reader = new FileReader();
-		reader.onloadend = () => {
-			if (typeof reader.result === 'string') {
-				const [, body] = reader.result.split(',');
-				resolve(body);
-			} else reject();
-		};
-		reader.readAsDataURL(blob);
-	});
-}
-
 export async function getGoogleTranscript(blobString: string) {
 	if (blobString.length === 0) return '';
 	try {
@@ -92,21 +70,6 @@ export async function getGoogleTranscript(blobString: string) {
 	} catch (error) {
 		return Promise.reject(error);
 	}
-}
-
-export function base64ToBlob(audioString: string) {
-	const binaryString = atob(audioString);
-
-	const arrayBuffer = new ArrayBuffer(binaryString.length);
-	const uint8Array = new Uint8Array(arrayBuffer);
-	for (let i = 0; i < binaryString.length; i++) {
-		uint8Array[i] = binaryString.charCodeAt(i);
-	}
-
-	const blob = new Blob([uint8Array], { type: 'audio/mpeg' });
-	const url = URL.createObjectURL(blob);
-
-	return url;
 }
 
 export async function getGoogleTextToSpeech(inputText: string) {

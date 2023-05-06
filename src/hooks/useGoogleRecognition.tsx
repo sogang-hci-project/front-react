@@ -1,17 +1,20 @@
 import { useEffect, useState } from 'react';
-import { blobToBase64, getGoogleTranscript } from '../utils/googlecloud';
+import { getGoogleTranscript } from '../api/googlecloud';
 import { SystemStatus } from '../types/common';
+import { blobToAudioBase64, checkMute } from '../utils/audio';
 
 const chunks: Blob[] = [];
 
 interface IUseGoogleRecognitionProps {
 	stream: MediaStream | null;
 	systemStatus: SystemStatus;
+	setSystemStatus: React.Dispatch<React.SetStateAction<SystemStatus>>;
 }
 
 function useGoogleRecognition({
 	stream,
 	systemStatus,
+	setSystemStatus,
 }: IUseGoogleRecognitionProps) {
 	const [transcript, setTranscript] = useState<string>('');
 	const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
@@ -25,8 +28,9 @@ function useGoogleRecognition({
 				chunks.push(event.data);
 			};
 			newRecorder.onstop = async () => {
+				setSystemStatus(checkMute(SystemStatus.PROCESS));
 				const blob = new Blob(chunks, { type: 'audio/webm;codecs=opus' });
-				const blobBase64 = await blobToBase64(blob);
+				const blobBase64 = await blobToAudioBase64(blob);
 				const script = await getGoogleTranscript(blobBase64);
 				setTranscript(script);
 			};
@@ -37,13 +41,13 @@ function useGoogleRecognition({
 	}, [stream]);
 
 	useEffect(() => {
+		if (systemStatus !== SystemStatus.PROCESS) setTranscript('');
 		if (
 			systemStatus === SystemStatus.LISTEN &&
 			mediaRecorder?.state === 'inactive'
 		) {
 			chunks.splice(0);
 			mediaRecorder.start();
-			setTranscript('');
 		} else if (
 			systemStatus !== SystemStatus.LISTEN &&
 			mediaRecorder?.state === 'recording'
