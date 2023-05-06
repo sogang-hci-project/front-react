@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { SystemStatus } from '../types/common';
 
 const audioContext = new AudioContext();
 void audioContext.suspend();
@@ -18,10 +19,10 @@ const VOLUME_ANALYSIS_INTERVAL = 100;
 const STREAM_REFRESH_INTERVAL = 1000;
 
 interface UseAudioStreamProps {
-	active: boolean;
+	systemStatus: SystemStatus;
 }
 
-function useAudioStream({ active }: UseAudioStreamProps) {
+function useAudioStream({ systemStatus }: UseAudioStreamProps) {
 	const volumeIntervalRef = useRef<NodeJS.Timer | null>(null);
 	const [volume, setVolume] = useState<number>(0);
 	const [stream, setStream] = useState<MediaStream | null>(null);
@@ -40,7 +41,7 @@ function useAudioStream({ active }: UseAudioStreamProps) {
 
 	useEffect(() => {
 		if (audioContext.state === 'suspended') void audioContext.resume();
-		if (!active) {
+		if (systemStatus !== SystemStatus.LISTEN) {
 			if (stream !== null) {
 				stream.getAudioTracks().forEach((track) => {
 					track.stop();
@@ -52,7 +53,7 @@ function useAudioStream({ active }: UseAudioStreamProps) {
 				setStream(newStream);
 			});
 		}
-	}, [streamAnchor, active]);
+	}, [streamAnchor, systemStatus]);
 
 	useEffect(() => {
 		if (stream?.active) {

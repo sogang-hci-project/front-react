@@ -1,0 +1,7 @@
+export enum SystemStatus {
+	MUTE = 'MUTE',
+	HIBERNATE = 'HIBERNATE',
+	LISTEN = 'LISTEN',
+	TRANSCRIBE = 'TRANSCRIBE',
+	SPEAK = 'SPEAK',
+}

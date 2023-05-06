@@ -18,7 +18,7 @@ import {
 	MessageContent,
 	Divider,
 } from './style';
-import { VoiceCanvas, ActivateButtonWrapper } from '../../components/interact';
+import { VoiceCanvas, MuteButtonWrapper } from '../../components/interact';
 import { RxTokens, RxAccessibility, RxShadow } from 'react-icons/rx';
 import { LANG } from '../../constants/setting';
 import { requestChatCompletion } from '../../utils/openai';
@@ -26,7 +26,8 @@ import useAudioStream from '../../hooks/useAudioStream';
 import useGoogleRecognition from '../../hooks/useGoogleRecognition';
 import useRecognition from '../../hooks/useRecognition';
 import { base64ToBlob, getGoogleTextToSpeech } from '../../utils/googlecloud';
-import { playAudio, stopAudio } from '../../hooks/useAudio';
+import { playAudio, stopAudio, toggleVoice } from '../../utils/audio';
+import { SystemStatus } from '../../types/common';
 
 const dummyTitle = 'american gothics';
 
@@ -44,19 +45,20 @@ async function replyAnAnswer(question: string) {
 }
 
 function Interact() {
-	const [voiceActive, setVoiceActive] = useState<boolean>(false);
 	const [message, setMessage] = useState<string>('');
+	const [systemStatus, setSystemStatus] = useState<SystemStatus>(
+		SystemStatus.MUTE
+	);
 	const { volume: voiceVolume, stream: voiceStream } = useAudioStream({
-		active: voiceActive,
+		systemStatus,
 	});
 	const { transcript: googleTranscript } = useGoogleRecognition({
 		stream: voiceStream,
-		active: voiceActive,
+		systemStatus,
 	});
 	const { transcript: localTranscript } = useRecognition({
-		voiceActive,
+		systemStatus,
 	});
-	const voiceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
 	useEffect(() => {
 		if (googleTranscript) {
@@ -70,42 +72,14 @@ function Interact() {
 	}, [localTranscript]);
 
 	useEffect(() => {
-		// console.log(voiceVolume);
-		if (voiceVolume > 80 && voiceActive === false) {
-			console.log('activated: ', voiceVolume);
-			setVoiceActive(true);
-			stopAudio();
-		} else if (
-			voiceVolume < 20 &&
-			voiceActive === true &&
-			voiceTimeoutRef.current === null
-		) {
-			console.log('deactivate-ready: ', voiceVolume);
-			voiceTimeoutRef.current = setTimeout(() => {
-				setVoiceActive(false);
-				if (voiceTimeoutRef.current) {
-					console.log('deactivated: ');
-					clearTimeout(voiceTimeoutRef.current);
-					voiceTimeoutRef.current = null;
-				}
-			}, 1000);
-		} else if (voiceVolume > 20 && voiceActive === true) {
-			if (voiceTimeoutRef.current) {
-				console.log('deactivation cancelled');
-				clearTimeout(voiceTimeoutRef.current);
-				voiceTimeoutRef.current = null;
-			}
-		}
+		toggleVoice({ voiceVolume, systemStatus, setSystemStatus });
 	}, [voiceVolume]);
 
-	// const handleActivateButton = () => {
-	// 	if (voiceActive) {
-	// 		setVoiceActive(false);
-	// 	} else {
-	// 		setVoiceActive(true);
-	// 		stopAudio();
-	// 	}
-	// };
+	const handleMuteButton = () => {
+		if (systemStatus === SystemStatus.MUTE)
+			setSystemStatus(SystemStatus.HIBERNATE);
+		else setSystemStatus(SystemStatus.MUTE);
+	};
 
 	return (
 		<Container>
@@ -121,7 +95,7 @@ function Interact() {
 				</Toolbar>
 				<Body>
 					<VoiceCanvas
-						voiceActive={voiceActive}
+						systemStatus={systemStatus}
 						voiceVolume={voiceVolume}
 					></VoiceCanvas>
 				</Body>
@@ -133,9 +107,9 @@ function Interact() {
 					</MessageContent>
 				</MessageContainer>
 				<ButtonContainer>
-					<ActivateButtonWrapper
-						voiceActive={voiceActive}
-						// handleActivateButton={handleActivateButton}
+					<MuteButtonWrapper
+						systemStatus={systemStatus}
+						handleMuteButton={handleMuteButton}
 					/>
 				</ButtonContainer>
 			</Viewport>

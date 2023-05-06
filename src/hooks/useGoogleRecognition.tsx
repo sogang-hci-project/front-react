@@ -1,14 +1,18 @@
 import { useEffect, useState } from 'react';
 import { blobToBase64, getGoogleTranscript } from '../utils/googlecloud';
+import { SystemStatus } from '../types/common';
 
 const chunks: Blob[] = [];
 
 interface IUseGoogleRecognitionProps {
 	stream: MediaStream | null;
-	active: boolean;
+	systemStatus: SystemStatus;
 }
 
-function useGoogleRecognition({ stream, active }: IUseGoogleRecognitionProps) {
+function useGoogleRecognition({
+	stream,
+	systemStatus,
+}: IUseGoogleRecognitionProps) {
 	const [transcript, setTranscript] = useState<string>('');
 	const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
 		null
@@ -33,15 +37,21 @@ function useGoogleRecognition({ stream, active }: IUseGoogleRecognitionProps) {
 	}, [stream]);
 
 	useEffect(() => {
-		if (active && mediaRecorder?.state === 'inactive') {
+		if (
+			systemStatus === SystemStatus.LISTEN &&
+			mediaRecorder?.state === 'inactive'
+		) {
 			chunks.splice(0);
 			mediaRecorder.start();
 			setTranscript('');
-		} else if (!active && mediaRecorder?.state === 'recording') {
+		} else if (
+			systemStatus !== SystemStatus.LISTEN &&
+			mediaRecorder?.state === 'recording'
+		) {
 			mediaRecorder.stop();
 			chunks.splice(0);
 		}
-	}, [active]);
+	}, [systemStatus]);
 
 	return { transcript };
 }

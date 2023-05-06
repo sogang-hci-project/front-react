@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-export const ActivateButton = styled('button')`
+export const MuteButton = styled('button')`
 	width: 100%;
 	height: 4rem;
 	background-color: white;

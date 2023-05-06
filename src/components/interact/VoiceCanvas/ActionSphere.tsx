@@ -4,13 +4,14 @@ import React, { useRef } from 'react';
 import { useFrame, Object3DNode } from '@react-three/fiber';
 import { Vector3 } from 'three';
 import * as THREE from 'three';
+import { SystemStatus } from '../../../types/common';
 
 interface ActionSphereProps {
 	speed: number;
 	color: THREE.Color;
 	position: Vector3;
 	radius: number;
-	voiceActive: boolean;
+	systemStatus: SystemStatus;
 }
 
 export default function ActionSphere({
@@ -18,13 +19,13 @@ export default function ActionSphere({
 	color,
 	position,
 	radius,
-	voiceActive,
+	systemStatus,
 }: ActionSphereProps) {
 	const meshRef =
 		useRef<THREE.Mesh<THREE.BufferGeometry, THREE.Material | THREE.Material[]>>(
 			null
 		);
-	const speedSlope = voiceActive ? 1 : 0.2;
+	const speedSlope = systemStatus === SystemStatus.LISTEN ? 1 : 0.2;
 
 	useFrame((state, delta) => {
 		const timeIncrement = state.clock.elapsedTime * speed * speedSlope;

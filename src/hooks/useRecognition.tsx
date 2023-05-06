@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { LANG } from '../constants/setting';
+import { SystemStatus } from '../types/common';
 
 const SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
@@ -8,10 +9,10 @@ recognition.interimResults = true;
 recognition.continuous = true;
 
 interface IUseRecognitionProps {
-	voiceActive: boolean;
+	systemStatus: SystemStatus;
 }
 
-function useRecognition({ voiceActive }: IUseRecognitionProps) {
+function useRecognition({ systemStatus }: IUseRecognitionProps) {
 	const [transcript, setTranscript] = useState<string>('');
 
 	recognition.onresult = (event) => {
@@ -20,9 +21,9 @@ function useRecognition({ voiceActive }: IUseRecognitionProps) {
 	};
 
 	useEffect(() => {
-		if (voiceActive) recognition.start();
+		if (systemStatus === SystemStatus.LISTEN) recognition.start();
 		else recognition.stop();
-	}, [voiceActive]);
+	}, [systemStatus]);
 
 	return { transcript };
 }
