@@ -1,4 +1,3 @@
-import React, { useState, Dispatch, SetStateAction } from 'react';
 import { MuteButton } from './style';
 import { Text } from '../../atom/Text';
 import { RxEyeOpen, RxEyeClosed } from 'react-icons/rx';

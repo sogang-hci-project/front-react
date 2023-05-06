@@ -1,4 +1,4 @@
-import { LANG } from '../constants/setting';
+import { LANG, LANGUAGE } from '../constants/setting';
 import { getQueryString } from '../utils/common';
 
 const transcriptConfig = {
@@ -16,6 +16,17 @@ const transcriptHeader = {
 const transcriptQueries = {
 	key: process.env.REACT_APP_GCLOUD_API_KEY || '',
 };
+
+const MAX_TRANS_LENGTH = 300000;
+
+const textToSpeechVoice = (() => {
+	if ((LANG as LANGUAGE) === LANGUAGE.KR) {
+		return 'ko-KR-Standard-D';
+	} else if ((LANG as LANGUAGE) === LANGUAGE.US) {
+		return 'en-US-Neural2-J';
+	}
+	return '';
+})();
 
 interface IGoogleTranscriptResponse {
 	requestId: string;
@@ -46,6 +57,11 @@ interface IGoogleTextToSpeechResponse {
 
 export async function getGoogleTranscript(blobString: string) {
 	if (blobString.length === 0) return '';
+	if (blobString.length > MAX_TRANS_LENGTH) {
+		alert('maximum speech length reached');
+		return '';
+	}
+	console.log(blobString.length);
 	try {
 		const res = await fetch(
 			`https://speech.googleapis.com/v1/speech:recognize?${getQueryString(
@@ -87,7 +103,7 @@ export async function getGoogleTextToSpeech(inputText: string) {
 					},
 					voice: {
 						languageCode: LANG,
-						name: 'en-US-Studio-M',
+						name: textToSpeechVoice,
 						ssmlGender: 'MALE',
 					},
 					audioConfig: {

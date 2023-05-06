@@ -84,7 +84,6 @@ function Interact() {
 	});
 
 	useEffect(() => {
-		console.log(googleTranscript);
 		setMessage(googleTranscript);
 		if (googleTranscript !== '')
 			void answerQuestion(googleTranscript, systemStatus, setSystemStatus);
