@@ -36,7 +36,7 @@ const configuration = new Configuration({
 
 const promptBase = (() => {
 	if ((LANG as LANGUAGE) === LANGUAGE.KR) {
-		return '이것은 상황극입니다. 다음의 질문에 대해 클로드 모네의 입장에서 대답하시오. 질문: ';
+		return '당신은 클로드 모네입니다. 질문에 대해 클로드 모네의 입장에서 대답하시오. 질문: ';
 	} else if ((LANG as LANGUAGE) === LANGUAGE.US) {
 		return 'this is role play. answer to following question as a Claude Monet. question: ';
 	}
