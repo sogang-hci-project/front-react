@@ -4,14 +4,15 @@ import React, { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Center, MeshTransmissionMaterial } from '@react-three/drei';
 import { Vector3, SphereGeometry } from 'three';
+import { SystemStatus } from '../../../types/common';
 
 interface MainSphereProps {
-	voiceActive: boolean;
+	systemStatus: SystemStatus;
 	voiceVolume: number;
 }
 
 export default function MainSphere({
-	voiceActive,
+	systemStatus,
 	voiceVolume,
 }: MainSphereProps) {
 	const geometryRef = useRef<SphereGeometry | null>(null);
@@ -39,7 +40,8 @@ export default function MainSphere({
 	// 	bg: '#ffffff',
 	// });
 
-	const variableDistortion = voiceActive ? voiceVolume / 100 : 0;
+	const variableDistortion =
+		systemStatus === SystemStatus.LISTEN ? voiceVolume / 100 : 0;
 
 	const transmissionCofig = {
 		meshPhysicalMaterial: false,

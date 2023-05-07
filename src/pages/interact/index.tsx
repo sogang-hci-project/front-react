@@ -1,58 +1,95 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import React, { useState, Dispatch, SetStateAction, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Viewport } from '../../components/common';
 import {
 	Toolbar,
 	ToolbarButton,
 	Body,
 	MessageContainer,
-	Message,
-	MessageCover,
 	ButtonContainer,
-	MessageContent,
 	Divider,
 } from './style';
-import { VoiceCanvas, ActivateButtonWrapper } from '../../components/interact';
+import {
+	VoiceCanvas,
+	MuteButtonWrapper,
+	MessageWrapper,
+} from '../../components/interact';
 import { RxTokens, RxAccessibility, RxShadow } from 'react-icons/rx';
-import useRecording from '../../hooks/useRecording';
-import { LANG } from '../../constants/setting';
+import { requestChatCompletion } from '../../api/openai';
+import useAudioStream from '../../hooks/useAudioStream';
+import useGoogleRecognition from '../../hooks/useGoogleRecognition';
+import useRecognition from '../../hooks/useRecognition';
+import {
+	checkMute,
+	playTextToAudio,
+	stopAudio,
+	toggleSystemStatusOnVolume,
+} from '../../utils/audio';
+import { SystemStatus } from '../../types/common';
 
 const dummyTitle = 'american gothics';
 
-const SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
-const recognition = new SpeechRecognition();
-recognition.lang = LANG;
-recognition.interimResults = true;
+async function generateAnswer(question: string) {
+	const res = await requestChatCompletion(question);
+	const content = res?.choices[0].message.content || '';
+	console.log('openai answer: ', content);
+	return content;
+}
+
+async function answerQuestion(
+	question: string,
+	systemStatus: SystemStatus,
+	setSystemState: React.Dispatch<React.SetStateAction<SystemStatus>>
+) {
+	if (systemStatus !== SystemStatus.TRANSCRIBE) return;
+	setSystemState(checkMute(SystemStatus.GENERATE));
+	const answer = await generateAnswer(question);
+	setSystemState(checkMute(SystemStatus.SPEAK));
+	await playTextToAudio(answer);
+	setSystemState(checkMute(SystemStatus.HIBERNATE));
+}
 
 function Interact() {
-	const [voiceActive, setVoiceActive] = useState<boolean>(false);
-	const [transcript, setTranscript] = useState<string>('');
-	const { volume: voiceVolume, transcript: voiceTranscript } = useRecording({
-		active: voiceActive,
+	const [message, setMessage] = useState<string>('');
+	const [systemStatus, setSystemStatus] = useState<SystemStatus>(
+		SystemStatus.MUTE
+	);
+	const { volume: voiceVolume, stream: voiceStream } = useAudioStream({
+		systemStatus,
+	});
+	const { transcript: googleTranscript } = useGoogleRecognition({
+		stream: voiceStream,
+		systemStatus,
+		setSystemStatus,
+	});
+	const { transcript: localTranscript } = useRecognition({
+		systemStatus,
 	});
 
-	// recognition.continuous = true;
-
-	recognition.onresult = (event) => {
-		const [[{ transcript: recognitionResult }]] = event.results;
-		setTranscript(recognitionResult);
-	};
+	useEffect(() => {
+		setMessage(googleTranscript);
+		if (googleTranscript !== '')
+			void answerQuestion(googleTranscript, systemStatus, setSystemStatus);
+	}, [googleTranscript]);
 
 	useEffect(() => {
-		setTranscript(voiceTranscript);
-	}, [voiceTranscript]);
+		setMessage(localTranscript);
+	}, [localTranscript]);
 
-	// useEffect(() => {}, [volume]);
+	useEffect(() => {
+		toggleSystemStatusOnVolume({
+			voiceVolume,
+			systemStatus,
+			setSystemStatus,
+		});
+	}, [voiceVolume]);
 
-	const handleActivateButton = () => {
-		if (voiceActive) {
-			console.log('recognition deactivate');
-			recognition.stop();
-			setVoiceActive(false);
+	const handleMuteButton = () => {
+		if (systemStatus === SystemStatus.MUTE) {
+			setSystemStatus(SystemStatus.HIBERNATE);
 		} else {
-			console.log('recognition activate');
-			recognition.start();
-			setVoiceActive(true);
+			setSystemStatus(SystemStatus.MUTE);
+			stopAudio();
 		}
 	};
 
@@ -70,21 +107,18 @@ function Interact() {
 				</Toolbar>
 				<Body>
 					<VoiceCanvas
-						voiceActive={voiceActive}
+						systemStatus={systemStatus}
 						voiceVolume={voiceVolume}
 					></VoiceCanvas>
 				</Body>
 				<Divider></Divider>
 				<MessageContainer>
-					<MessageCover></MessageCover>
-					<MessageContent>
-						<Message>{transcript}</Message>
-					</MessageContent>
+					<MessageWrapper message={message} systemStatus={systemStatus} />
 				</MessageContainer>
 				<ButtonContainer>
-					<ActivateButtonWrapper
-						voiceActive={voiceActive}
-						handleActivateButton={handleActivateButton}
+					<MuteButtonWrapper
+						systemStatus={systemStatus}
+						handleMuteButton={handleMuteButton}
 					/>
 				</ButtonContainer>
 			</Viewport>

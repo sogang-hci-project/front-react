@@ -1,21 +1,36 @@
 import styled from '@emotion/styled';
 
-export const ActivateButton = styled('button')`
+export const MessageCover = styled('div')`
 	width: 100%;
-	height: 4rem;
-	background-color: white;
-	border: 1px solid black;
-	font-size: 1rem;
-	border-radius: 2rem;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	height: 8rem;
+	position: sticky;
+	top: 0;
+	left: 0;
+	/* background-color: rgba(0, 0, 0, 0.1); */
+	box-shadow: inset 0 0 30px 30px rgba(255, 255, 255, 1);
+	pointer-events: none;
+	z-index: 1;
+`;
 
-	-webkit-transition-duration: 0.4s;
-	transition-duration: 0.4s;
-	:active {
-		background-color: rgba(220, 220, 220, 1);
-	}
+export const MessageContent = styled('div')`
+	width: 100%;
+	padding: 0 2rem;
+	position: absolute;
+	z-index: 0;
+	left: 0;
+`;
+
+export const Message = styled('p')`
+	font-size: 1.2rem;
+	width: 100%;
+	/* line-height: 100%; */
+	text-align: center;
+`;
+
+export const DotContainer = styled('div')`
+	width: 100%;
+	display: flex;
+	justify-content: center;
 `;
 
 export const Dot = styled('p')`
