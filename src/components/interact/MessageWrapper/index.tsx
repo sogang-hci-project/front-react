@@ -5,7 +5,7 @@ import {
 	MessageContent,
 	MessageCover,
 } from './style';
-import { SystemStatus } from '../../../types/common';
+import { SystemStatus } from '~/types/common';
 
 const onGenerateMessage = (
 	<>

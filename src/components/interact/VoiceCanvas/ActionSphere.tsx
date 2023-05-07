@@ -4,7 +4,7 @@ import React, { useRef } from 'react';
 import { useFrame, Object3DNode } from '@react-three/fiber';
 import { Vector3 } from 'three';
 import * as THREE from 'three';
-import { SystemStatus } from '../../../types/common';
+import { SystemStatus } from '~/types/common';
 
 interface ActionSphereProps {
 	speed: number;

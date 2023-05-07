@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { LANG } from '../constants/setting';
-import { SystemStatus } from '../types/common';
+import { LANG } from '@constants/setting';
+import { SystemStatus } from '~/types/common';
 
 const SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
