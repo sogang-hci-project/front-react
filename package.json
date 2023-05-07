@@ -3,6 +3,7 @@
 	"version": "0.1.0",
 	"private": true,
 	"dependencies": {
+		"@craco/craco": "^7.1.0",
 		"@emotion/css": "^11.10.6",
 		"@emotion/eslint-plugin": "^11.10.0",
 		"@emotion/react": "^11.10.6",
@@ -38,10 +39,14 @@
 		"workbox-streams": "^6.5.4"
 	},
 	"scripts": {
-		"start": "react-scripts start",
-		"build": "react-scripts build",
-		"test": "react-scripts test",
-		"eject": "react-scripts eject",
+		"start-backup": "react-scripts start",
+		"build-backup": "react-scripts build",
+		"test-backup": "react-scripts test",
+		"eject-backup": "react-scripts eject",
+		"start": "craco start",
+		"build": "craco build",
+		"test": "craco test",
+		"eject": "craco eject",
 		"lint": "tsc --noEmit && eslint src/**/*.ts{,x} --cache",
 		"lint:fix": "eslint src/**/*.ts{,x} --fix",
 		"prepare": "husky install"

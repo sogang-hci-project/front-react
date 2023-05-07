@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { SystemStatus } from '../types/common';
+import { SystemStatus } from '~/types/common';
 
 const audioContext = new AudioContext();
 void audioContext.suspend();

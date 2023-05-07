@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { useState, useEffect } from 'react';
-import { Container, Viewport } from '../../components/common';
+import { Container, Viewport } from '@components/common';
 import {
 	Toolbar,
 	ToolbarButton,
@@ -13,19 +13,19 @@ import {
 	VoiceCanvas,
 	MuteButtonWrapper,
 	MessageWrapper,
-} from '../../components/interact';
+} from '@components/interact';
 import { RxTokens, RxAccessibility, RxShadow } from 'react-icons/rx';
-import { requestChatCompletion } from '../../api/openai';
-import useAudioStream from '../../hooks/useAudioStream';
-import useGoogleRecognition from '../../hooks/useGoogleRecognition';
-import useRecognition from '../../hooks/useRecognition';
+import { requestChatCompletion } from '@api/openai';
+import useAudioStream from '@hooks/useAudioStream';
+import useGoogleRecognition from '@hooks/useGoogleRecognition';
+import useRecognition from '@hooks/useRecognition';
 import {
 	checkMute,
 	playTextToAudio,
 	stopAudio,
 	toggleSystemStatusOnVolume,
-} from '../../utils/audio';
-import { SystemStatus } from '../../types/common';
+} from '@utils/audio';
+import { SystemStatus } from '~/types/common';
 
 const dummyTitle = 'american gothics';
 

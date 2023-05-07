@@ -1,16 +1,16 @@
 /* eslint-disable react/no-unknown-property */
 // [#14] 이슈: eslint-react와 three.js간 호환성
-import React from 'react';
+
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { Vector3 } from 'three';
-import { useControls } from 'leva';
+
 import * as THREE from 'three';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
-import CircularMesh from './CircularMesh';
+
 import MainSphere from './MainSphere';
 import ActionSphere from './ActionSphere';
-import { SystemStatus } from '../../../types/common';
+import { SystemStatus } from '~/types/common';
 
 interface RigProps {
 	systemStatus: SystemStatus;

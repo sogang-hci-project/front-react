@@ -1,7 +1,7 @@
 import { MuteButton } from './style';
-import { Text } from '../../atom/Text';
+import { Text } from '@components/atom/Text';
 import { RxEyeOpen, RxEyeClosed } from 'react-icons/rx';
-import { SystemStatus } from '../../../types/common';
+import { SystemStatus } from '~/types/common';
 
 const activeMessage = <RxEyeOpen />;
 const inactiveMessage = <RxEyeClosed />;
