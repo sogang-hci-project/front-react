@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { getGoogleTranscript } from '../api/googlecloud';
-import { SystemStatus } from '../types/common';
-import { blobToAudioBase64, checkMute } from '../utils/audio';
+import { getGoogleTranscript } from '@api/googlecloud';
+import { SystemStatus } from '~/types/common';
+import { blobToAudioBase64, checkMute } from '@utils/audio';
 
 const chunks: Blob[] = [];
 
