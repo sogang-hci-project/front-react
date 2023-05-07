@@ -24,6 +24,7 @@ interface UseAudioStreamProps {
 
 function useAudioStream({ systemStatus }: UseAudioStreamProps) {
 	const volumeIntervalRef = useRef<NodeJS.Timer | null>(null);
+	const anchorIntervalRef = useRef<NodeJS.Timer | null>(null);
 	const [volume, setVolume] = useState<number>(0);
 	const [stream, setStream] = useState<MediaStream | null>(null);
 	const [streamAnchor, setStreamAnchor] = useState<object>({});
@@ -33,12 +34,13 @@ function useAudioStream({ systemStatus }: UseAudioStreamProps) {
 		volumeIntervalRef.current = setInterval(() => {
 			setVolume(getVolume(analyserNode));
 		}, VOLUME_ANALYSIS_INTERVAL);
-		const anchorInterval = setInterval(() => {
+		if (anchorIntervalRef.current) clearInterval(anchorIntervalRef.current);
+		anchorIntervalRef.current = setInterval(() => {
 			setStreamAnchor({});
-			// clearTimeout(anchorInterval);
 		}, STREAM_REFRESH_INTERVAL);
 		return () => {
-			clearInterval(anchorInterval);
+			if (volumeIntervalRef.current) clearInterval(volumeIntervalRef.current);
+			if (anchorIntervalRef.current) clearInterval(anchorIntervalRef.current);
 		};
 	}, []);
 

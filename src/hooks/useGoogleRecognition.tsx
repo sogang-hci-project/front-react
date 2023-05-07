@@ -8,16 +8,29 @@ const chunks: Blob[] = [];
 interface IUseGoogleRecognitionProps {
 	stream: MediaStream | null;
 	systemStatus: SystemStatus;
-	setSystemStatus: React.Dispatch<React.SetStateAction<SystemStatus>>;
 }
 
 function useGoogleRecognition({
 	stream,
 	systemStatus,
-	setSystemStatus,
 }: IUseGoogleRecognitionProps) {
 	const [transcript, setTranscript] = useState<string>('');
 	const mediaRecorder = useRef<MediaRecorder | null>(null);
+
+	useEffect(() => {
+		if (mediaRecorder.current?.state === 'recording')
+			mediaRecorder.current.stop();
+		mediaRecorder.current = null;
+		chunks.splice(0);
+		if (stream?.active) {
+			const newRecorder = new MediaRecorder(stream);
+			newRecorder.ondataavailable = (event) => {
+				chunks.push(event.data);
+			};
+			newRecorder.start();
+			mediaRecorder.current = newRecorder;
+		}
+	}, [stream]);
 
 	useEffect(() => {
 		if (systemStatus === SystemStatus.TRANSCRIBE && mediaRecorder.current) {
@@ -31,18 +44,8 @@ function useGoogleRecognition({
 				mediaRecorder.current.stop();
 			mediaRecorder.current = null;
 			chunks.splice(0);
-		} else if (systemStatus === SystemStatus.HIBERNATE && stream?.active) {
-			if (mediaRecorder.current?.state === 'recording')
-				mediaRecorder.current.stop();
-			chunks.splice(0);
-			const newRecorder = new MediaRecorder(stream);
-			newRecorder.ondataavailable = (event) => {
-				chunks.push(event.data);
-			};
-			newRecorder.start();
-			mediaRecorder.current = newRecorder;
 		}
-	}, [stream, systemStatus]);
+	}, [systemStatus]);
 
 	return { transcript };
 }

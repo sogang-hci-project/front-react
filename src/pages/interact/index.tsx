@@ -60,7 +60,6 @@ function Interact() {
 	const { transcript: googleTranscript } = useGoogleRecognition({
 		stream: voiceStream,
 		systemStatus,
-		setSystemStatus,
 	});
 	const { transcript: localTranscript } = useRecognition({
 		systemStatus,
