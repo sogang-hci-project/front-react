@@ -56,10 +56,12 @@ interface IGoogleTextToSpeechResponse {
 }
 
 export async function getGoogleTranscript(blobString: string) {
-	if (blobString.length === 0) return '';
+	if (!blobString || blobString.length === 0) {
+		return Promise.reject('Google STT input is empty');
+	}
+
 	if (blobString.length > MAX_TRANS_LENGTH) {
-		alert('maximum speech length reached');
-		return '';
+		return Promise.reject('Google STT input is too long');
 	}
 	try {
 		const res = await fetch(
@@ -79,6 +81,9 @@ export async function getGoogleTranscript(blobString: string) {
 		);
 		const data = (await res.json()) as IGoogleTranscriptResponse;
 		const results = data.results;
+		console.log(data);
+		if (results === undefined)
+			return await Promise.reject('Google STT reponse is empty');
 		const [{ alternatives }] = results ? results : [{ alternatives: null }];
 		const [{ transcript }] = alternatives ? alternatives : [{ transcript: '' }];
 		return transcript;

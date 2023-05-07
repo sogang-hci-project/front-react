@@ -20,40 +20,29 @@ function useGoogleRecognition({
 	const mediaRecorder = useRef<MediaRecorder | null>(null);
 
 	useEffect(() => {
-		if (stream) {
-			const newRecorder = new MediaRecorder(stream);
-			newRecorder.ondataavailable = (event) => {
-				chunks.push(event.data);
-			};
-			newRecorder.onstop = async () => {
-				setSystemStatus(checkMute(SystemStatus.TRANSCRIBE));
+		if (systemStatus === SystemStatus.TRANSCRIBE && mediaRecorder.current) {
+			mediaRecorder.current.onstop = async () => {
 				const blob = new Blob(chunks, { type: 'audio/webm;codecs=opus' });
 				const blobBase64 = await blobToAudioBase64(blob);
 				const script = await getGoogleTranscript(blobBase64);
 				setTranscript(script);
 			};
-			mediaRecorder.current = newRecorder;
-		} else {
+			if (mediaRecorder.current?.state === 'recording')
+				mediaRecorder.current.stop();
 			mediaRecorder.current = null;
-		}
-	}, [stream]);
-
-	useEffect(() => {
-		if (systemStatus !== SystemStatus.GENERATE) setTranscript('');
-		if (
-			systemStatus === SystemStatus.LISTEN &&
-			mediaRecorder.current?.state === 'inactive'
-		) {
 			chunks.splice(0);
-			mediaRecorder.current.start();
-		} else if (
-			systemStatus !== SystemStatus.LISTEN &&
-			mediaRecorder.current?.state === 'recording'
-		) {
-			mediaRecorder.current.stop();
+		} else if (systemStatus === SystemStatus.HIBERNATE && stream?.active) {
+			if (mediaRecorder.current?.state === 'recording')
+				mediaRecorder.current.stop();
 			chunks.splice(0);
+			const newRecorder = new MediaRecorder(stream);
+			newRecorder.ondataavailable = (event) => {
+				chunks.push(event.data);
+			};
+			newRecorder.start();
+			mediaRecorder.current = newRecorder;
 		}
-	}, [systemStatus]);
+	}, [stream, systemStatus]);
 
 	return { transcript };
 }

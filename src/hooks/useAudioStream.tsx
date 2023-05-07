@@ -33,15 +33,18 @@ function useAudioStream({ systemStatus }: UseAudioStreamProps) {
 		volumeIntervalRef.current = setInterval(() => {
 			setVolume(getVolume(analyserNode));
 		}, VOLUME_ANALYSIS_INTERVAL);
-		const anchorInterval = setTimeout(() => {
+		const anchorInterval = setInterval(() => {
 			setStreamAnchor({});
-			clearTimeout(anchorInterval);
+			// clearTimeout(anchorInterval);
 		}, STREAM_REFRESH_INTERVAL);
+		return () => {
+			clearInterval(anchorInterval);
+		};
 	}, []);
 
 	useEffect(() => {
 		if (audioContext.state === 'suspended') void audioContext.resume();
-		if (systemStatus !== SystemStatus.LISTEN) {
+		if ([SystemStatus.HIBERNATE, SystemStatus.SPEAK].includes(systemStatus)) {
 			if (stream !== null) {
 				stream.getAudioTracks().forEach((track) => {
 					track.stop();
