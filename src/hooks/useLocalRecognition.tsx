@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { LANG } from '@constants/setting';
 import { SystemStatus } from '~/types/common';
 import { checkMute } from '~/utils/audio';
+import { handleError } from '~/utils/common';
 
 const SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
 
@@ -32,7 +33,7 @@ const recognition = new AsyncSpeechRecognition(START_ASYNC_DELAY);
 recognition.lang = LANG;
 recognition.interimResults = true;
 recognition.continuous = true;
-recognition.onerror = (error) => console.log(error);
+recognition.onerror = (error) => handleError(error.message);
 
 interface IUseLocalRecognitionProps {
 	systemStatus: SystemStatus;

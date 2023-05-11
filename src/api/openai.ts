@@ -1,5 +1,6 @@
 import { Configuration, OpenAIApi } from 'openai';
 import { LANG, LANGUAGE } from '../constants/setting';
+import { handleError } from '~/utils/common';
 
 interface IChatCompletion {
 	id: string;
@@ -45,11 +46,9 @@ const promptBase = (() => {
 
 const openai = new OpenAIApi(configuration);
 export async function requestChatCompletion(query: string) {
-	if (query.length === 0) return;
-	if (query.length > MAX_QUERY_COUNT) {
-		alert('Exceeded maximum query word count');
-		return;
-	}
+	if (query.length === 0) handleError('OpenAI query is empty');
+	if (query.length > MAX_QUERY_COUNT)
+		handleError('OpenAI query exceeds maximum length');
 	const modifiedQuery = promptBase + query;
 
 	const res = await fetch('https://api.openai.com/v1/chat/completions', {

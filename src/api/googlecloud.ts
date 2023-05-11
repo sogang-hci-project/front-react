@@ -1,5 +1,5 @@
 import { LANG, LANGUAGE } from '../constants/setting';
-import { getQueryString } from '../utils/common';
+import { getQueryString, handleError } from '../utils/common';
 
 const transcriptConfig = {
 	encoding: 'WEBM_OPUS',
@@ -56,13 +56,11 @@ interface IGoogleTextToSpeechResponse {
 }
 
 export async function getGoogleTranscript(blobString: string) {
-	if (!blobString || blobString.length === 0) {
-		return Promise.reject('Google STT input is empty');
-	}
+	if (!blobString || blobString.length === 0)
+		handleError('Google STT input is empty');
 
-	if (blobString.length > MAX_TRANS_LENGTH) {
-		return Promise.reject('Google STT input is too long');
-	}
+	if (blobString.length > MAX_TRANS_LENGTH)
+		handleError('Google STT input exceeds maximum length');
 	try {
 		const res = await fetch(
 			`https://speech.googleapis.com/v1/speech:recognize?${getQueryString(
@@ -87,6 +85,7 @@ export async function getGoogleTranscript(blobString: string) {
 		const [{ transcript }] = alternatives ? alternatives : [{ transcript: '' }];
 		return transcript;
 	} catch (error) {
+		handleError((error as Error).message);
 		return Promise.reject(error);
 	}
 }
