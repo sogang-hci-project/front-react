@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LANG } from '@constants/setting';
 import { SystemStatus } from '~/types/common';
 import { checkMute } from '~/utils/audio';

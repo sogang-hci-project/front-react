@@ -41,11 +41,13 @@ async function generateAnswer(question: string) {
 async function answerQuestion(
 	question: string,
 	systemStatus: SystemStatus,
-	setSystemState: React.Dispatch<React.SetStateAction<SystemStatus>>
+	setSystemState: React.Dispatch<React.SetStateAction<SystemStatus>>,
+	setMessage: React.Dispatch<React.SetStateAction<string>>
 ) {
 	console.log('user question: ', question);
 	if (systemStatus !== SystemStatus.GENERATE || question.length === 0) return;
 	const answer = await generateAnswer(question);
+	setMessage(answer);
 	setSystemState(checkMute(SystemStatus.SPEAK));
 	await playTextToAudio(answer);
 	setSystemState(checkMute(SystemStatus.HIBERNATE));
@@ -77,7 +79,12 @@ function Interact() {
 		setMessage(transcript);
 		if (transcript.length === 0) return;
 		if (systemStatus === SystemStatus.GENERATE)
-			void answerQuestion(transcript, systemStatus, setSystemStatus);
+			void answerQuestion(
+				transcript,
+				systemStatus,
+				setSystemStatus,
+				setMessage
+			);
 	}, [transcript]);
 
 	useEffect(() => {

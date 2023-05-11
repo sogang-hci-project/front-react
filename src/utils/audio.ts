@@ -17,7 +17,7 @@ const timeoutRef: ITimeoutRef = { current: null };
 export function playAudio(src: string) {
 	if (src.length === 0) return;
 	audio.src = src;
-	return new Promise<void>((resolve, reject) => {
+	return new Promise<void>((resolve) => {
 		const playButton = document.createElement('button');
 		playButton.onclick = () => {
 			void audio.play();
