@@ -24,6 +24,7 @@ interface UseAudioStreamProps {
 
 function useAudioStream({ systemStatus }: UseAudioStreamProps) {
 	const volumeIntervalRef = useRef<NodeJS.Timer | null>(null);
+	const anchorIntervalRef = useRef<NodeJS.Timer | null>(null);
 	const [volume, setVolume] = useState<number>(0);
 	const [stream, setStream] = useState<MediaStream | null>(null);
 	const [streamAnchor, setStreamAnchor] = useState<object>({});
@@ -33,15 +34,19 @@ function useAudioStream({ systemStatus }: UseAudioStreamProps) {
 		volumeIntervalRef.current = setInterval(() => {
 			setVolume(getVolume(analyserNode));
 		}, VOLUME_ANALYSIS_INTERVAL);
-		const anchorInterval = setTimeout(() => {
+		if (anchorIntervalRef.current) clearInterval(anchorIntervalRef.current);
+		anchorIntervalRef.current = setInterval(() => {
 			setStreamAnchor({});
-			clearTimeout(anchorInterval);
 		}, STREAM_REFRESH_INTERVAL);
+		return () => {
+			if (volumeIntervalRef.current) clearInterval(volumeIntervalRef.current);
+			if (anchorIntervalRef.current) clearInterval(anchorIntervalRef.current);
+		};
 	}, []);
 
 	useEffect(() => {
 		if (audioContext.state === 'suspended') void audioContext.resume();
-		if (systemStatus !== SystemStatus.LISTEN) {
+		if ([SystemStatus.HIBERNATE, SystemStatus.SPEAK].includes(systemStatus)) {
 			if (stream !== null) {
 				stream.getAudioTracks().forEach((track) => {
 					track.stop();

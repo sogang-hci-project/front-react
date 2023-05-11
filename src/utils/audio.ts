@@ -53,7 +53,7 @@ export function toggleSystemStatusOnVolume({
 		timeoutRef.current === null
 	) {
 		timeoutRef.current = setTimeout(() => {
-			setSystemStatus(checkMute(SystemStatus.HIBERNATE));
+			setSystemStatus(checkMute(SystemStatus.TRANSCRIBE));
 			if (timeoutRef.current) {
 				clearTimeout(timeoutRef.current);
 				timeoutRef.current = null;
