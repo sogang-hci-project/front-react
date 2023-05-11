@@ -11,14 +11,27 @@ interface ITimeoutRef {
 }
 
 const audio = new Audio();
+audio.volume = 0;
 const timeoutRef: ITimeoutRef = { current: null };
 
 export function playAudio(src: string) {
-	return new Promise<void>((resolve) => {
-		audio.src = src;
-		void audio.play().then(() => {
-			resolve();
-		});
+	if (src.length === 0) return;
+	audio.src = src;
+	return new Promise<void>((resolve, reject) => {
+		const playButton = document.createElement('button');
+		playButton.onclick = () => {
+			void audio
+				.play()
+				.then(() => {
+					audio.volume = 0.5;
+					resolve();
+				})
+				.catch((error) => {
+					reject(error);
+				});
+		};
+		audio.volume = 0.5;
+		playButton.click();
 	});
 }
 

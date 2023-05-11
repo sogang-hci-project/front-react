@@ -28,6 +28,7 @@ import {
 import { SystemStatus } from '~/types/common';
 
 const dummyTitle = 'american gothics';
+const clickSound = new Audio('/sound/toggle.mp3');
 
 async function generateAnswer(question: string) {
 	const res = await requestChatCompletion(question);
@@ -41,8 +42,7 @@ async function answerQuestion(
 	systemStatus: SystemStatus,
 	setSystemState: React.Dispatch<React.SetStateAction<SystemStatus>>
 ) {
-	if (systemStatus !== SystemStatus.TRANSCRIBE) return;
-	setSystemState(checkMute(SystemStatus.GENERATE));
+	if (systemStatus !== SystemStatus.GENERATE || question.length === 0) return;
 	const answer = await generateAnswer(question);
 	setSystemState(checkMute(SystemStatus.SPEAK));
 	await playTextToAudio(answer);
@@ -57,22 +57,25 @@ function Interact() {
 	const { volume: voiceVolume, stream: voiceStream } = useAudioStream({
 		systemStatus,
 	});
-	const { transcript: googleTranscript } = useGoogleRecognition({
-		stream: voiceStream,
-		systemStatus,
-	});
+	// const { transcript: googleTranscript } = useGoogleRecognition({
+	// 	stream: voiceStream,
+	// 	systemStatus,
+	// });
 	const { transcript: localTranscript } = useRecognition({
 		systemStatus,
+		setSystemStatus,
 	});
 
-	useEffect(() => {
-		setMessage(googleTranscript);
-		if (googleTranscript !== '')
-			void answerQuestion(googleTranscript, systemStatus, setSystemStatus);
-	}, [googleTranscript]);
+	// useEffect(() => {
+	// 	setMessage(googleTranscript);
+	// 	if (googleTranscript !== '')
+	// 	void answerQuestion(googleTranscript, systemStatus, setSystemStatus);
+	// }, [googleTranscript]);
 
 	useEffect(() => {
 		setMessage(localTranscript);
+		if (systemStatus === SystemStatus.GENERATE)
+			void answerQuestion(localTranscript, systemStatus, setSystemStatus);
 	}, [localTranscript]);
 
 	useEffect(() => {
@@ -84,6 +87,7 @@ function Interact() {
 	}, [voiceVolume]);
 
 	const handleMuteButton = () => {
+		void clickSound.play();
 		if (systemStatus === SystemStatus.MUTE) {
 			setSystemStatus(SystemStatus.HIBERNATE);
 		} else {

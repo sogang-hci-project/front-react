@@ -28,6 +28,9 @@ const MAX_TOKEN_COUNT = (() => {
 	else if ((LANG as LANGUAGE) === LANGUAGE.US) return 64;
 	else return 64;
 })();
+const STATUS = {
+	PROCESSING: false,
+};
 
 const configuration = new Configuration({
 	organization: process.env.REACT_APP_OPEN_AI_ORGANIZATION_KEY,
@@ -46,6 +49,8 @@ const promptBase = (() => {
 const openai = new OpenAIApi(configuration);
 export async function requestChatCompletion(query: string) {
 	if (query.length === 0) return;
+	if (STATUS.PROCESSING) return;
+	STATUS.PROCESSING = true;
 	if (query.length > MAX_QUERY_COUNT) {
 		alert('Exceeded maximum query word count');
 		return;
@@ -66,5 +71,6 @@ export async function requestChatCompletion(query: string) {
 	});
 
 	const data = (await res.json()) as IChatCompletion;
+	STATUS.PROCESSING = false;
 	return data;
 }

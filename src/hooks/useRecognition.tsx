@@ -1,28 +1,73 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { LANG } from '@constants/setting';
 import { SystemStatus } from '~/types/common';
+import { checkMute } from '~/utils/audio';
 
 const SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
-const recognition = new SpeechRecognition();
+
+class AsyncSpeechRecognition extends SpeechRecognition {
+	delay: number;
+
+	ongoing: boolean;
+
+	constructor(delay: number) {
+		super();
+		this.delay = delay;
+		this.ongoing = false;
+	}
+
+	startAsync(): void {
+		if (this.ongoing) return;
+		this.ongoing = true;
+		const timer = setTimeout(() => {
+			this.start();
+			this.ongoing = false;
+			clearTimeout(timer);
+		}, this.delay);
+	}
+}
+
+const START_ASYNC_DELAY = 200;
+const recognition = new AsyncSpeechRecognition(START_ASYNC_DELAY);
 recognition.lang = LANG;
 recognition.interimResults = true;
 recognition.continuous = true;
+recognition.onerror = (error) => console.log(error);
 
 interface IUseRecognitionProps {
 	systemStatus: SystemStatus;
+	setSystemStatus: React.Dispatch<React.SetStateAction<SystemStatus>>;
 }
 
-function useRecognition({ systemStatus }: IUseRecognitionProps) {
+function useRecognition({
+	systemStatus,
+	setSystemStatus,
+}: IUseRecognitionProps) {
 	const [transcript, setTranscript] = useState<string>('');
 
-	recognition.onresult = (event) => {
-		const [[{ transcript: result }]] = event.results;
-		setTranscript(result);
-	};
+	useEffect(() => {
+		if (recognition.onresult === null)
+			recognition.onresult = (event) => {
+				const [[{ transcript: result }]] = event.results;
+				setTranscript(result);
+			};
+	}, []);
 
 	useEffect(() => {
-		if (systemStatus === SystemStatus.LISTEN) recognition.start();
-		else recognition.stop();
+		if (systemStatus === SystemStatus.MUTE) {
+			recognition.abort();
+			setTranscript('');
+		} else if (systemStatus === SystemStatus.TRANSCRIBE) {
+			recognition.stop();
+			recognition.startAsync();
+			setSystemStatus(checkMute(SystemStatus.GENERATE));
+		} else if (systemStatus === SystemStatus.LISTEN) {
+			return;
+		} else {
+			recognition.abort();
+			recognition.startAsync();
+			setTranscript('');
+		}
 	}, [systemStatus]);
 
 	return { transcript };
