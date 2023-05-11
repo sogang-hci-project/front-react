@@ -14,6 +14,14 @@ async function getStream() {
 	return stream;
 }
 
+function removeStream(stream: MediaStream | null) {
+	if (stream === null) return;
+	stream.getAudioTracks().forEach((track) => {
+		track.stop();
+		stream.removeTrack(track);
+	});
+}
+
 function getVolume(node: AnalyserNode) {
 	const data = new Uint8Array(node.frequencyBinCount);
 	node.getByteFrequencyData(data);
@@ -31,19 +39,13 @@ function useAudioStream() {
 		void getStream().then((newStream) => {
 			setStream(newStream);
 		});
-		if (volumeIntervalRef.current) clearInterval(volumeIntervalRef.current);
 		volumeIntervalRef.current = setInterval(() => {
 			setVolume(getVolume(analyserNode));
 		}, VOLUME_ANALYSIS_INTERVAL);
 		return () => {
 			if (volumeIntervalRef.current) clearInterval(volumeIntervalRef.current);
-			if (stream !== null) {
-				stream.getAudioTracks().forEach((track) => {
-					track.stop();
-					stream.removeTrack(track);
-				});
-				setStream(null);
-			}
+			removeStream(stream);
+			setStream(null);
 		};
 	}, []);
 

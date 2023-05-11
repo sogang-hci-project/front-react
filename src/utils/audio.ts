@@ -3,7 +3,7 @@ import { SystemStatus } from '~/types/common';
 import { getGoogleTextToSpeech } from '@api/googlecloud';
 
 const ACTIVATION_VOLUME = 80;
-const DEACTIVATION_VOLUME = 40;
+const DEACTIVATION_VOLUME = 60;
 const VOICE_DEACTIVATION_TIME = 600;
 
 interface ITimeoutRef {
