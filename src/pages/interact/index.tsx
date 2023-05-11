@@ -18,7 +18,7 @@ import { RxTokens, RxAccessibility, RxShadow } from 'react-icons/rx';
 import { requestChatCompletion } from '@api/openai';
 import useAudioStream from '@hooks/useAudioStream';
 import useGoogleRecognition from '@hooks/useGoogleRecognition';
-import useRecognition from '@hooks/useRecognition';
+import useLocalRecognition from '~/hooks/useLocalRecognition';
 import {
 	checkMute,
 	playTextToAudio,
@@ -26,6 +26,7 @@ import {
 	toggleSystemStatusOnVolume,
 } from '@utils/audio';
 import { SystemStatus } from '~/types/common';
+import { isChrome, isSafari } from '~/utils/common';
 
 const dummyTitle = 'american gothics';
 const clickSound = new Audio('/sound/toggle.mp3');
@@ -42,6 +43,7 @@ async function answerQuestion(
 	systemStatus: SystemStatus,
 	setSystemState: React.Dispatch<React.SetStateAction<SystemStatus>>
 ) {
+	console.log('user question: ', question);
 	if (systemStatus !== SystemStatus.GENERATE || question.length === 0) return;
 	const answer = await generateAnswer(question);
 	setSystemState(checkMute(SystemStatus.SPEAK));
@@ -49,34 +51,34 @@ async function answerQuestion(
 	setSystemState(checkMute(SystemStatus.HIBERNATE));
 }
 
+function useRecognition() {
+	if (isChrome) return useGoogleRecognition;
+	else if (isSafari) return useLocalRecognition;
+	else
+		return () => {
+			return { transcript: 'browser not supported' };
+		};
+}
+
 function Interact() {
 	const [message, setMessage] = useState<string>('');
 	const [systemStatus, setSystemStatus] = useState<SystemStatus>(
 		SystemStatus.MUTE
 	);
-	const { volume: voiceVolume, stream: voiceStream } = useAudioStream({
-		systemStatus,
-	});
-	// const { transcript: googleTranscript } = useGoogleRecognition({
-	// 	stream: voiceStream,
-	// 	systemStatus,
-	// });
-	const { transcript: localTranscript } = useRecognition({
+	const { volume: voiceVolume, stream: voiceStream } = useAudioStream();
+
+	const { transcript } = useRecognition()({
+		stream: voiceStream,
 		systemStatus,
 		setSystemStatus,
 	});
 
-	// useEffect(() => {
-	// 	setMessage(googleTranscript);
-	// 	if (googleTranscript !== '')
-	// 	void answerQuestion(googleTranscript, systemStatus, setSystemStatus);
-	// }, [googleTranscript]);
-
 	useEffect(() => {
-		setMessage(localTranscript);
+		setMessage(transcript);
+		if (transcript.length === 0) return;
 		if (systemStatus === SystemStatus.GENERATE)
-			void answerQuestion(localTranscript, systemStatus, setSystemStatus);
-	}, [localTranscript]);
+			void answerQuestion(transcript, systemStatus, setSystemStatus);
+	}, [transcript]);
 
 	useEffect(() => {
 		toggleSystemStatusOnVolume({

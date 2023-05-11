@@ -21,13 +21,8 @@ function getVolume(node: AnalyserNode) {
 }
 
 const VOLUME_ANALYSIS_INTERVAL = 100;
-const STREAM_REFRESH_INTERVAL = 1500;
 
-interface UseAudioStreamProps {
-	systemStatus: SystemStatus;
-}
-
-function useAudioStream({ systemStatus }: UseAudioStreamProps) {
+function useAudioStream() {
 	const volumeIntervalRef = useRef<NodeJS.Timer | null>(null);
 	const [volume, setVolume] = useState<number>(0);
 	const [stream, setStream] = useState<MediaStream | null>(null);
@@ -55,31 +50,6 @@ function useAudioStream({ systemStatus }: UseAudioStreamProps) {
 	useEffect(() => {
 		if (audioContext.state === 'suspended') void audioContext.resume();
 	}, [stream]);
-
-	// useEffect(() => {
-	// 	if (audioContext.state === 'suspended') void audioContext.resume();
-	// 	if ([SystemStatus.HIBERNATE, SystemStatus.SPEAK].includes(systemStatus)) {
-	// 		if (stream !== null) {
-	// 			stream.getAudioTracks().forEach((track) => {
-	// 				track.stop();
-	// 				stream.removeTrack(track);
-	// 			});
-	// 			setStream(null);
-	// 		}
-	// 		void getStream().then((newStream) => {
-	// 			setStream(newStream);
-	// 		});
-	// 	}
-	// }, [, systemStatus]);
-
-	// useEffect(() => {
-	// 	if (stream?.active) {
-	// 		const sourceNode = new MediaStreamAudioSourceNode(audioContext, {
-	// 			mediaStream: stream,
-	// 		});
-	// 		sourceNode.connect(analyserNode);
-	// 	}
-	// }, [stream]);
 
 	return { volume, stream };
 }

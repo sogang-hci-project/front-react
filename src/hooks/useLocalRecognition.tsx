@@ -34,15 +34,15 @@ recognition.interimResults = true;
 recognition.continuous = true;
 recognition.onerror = (error) => console.log(error);
 
-interface IUseRecognitionProps {
+interface IUseLocalRecognitionProps {
 	systemStatus: SystemStatus;
 	setSystemStatus: React.Dispatch<React.SetStateAction<SystemStatus>>;
 }
 
-function useRecognition({
+function useLocalRecognition({
 	systemStatus,
 	setSystemStatus,
-}: IUseRecognitionProps) {
+}: IUseLocalRecognitionProps) {
 	const [transcript, setTranscript] = useState<string>('');
 
 	useEffect(() => {
@@ -73,4 +73,4 @@ function useRecognition({
 	return { transcript };
 }
 
-export default useRecognition;
+export default useLocalRecognition;

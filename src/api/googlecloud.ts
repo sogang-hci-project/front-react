@@ -81,7 +81,6 @@ export async function getGoogleTranscript(blobString: string) {
 		);
 		const data = (await res.json()) as IGoogleTranscriptResponse;
 		const results = data.results;
-		console.log(data);
 		if (results === undefined)
 			return await Promise.reject('Google STT reponse is empty');
 		const [{ alternatives }] = results ? results : [{ alternatives: null }];
