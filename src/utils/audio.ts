@@ -20,17 +20,10 @@ export function playAudio(src: string) {
 	return new Promise<void>((resolve, reject) => {
 		const playButton = document.createElement('button');
 		playButton.onclick = () => {
-			void audio
-				.play()
-				.then(() => {
-					audio.volume = 0.5;
-					resolve();
-				})
-				.catch((error) => {
-					reject(error);
-				});
+			void audio.play();
 		};
 		audio.volume = 0.5;
+		audio.onended = () => resolve();
 		playButton.click();
 	});
 }
