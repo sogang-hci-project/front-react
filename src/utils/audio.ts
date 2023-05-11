@@ -2,7 +2,7 @@ import React from 'react';
 import { SystemStatus } from '~/types/common';
 import { getGoogleTextToSpeech } from '@api/googlecloud';
 
-const ACTIVATION_VOLUME = 80;
+const ACTIVATION_VOLUME = 60;
 const DEACTIVATION_VOLUME = 60;
 const VOICE_DEACTIVATION_TIME = 600;
 
