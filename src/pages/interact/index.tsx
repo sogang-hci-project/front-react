@@ -18,7 +18,7 @@ import { RxTokens, RxAccessibility, RxShadow } from 'react-icons/rx';
 import { requestChatCompletion } from '@api/openai';
 import useAudioStream from '@hooks/useAudioStream';
 import useGoogleRecognition from '@hooks/useGoogleRecognition';
-import useRecognition from '@hooks/useRecognition';
+import useLocalRecognition from '~/hooks/useLocalRecognition';
 import {
 	checkMute,
 	playTextToAudio,
@@ -26,8 +26,10 @@ import {
 	toggleSystemStatusOnVolume,
 } from '@utils/audio';
 import { SystemStatus } from '~/types/common';
+import { isChrome, isSafari } from '~/utils/common';
 
 const dummyTitle = 'american gothics';
+const clickSound = new Audio('/sound/toggle.mp3');
 
 async function generateAnswer(question: string) {
 	const res = await requestChatCompletion(question);
@@ -39,14 +41,25 @@ async function generateAnswer(question: string) {
 async function answerQuestion(
 	question: string,
 	systemStatus: SystemStatus,
-	setSystemState: React.Dispatch<React.SetStateAction<SystemStatus>>
+	setSystemState: React.Dispatch<React.SetStateAction<SystemStatus>>,
+	setMessage: React.Dispatch<React.SetStateAction<string>>
 ) {
-	if (systemStatus !== SystemStatus.TRANSCRIBE) return;
-	setSystemState(checkMute(SystemStatus.GENERATE));
+	console.log('user question: ', question);
+	if (systemStatus !== SystemStatus.GENERATE || question.length === 0) return;
 	const answer = await generateAnswer(question);
+	setMessage(answer);
 	setSystemState(checkMute(SystemStatus.SPEAK));
 	await playTextToAudio(answer);
 	setSystemState(checkMute(SystemStatus.HIBERNATE));
+}
+
+function useRecognition() {
+	if (isChrome) return useGoogleRecognition;
+	else if (isSafari) return useLocalRecognition;
+	else
+		return () => {
+			return { transcript: 'browser not supported' };
+		};
 }
 
 function Interact() {
@@ -54,26 +67,25 @@ function Interact() {
 	const [systemStatus, setSystemStatus] = useState<SystemStatus>(
 		SystemStatus.MUTE
 	);
-	const { volume: voiceVolume, stream: voiceStream } = useAudioStream({
-		systemStatus,
-	});
-	const { transcript: googleTranscript } = useGoogleRecognition({
+	const { volume: voiceVolume, stream: voiceStream } = useAudioStream();
+
+	const { transcript } = useRecognition()({
 		stream: voiceStream,
 		systemStatus,
-	});
-	const { transcript: localTranscript } = useRecognition({
-		systemStatus,
+		setSystemStatus,
 	});
 
 	useEffect(() => {
-		setMessage(googleTranscript);
-		if (googleTranscript !== '')
-			void answerQuestion(googleTranscript, systemStatus, setSystemStatus);
-	}, [googleTranscript]);
-
-	useEffect(() => {
-		setMessage(localTranscript);
-	}, [localTranscript]);
+		setMessage(transcript);
+		if (transcript.length === 0) return;
+		if (systemStatus === SystemStatus.GENERATE)
+			void answerQuestion(
+				transcript,
+				systemStatus,
+				setSystemStatus,
+				setMessage
+			);
+	}, [transcript]);
 
 	useEffect(() => {
 		toggleSystemStatusOnVolume({
@@ -84,6 +96,7 @@ function Interact() {
 	}, [voiceVolume]);
 
 	const handleMuteButton = () => {
+		void clickSound.play();
 		if (systemStatus === SystemStatus.MUTE) {
 			setSystemStatus(SystemStatus.HIBERNATE);
 		} else {

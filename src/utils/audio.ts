@@ -2,8 +2,8 @@ import React from 'react';
 import { SystemStatus } from '~/types/common';
 import { getGoogleTextToSpeech } from '@api/googlecloud';
 
-const ACTIVATION_VOLUME = 80;
-const DEACTIVATION_VOLUME = 40;
+const ACTIVATION_VOLUME = 60;
+const DEACTIVATION_VOLUME = 60;
 const VOICE_DEACTIVATION_TIME = 600;
 
 interface ITimeoutRef {
@@ -11,14 +11,20 @@ interface ITimeoutRef {
 }
 
 const audio = new Audio();
+audio.volume = 0;
 const timeoutRef: ITimeoutRef = { current: null };
 
 export function playAudio(src: string) {
+	if (src.length === 0) return;
+	audio.src = src;
 	return new Promise<void>((resolve) => {
-		audio.src = src;
-		void audio.play().then(() => {
-			resolve();
-		});
+		const playButton = document.createElement('button');
+		playButton.onclick = () => {
+			void audio.play();
+		};
+		audio.volume = 0.5;
+		audio.onended = () => resolve();
+		playButton.click();
 	});
 }
 

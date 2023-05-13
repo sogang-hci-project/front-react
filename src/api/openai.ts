@@ -1,5 +1,6 @@
 import { Configuration, OpenAIApi } from 'openai';
 import { LANG, LANGUAGE } from '../constants/setting';
+import { handleError } from '~/utils/common';
 
 interface IChatCompletion {
 	id: string;
@@ -45,26 +46,27 @@ const promptBase = (() => {
 
 const openai = new OpenAIApi(configuration);
 export async function requestChatCompletion(query: string) {
-	if (query.length === 0) return;
-	if (query.length > MAX_QUERY_COUNT) {
-		alert('Exceeded maximum query word count');
+	if (query.length === 0) handleError('OpenAI query is empty');
+	if (query.length > MAX_QUERY_COUNT)
+		handleError('OpenAI query exceeds maximum length');
+	const modifiedQuery = promptBase + query;
+	try {
+		const res = await fetch('https://api.openai.com/v1/chat/completions', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${process.env.REACT_APP_OPEN_AI_API_KEY || ''}`,
+			},
+			body: JSON.stringify({
+				model: 'gpt-3.5-turbo',
+				messages: [{ role: 'user', content: modifiedQuery }],
+				max_tokens: MAX_TOKEN_COUNT,
+			}),
+		});
+		const data = (await res.json()) as IChatCompletion;
+		return data;
+	} catch (error) {
+		handleError((error as Error).message);
 		return;
 	}
-	const modifiedQuery = promptBase + query;
-
-	const res = await fetch('https://api.openai.com/v1/chat/completions', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${process.env.REACT_APP_OPEN_AI_API_KEY || ''}`,
-		},
-		body: JSON.stringify({
-			model: 'gpt-3.5-turbo',
-			messages: [{ role: 'user', content: modifiedQuery }],
-			max_tokens: MAX_TOKEN_COUNT,
-		}),
-	});
-
-	const data = (await res.json()) as IChatCompletion;
-	return data;
 }
