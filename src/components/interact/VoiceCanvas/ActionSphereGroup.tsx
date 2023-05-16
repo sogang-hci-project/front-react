@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import ActionSphere from './ActionSphere';
 import { Vector3 } from 'three';
 import * as THREE from 'three';

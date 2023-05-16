@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unknown-property */
 // [#14] 이슈: eslint-react와 three.js간 호환성
-import React, { useRef } from 'react';
-import { useFrame, Object3DNode } from '@react-three/fiber';
+import { useRef } from 'react';
+import { useFrame } from '@react-three/fiber';
 import { Vector3 } from 'three';
 import * as THREE from 'three';
 import { SystemStatus } from '~/types/common';
@@ -34,7 +34,7 @@ export default function ActionSphere({
 		else return 0.2;
 	})();
 
-	useFrame((state, delta) => {
+	useFrame((state) => {
 		const timeIncrement = state.clock.elapsedTime * speed * speedSlope;
 		if (meshRef.current) {
 			const cx = position.x + 0.3 * Math.cos(timeIncrement + angle);

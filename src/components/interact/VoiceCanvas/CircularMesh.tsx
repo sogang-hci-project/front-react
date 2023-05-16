@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from 'react';
+import { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Line } from '@react-three/drei';
 import { Vector3 } from 'three';
@@ -11,7 +11,7 @@ export default function CircularMesh() {
 	const rotationEuler = new THREE.Euler(0, 0, 0);
 	const rotationSpeed = 0.5;
 
-	useFrame((state, delta) => {
+	useFrame((state) => {
 		const timeIncrement = state.clock.elapsedTime * Math.sin(rotationSpeed);
 		rotationEuler.x = 1.5708 * timeIncrement;
 		rotationEuler.y = 1.5708 * timeIncrement;

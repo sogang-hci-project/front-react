@@ -3,14 +3,14 @@
 
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import { Vector3 } from 'three';
+import { AmbientLight, Vector3 } from 'three';
 
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 
 import MainSphere from './MainSphere';
 import { SystemStatus } from '~/types/common';
 import ActionSphereGroup from './ActionSphereGroup';
-import CircularMesh from './CircularMesh';
+import { useRef } from 'react';
 
 interface RigProps {
 	systemStatus: SystemStatus;
@@ -34,17 +34,28 @@ interface LightGroupProps {
 	voiceVolume: number;
 }
 
-function LightGroup({ systemStatus, voiceVolume }: LightGroupProps) {
-	const lightIntensity = (() => {
+function LightGroup({ systemStatus }: LightGroupProps) {
+	const ambientLightRef = useRef<AmbientLight | null>(null);
+
+	const targetIntensity = (() => {
 		if ([SystemStatus.LISTEN, SystemStatus.SPEAK].includes(systemStatus))
 			return 1;
 		else if (systemStatus === SystemStatus.GENERATE) return 2;
 		else return 0.5;
 	})();
 
+	useFrame(() => {
+		if (!ambientLightRef.current) return;
+		if (ambientLightRef.current?.intensity - targetIntensity > 0.01) {
+			ambientLightRef.current.intensity -= 0.01;
+		} else if (ambientLightRef.current?.intensity - targetIntensity < 0.01) {
+			ambientLightRef.current.intensity += 0.01;
+		}
+	});
+
 	return (
 		<group>
-			<ambientLight intensity={lightIntensity} />
+			<ambientLight ref={ambientLightRef} />
 		</group>
 	);
 }
