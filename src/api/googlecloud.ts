@@ -80,7 +80,7 @@ export async function getGoogleTranscript(blobString: string) {
 		const data = (await res.json()) as IGoogleTranscriptResponse;
 		const results = data.results;
 		if (results === undefined) throw Error('undefined');
-		const [{ alternatives }] = results ? results : [{ alternatives: null }];
+		const [{ alternatives }] = results || [{ alternatives: null }];
 		const [{ transcript }] = alternatives ? alternatives : [{ transcript: '' }];
 		return transcript;
 	} catch (error) {
