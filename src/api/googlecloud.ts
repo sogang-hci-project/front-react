@@ -79,13 +79,13 @@ export async function getGoogleTranscript(blobString: string) {
 		);
 		const data = (await res.json()) as IGoogleTranscriptResponse;
 		const results = data.results;
-		if (results === undefined)
-			return await Promise.reject('Google STT reponse is empty');
+		if (results === undefined) throw Error('undefined');
 		const [{ alternatives }] = results ? results : [{ alternatives: null }];
 		const [{ transcript }] = alternatives ? alternatives : [{ transcript: '' }];
 		return transcript;
 	} catch (error) {
-		handleError((error as Error).message);
+		const message = (error as Error).message;
+		handleError(message === 'undefined' ? 'Unrecognizable Voice' : message);
 		return Promise.reject(error);
 	}
 }

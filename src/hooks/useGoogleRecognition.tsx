@@ -49,6 +49,7 @@ function useGoogleRecognition({
 			};
 			mediaRecorder.current.start();
 		}
+		setTranscript('');
 	}, [timerObject]);
 
 	useEffect(() => {

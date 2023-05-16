@@ -77,7 +77,7 @@ function Interact() {
 
 	useEffect(() => {
 		console.log(transcript, systemStatus);
-		setMessage(transcript);
+		if (systemStatus !== SystemStatus.SPEAK) setMessage(transcript);
 		if (transcript.length === 0) return;
 		if (systemStatus === SystemStatus.GENERATE) {
 			void answerQuestion(
