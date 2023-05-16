@@ -21,7 +21,7 @@ function Rig({ systemStatus, voiceVolume }: RigProps) {
 	return useFrame(({ camera, clock }) => {
 		const timeIncrement = 0.1 * Math.sin(3 * clock.elapsedTime);
 		const nz =
-			SystemStatus.LISTEN === systemStatus ? 3.5 - voiceVolume / 100 : 4;
+			systemStatus === SystemStatus.LISTEN ? 3.5 - voiceVolume / 100 : 4;
 		const ny = systemStatus === SystemStatus.GENERATE ? timeIncrement : 0;
 		const vec = new Vector3(0, 0, nz);
 		camera.position.lerp(vec, 0.125);
