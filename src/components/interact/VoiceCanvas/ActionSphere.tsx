@@ -11,6 +11,7 @@ interface ActionSphereProps {
 	color: THREE.Color;
 	position: Vector3;
 	radius: number;
+	angle: number;
 	systemStatus: SystemStatus;
 }
 
@@ -19,20 +20,26 @@ export default function ActionSphere({
 	color,
 	position,
 	radius,
+	angle,
 	systemStatus,
 }: ActionSphereProps) {
 	const meshRef =
 		useRef<THREE.Mesh<THREE.BufferGeometry, THREE.Material | THREE.Material[]>>(
 			null
 		);
-	const speedSlope = systemStatus === SystemStatus.LISTEN ? 1 : 0.2;
+
+	const speedSlope = (() => {
+		if (systemStatus === SystemStatus.LISTEN) return 1;
+		else if (systemStatus === SystemStatus.GENERATE) return 2;
+		else return 0.2;
+	})();
 
 	useFrame((state, delta) => {
 		const timeIncrement = state.clock.elapsedTime * speed * speedSlope;
 		if (meshRef.current) {
-			const cx = position.x + 0.3 * Math.cos(timeIncrement);
-			const cy = position.y + 0.3 * Math.sin(timeIncrement);
-			const cz = position.z + 0.3 * Math.sin(timeIncrement);
+			const cx = position.x + 0.3 * Math.cos(timeIncrement + angle);
+			const cy = position.y + 0.3 * Math.sin(timeIncrement + angle);
+			const cz = position.z - 0.3 * Math.sin(timeIncrement);
 			meshRef.current.position.set(cx, cy, cz);
 		}
 	});

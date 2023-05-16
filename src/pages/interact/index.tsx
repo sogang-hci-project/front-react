@@ -76,16 +76,18 @@ function Interact() {
 	});
 
 	useEffect(() => {
+		console.log(transcript, systemStatus);
 		setMessage(transcript);
 		if (transcript.length === 0) return;
-		if (systemStatus === SystemStatus.GENERATE)
+		if (systemStatus === SystemStatus.GENERATE) {
 			void answerQuestion(
 				transcript,
 				systemStatus,
 				setSystemStatus,
 				setMessage
 			);
-	}, [transcript]);
+		}
+	}, [transcript, systemStatus]);
 
 	useEffect(() => {
 		toggleSystemStatusOnVolume({
