@@ -37,16 +37,19 @@ function useGoogleRecognition({
 		if (systemStatus === SystemStatus.LISTEN) return;
 		if (mediaRecorder.current?.state === 'recording')
 			mediaRecorder.current.stop();
-		mediaRecorder.current = new MediaRecorder(stream);
-		mediaRecorder.current.onstop = () => {
-			const blob = new Blob(chunks, { type: 'audio/webm;codecs=opus' });
-			chunks.splice(0);
-			setAudioBlob(blob);
-		};
-		mediaRecorder.current.ondataavailable = (event) => {
-			chunks.push(event.data);
-		};
-		mediaRecorder.current.start();
+		if (systemStatus === SystemStatus.HIBERNATE) {
+			mediaRecorder.current = new MediaRecorder(stream);
+			mediaRecorder.current.onstop = () => {
+				const blob = new Blob(chunks, { type: 'audio/webm;codecs=opus' });
+				chunks.splice(0);
+				setAudioBlob(blob);
+			};
+			mediaRecorder.current.ondataavailable = (event) => {
+				chunks.push(event.data);
+			};
+			mediaRecorder.current.start();
+		}
+		setTranscript('');
 	}, [timerObject]);
 
 	useEffect(() => {

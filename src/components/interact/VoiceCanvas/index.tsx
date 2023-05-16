@@ -3,14 +3,14 @@
 
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import { Vector3 } from 'three';
+import { AmbientLight, Vector3 } from 'three';
 
-import * as THREE from 'three';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 
 import MainSphere from './MainSphere';
-import ActionSphere from './ActionSphere';
 import { SystemStatus } from '~/types/common';
+import ActionSphereGroup from './ActionSphereGroup';
+import { useRef } from 'react';
 
 interface RigProps {
 	systemStatus: SystemStatus;
@@ -18,12 +18,14 @@ interface RigProps {
 }
 
 function Rig({ systemStatus, voiceVolume }: RigProps) {
-	return useFrame(({ camera }) => {
+	return useFrame(({ camera, clock }) => {
+		const timeIncrement = 0.1 * Math.sin(3 * clock.elapsedTime);
 		const nz =
 			systemStatus === SystemStatus.LISTEN ? 3.5 - voiceVolume / 100 : 4;
+		const ny = systemStatus === SystemStatus.GENERATE ? timeIncrement : 0;
 		const vec = new Vector3(0, 0, nz);
 		camera.position.lerp(vec, 0.125);
-		camera.lookAt(0, 0, 0);
+		camera.lookAt(0, ny, 0);
 	});
 }
 
@@ -32,11 +34,28 @@ interface LightGroupProps {
 	voiceVolume: number;
 }
 
-function LightGroup({ systemStatus, voiceVolume }: LightGroupProps) {
-	const lightIntensity = systemStatus === SystemStatus.LISTEN ? 1 : 0.5;
+function LightGroup({ systemStatus }: LightGroupProps) {
+	const ambientLightRef = useRef<AmbientLight | null>(null);
+
+	const targetIntensity = (() => {
+		if ([SystemStatus.LISTEN, SystemStatus.SPEAK].includes(systemStatus))
+			return 1;
+		else if (systemStatus === SystemStatus.GENERATE) return 2;
+		else return 0.5;
+	})();
+
+	useFrame(() => {
+		if (!ambientLightRef.current) return;
+		if (ambientLightRef.current?.intensity - targetIntensity > 0.01) {
+			ambientLightRef.current.intensity -= 0.01;
+		} else if (ambientLightRef.current?.intensity - targetIntensity < 0.01) {
+			ambientLightRef.current.intensity += 0.01;
+		}
+	});
+
 	return (
 		<group>
-			<ambientLight intensity={lightIntensity} />
+			<ambientLight ref={ambientLightRef} />
 		</group>
 	);
 }
@@ -53,30 +72,7 @@ function VoiceCanvas({ systemStatus, voiceVolume }: VoiceCanvasProps) {
 			<Rig systemStatus={systemStatus} voiceVolume={voiceVolume} />
 			<LightGroup systemStatus={systemStatus} voiceVolume={voiceVolume} />
 			<MainSphere systemStatus={systemStatus} voiceVolume={voiceVolume} />
-			<group>
-				<ActionSphere
-					speed={1}
-					color={new THREE.Color('rgb(255, 255, 0)')}
-					position={new Vector3(-0.1, -0.1, 0)}
-					radius={0.4}
-					systemStatus={systemStatus}
-				/>
-				<ActionSphere
-					speed={2}
-					color={new THREE.Color('rgb(255, 0, 255)')}
-					position={new Vector3(0.1, 0.1, 0)}
-					radius={0.4}
-					systemStatus={systemStatus}
-				/>
-				<ActionSphere
-					speed={3}
-					color={new THREE.Color('rgb(0, 255, 255)')}
-					position={new Vector3(-0.1, 0.1, 0)}
-					radius={0.4}
-					systemStatus={systemStatus}
-				/>
-			</group>
-
+			<ActionSphereGroup systemStatus={systemStatus} />
 			{/** 시각적 도움을 받기 위해 축을 생성합니다 */}
 			{/* <primitive object={new THREE.AxesHelper(10)} /> */}
 			<OrbitControls />

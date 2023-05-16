@@ -60,11 +60,8 @@ function useLocalRecognition({
 			setTranscript('');
 		} else if (systemStatus === SystemStatus.TRANSCRIBE) {
 			recognition.stop();
-			recognition.startAsync();
 			setSystemStatus(checkMute(SystemStatus.GENERATE));
-		} else if (systemStatus === SystemStatus.LISTEN) {
-			return;
-		} else {
+		} else if (systemStatus === SystemStatus.HIBERNATE) {
 			recognition.abort();
 			recognition.startAsync();
 			setTranscript('');

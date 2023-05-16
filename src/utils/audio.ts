@@ -50,7 +50,10 @@ export function toggleSystemStatusOnVolume({
 	systemStatus,
 	setSystemStatus,
 }: IToggleVoiceArguments) {
-	if (voiceVolume > ACTIVATION_VOLUME && systemStatus !== SystemStatus.LISTEN) {
+	if (
+		voiceVolume > ACTIVATION_VOLUME &&
+		systemStatus === SystemStatus.HIBERNATE
+	) {
 		setSystemStatus(checkMute(SystemStatus.LISTEN));
 		stopAudio();
 	} else if (

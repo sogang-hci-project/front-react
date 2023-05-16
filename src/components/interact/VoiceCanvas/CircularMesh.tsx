@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from 'react';
+import { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Line } from '@react-three/drei';
 import { Vector3 } from 'three';
@@ -9,12 +9,12 @@ import * as THREE from 'three';
 export default function CircularMesh() {
 	const groupRef = useRef<THREE.Group>(null);
 	const rotationEuler = new THREE.Euler(0, 0, 0);
-	const rotationSpeed = 0.05;
+	const rotationSpeed = 0.5;
 
-	useFrame((state, delta) => {
-		const timeIncrement = state.clock.elapsedTime * rotationSpeed;
+	useFrame((state) => {
+		const timeIncrement = state.clock.elapsedTime * Math.sin(rotationSpeed);
 		rotationEuler.x = 1.5708 * timeIncrement;
-		rotationEuler.y = 1.5708;
+		rotationEuler.y = 1.5708 * timeIncrement;
 		rotationEuler.z = 1.5708 * timeIncrement;
 		groupRef.current?.setRotationFromEuler(rotationEuler);
 	});
@@ -42,8 +42,8 @@ export default function CircularMesh() {
 				const y2 = Math.sin(theta2);
 				const z2 = Math.cos(phi2) * Math.cos(theta2);
 
-				const v1 = new Vector3(x1, z1, y1).multiplyScalar(0.5);
-				const v2 = new Vector3(x2, z2, y2).multiplyScalar(0.5);
+				const v1 = new Vector3(x1, z1, y1).multiplyScalar(0.8);
+				const v2 = new Vector3(x2, z2, y2).multiplyScalar(0.8);
 
 				lines.push(<Line key={keyId} points={[v1, v2]} color="white" />);
 			}
