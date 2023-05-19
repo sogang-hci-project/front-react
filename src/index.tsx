@@ -5,8 +5,8 @@ import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import Interact from './pages/interact';
-import Setting from './pages/setting';
+import Interact from '@pages/interact';
+import Setting from '@pages/setting';
 import { Global } from '@emotion/react';
 
 const root = createRoot(document.getElementById('root') as HTMLElement);
