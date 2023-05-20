@@ -3,7 +3,7 @@ import {
 	DotContainer,
 	Message,
 	MessageContent,
-	MessageCover,
+	UserMessageWrapper,
 } from './style';
 import { SystemStatus } from '~/types/common';
 
@@ -23,18 +23,17 @@ function renderMessage(message: string, systemStatus: SystemStatus) {
 	else return <Message>{message}</Message>;
 }
 
-interface IMessageWrapperProps {
+interface IUserMessageProps {
 	message: string;
 	systemStatus: SystemStatus;
 }
 
-function MessageWrapper({ message, systemStatus }: IMessageWrapperProps) {
+function UserMessage({ message, systemStatus }: IUserMessageProps) {
 	return (
-		<>
-			<MessageCover></MessageCover>
+		<UserMessageWrapper>
 			<MessageContent>{renderMessage(message, systemStatus)}</MessageContent>
-		</>
+		</UserMessageWrapper>
 	);
 }
 
-export default MessageWrapper;
+export default UserMessage;

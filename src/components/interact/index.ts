@@ -1,5 +1,13 @@
 import VoiceCanvas from './VoiceCanvas';
-import MuteButtonWrapper from './MuteButtonWrapper';
-import MessageWrapper from './MessageWrapper';
+import MuteButton from './MuteButton';
+import UserMessage from './UserMessage';
+import KeyboardButton from './KeyboardButton';
+import VolumeIndicator from './VolumeIndicator';
 
-export { VoiceCanvas, MuteButtonWrapper, MessageWrapper };
+export {
+	VoiceCanvas,
+	MuteButton,
+	UserMessage,
+	KeyboardButton,
+	VolumeIndicator,
+};

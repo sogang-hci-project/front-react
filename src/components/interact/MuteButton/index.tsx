@@ -1,4 +1,4 @@
-import { MuteButton } from './style';
+import { Button } from './style';
 import { Text } from '@components/atom/Text';
 import { RxEyeOpen, RxEyeClosed } from 'react-icons/rx';
 import { SystemStatus } from '~/types/common';
@@ -6,20 +6,20 @@ import { SystemStatus } from '~/types/common';
 const activeMessage = <RxEyeOpen />;
 const inactiveMessage = <RxEyeClosed />;
 
-interface MuteButtonWrapperProps {
+interface MuteButtonProps {
 	systemStatus: SystemStatus;
 	handleMuteButton?: () => void;
 }
 
-export default function MuteButtonWrapper({
+export default function MuteButton({
 	systemStatus,
 	handleMuteButton,
-}: MuteButtonWrapperProps) {
+}: MuteButtonProps) {
 	return (
-		<MuteButton onClick={handleMuteButton}>
+		<Button onClick={handleMuteButton}>
 			<Text size={1.2}>
 				{systemStatus === SystemStatus.MUTE ? inactiveMessage : activeMessage}
 			</Text>
-		</MuteButton>
+		</Button>
 	);
 }

@@ -11,8 +11,10 @@ import {
 } from './style';
 import {
 	VoiceCanvas,
-	MuteButtonWrapper,
-	MessageWrapper,
+	MuteButton,
+	UserMessage,
+	KeyboardButton,
+	VolumeIndicator,
 } from '@components/interact';
 import { RxTokens, RxAccessibility, RxShadow } from 'react-icons/rx';
 import { requestChatCompletion } from '@api/openai';
@@ -127,13 +129,20 @@ function Interact() {
 				</Body>
 				<Divider></Divider>
 				<MessageContainer>
-					<MessageWrapper message={message} systemStatus={systemStatus} />
+					<UserMessage
+						message={
+							'Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis reiciendis facere odit rerum, commodi corrupti velit quod sequi veritatis tempore maiores quidem fugiat, nemo explicabo dolore? Cupiditate praesentium quia non officia veritatis deleniti! Eaque est hic incidunt minus minima architecto ut, itaque dolor, recusandae quidem quae natus, nisi omnis tempore.'
+						}
+						systemStatus={systemStatus}
+					/>
 				</MessageContainer>
 				<ButtonContainer>
-					<MuteButtonWrapper
+					<VolumeIndicator volume={voiceVolume} systemStatus={systemStatus} />
+					<MuteButton
 						systemStatus={systemStatus}
 						handleMuteButton={handleMuteButton}
 					/>
+					<KeyboardButton handleKeyboardButton={() => {}} />
 				</ButtonContainer>
 			</Viewport>
 		</Container>

@@ -34,7 +34,7 @@ export const Body = styled('div')`
 	justify-content: center;
 
 	width: 100%;
-	height: calc(100vh - 24rem);
+	height: calc(100vh - 30rem);
 
 	background-color: white;
 `;
@@ -46,25 +46,16 @@ export const Divider = styled('div')`
 
 export const MessageContainer = styled('div')`
 	width: 100%;
-	height: 8rem;
-	position: relative;
-
-	background-color: white;
-	display: flex;
-	align-items: center;
-
-	overflow-y: scroll;
-	::-webkit-scrollbar {
-		display: none;
-	}
-	box-shadow: inset 0 0 30px 30px rgba(255, 255, 255, 1);
+	height: 16rem;
+	padding: 0 2rem;
 `;
 
-export const ButtonContainer = styled('p')`
-	height: 8rem;
+export const ButtonContainer = styled('div')`
+	height: 6rem;
 	width: 100%;
 	padding: 2rem;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	gap: 1rem;
 `;
