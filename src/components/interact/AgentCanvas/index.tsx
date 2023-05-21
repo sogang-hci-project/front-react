@@ -11,6 +11,7 @@ import MainSphere from './MainSphere';
 import { SystemStatus } from '~/types/common';
 import ActionSphereGroup from './ActionSphereGroup';
 import { useRef } from 'react';
+import { AgentCanvasWrapper } from './style';
 
 interface RigProps {
 	systemStatus: SystemStatus;
@@ -20,12 +21,19 @@ interface RigProps {
 function Rig({ systemStatus, voiceVolume }: RigProps) {
 	return useFrame(({ camera, clock }) => {
 		const timeIncrement = 0.1 * Math.sin(3 * clock.elapsedTime);
-		const nz =
-			systemStatus === SystemStatus.LISTEN ? 3.5 - voiceVolume / 100 : 4;
-		const ny = systemStatus === SystemStatus.GENERATE ? timeIncrement : 0;
-		const vec = new Vector3(0, 0, nz);
-		camera.position.lerp(vec, 0.125);
-		camera.lookAt(0, ny, 0);
+		const positionVector = new Vector3(0, 0, 4);
+		const directionVector = new Vector3(0, 0, 0);
+
+		if (systemStatus === SystemStatus.LISTEN) {
+			positionVector.set(0, 0, 3.5 - voiceVolume / 100);
+		} else if (systemStatus === SystemStatus.GENERATE) {
+			directionVector.set(0, timeIncrement, 0);
+		} else if (systemStatus === SystemStatus.SPEAK) {
+			positionVector.set(0, 0, 12);
+			directionVector.set(0, 4, 0);
+		}
+		camera.position.lerp(positionVector, 0.125);
+		camera.lookAt(directionVector);
 	});
 }
 
@@ -60,27 +68,29 @@ function LightGroup({ systemStatus }: LightGroupProps) {
 	);
 }
 
-interface VoiceCanvasProps {
+interface AgentCanvasProps {
 	systemStatus: SystemStatus;
 	voiceVolume: number;
 }
 
-function VoiceCanvas({ systemStatus, voiceVolume }: VoiceCanvasProps) {
+function AgentCanvas({ systemStatus, voiceVolume }: AgentCanvasProps) {
 	return (
-		<Canvas shadows camera={{ position: [0, 0, 3], fov: 50 }}>
-			{/* <CircularMesh /> */}
-			<Rig systemStatus={systemStatus} voiceVolume={voiceVolume} />
-			<LightGroup systemStatus={systemStatus} voiceVolume={voiceVolume} />
-			<MainSphere systemStatus={systemStatus} voiceVolume={voiceVolume} />
-			<ActionSphereGroup systemStatus={systemStatus} />
-			{/** 시각적 도움을 받기 위해 축을 생성합니다 */}
-			{/* <primitive object={new THREE.AxesHelper(10)} /> */}
-			<OrbitControls />
-			<EffectComposer>
-				<Bloom luminanceThreshold={0} luminanceSmoothing={0.9} height={300} />
-			</EffectComposer>
-		</Canvas>
+		<AgentCanvasWrapper systemStatus={systemStatus}>
+			<Canvas shadows camera={{ position: [0, 0, 3], fov: 50 }}>
+				{/* <CircularMesh /> */}
+				<Rig systemStatus={systemStatus} voiceVolume={voiceVolume} />
+				<LightGroup systemStatus={systemStatus} voiceVolume={voiceVolume} />
+				<MainSphere systemStatus={systemStatus} voiceVolume={voiceVolume} />
+				<ActionSphereGroup systemStatus={systemStatus} />
+				{/** 시각적 도움을 받기 위해 축을 생성합니다 */}
+				{/* <primitive object={new THREE.AxesHelper(10)} /> */}
+				<OrbitControls />
+				<EffectComposer>
+					<Bloom luminanceThreshold={0} luminanceSmoothing={0.9} height={300} />
+				</EffectComposer>
+			</Canvas>
+		</AgentCanvasWrapper>
 	);
 }
 
-export default VoiceCanvas;
+export default AgentCanvas;

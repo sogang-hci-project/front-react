@@ -4,17 +4,18 @@ import { Container, Viewport } from '@components/common';
 import {
 	Toolbar,
 	ToolbarButton,
-	Body,
+	AgentContainer,
 	MessageContainer,
 	ButtonContainer,
 	Divider,
 } from './style';
 import {
-	VoiceCanvas,
+	AgentCanvas,
 	MuteButton,
 	UserMessage,
 	KeyboardButton,
 	VolumeIndicator,
+	AgentMessage,
 } from '@components/interact';
 import { RxTokens, RxAccessibility, RxShadow } from 'react-icons/rx';
 import { requestChatCompletion } from '@api/openai';
@@ -44,12 +45,12 @@ async function answerQuestion(
 	question: string,
 	systemStatus: SystemStatus,
 	setSystemState: React.Dispatch<React.SetStateAction<SystemStatus>>,
-	setMessage: React.Dispatch<React.SetStateAction<string>>
+	setAgentMessage: React.Dispatch<React.SetStateAction<string>>
 ) {
 	console.log('user question: ', question);
 	if (systemStatus !== SystemStatus.GENERATE || question.length === 0) return;
 	const answer = await generateAnswer(question);
-	setMessage(answer);
+	setAgentMessage(answer);
 	setSystemState(checkMute(SystemStatus.SPEAK));
 	await playTextToAudio(answer);
 	setSystemState(checkMute(SystemStatus.HIBERNATE));
@@ -65,7 +66,8 @@ function useRecognition() {
 }
 
 function Interact() {
-	const [message, setMessage] = useState<string>('');
+	const [userMessage, setUserMessage] = useState<string>('');
+	const [agentMessage, setAgentMessage] = useState<string>('');
 	const [systemStatus, setSystemStatus] = useState<SystemStatus>(
 		SystemStatus.MUTE
 	);
@@ -79,14 +81,14 @@ function Interact() {
 
 	useEffect(() => {
 		console.log(transcript, systemStatus);
-		if (systemStatus !== SystemStatus.SPEAK) setMessage(transcript);
+		if (systemStatus !== SystemStatus.SPEAK) setUserMessage(transcript);
 		if (transcript.length === 0) return;
 		if (systemStatus === SystemStatus.GENERATE) {
 			void answerQuestion(
 				transcript,
 				systemStatus,
 				setSystemStatus,
-				setMessage
+				setAgentMessage
 			);
 		}
 	}, [transcript, systemStatus]);
@@ -121,20 +123,16 @@ function Interact() {
 						<RxTokens />
 					</ToolbarButton>
 				</Toolbar>
-				<Body>
-					<VoiceCanvas
+				<AgentContainer>
+					<AgentMessage message={agentMessage} systemStatus={systemStatus} />
+					<AgentCanvas
 						systemStatus={systemStatus}
 						voiceVolume={voiceVolume}
-					></VoiceCanvas>
-				</Body>
+					></AgentCanvas>
+				</AgentContainer>
 				<Divider></Divider>
 				<MessageContainer>
-					<UserMessage
-						message={
-							'Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis reiciendis facere odit rerum, commodi corrupti velit quod sequi veritatis tempore maiores quidem fugiat, nemo explicabo dolore? Cupiditate praesentium quia non officia veritatis deleniti! Eaque est hic incidunt minus minima architecto ut, itaque dolor, recusandae quidem quae natus, nisi omnis tempore.'
-						}
-						systemStatus={systemStatus}
-					/>
+					<UserMessage message={userMessage} systemStatus={systemStatus} />
 				</MessageContainer>
 				<ButtonContainer>
 					<VolumeIndicator volume={voiceVolume} systemStatus={systemStatus} />

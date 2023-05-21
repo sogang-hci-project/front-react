@@ -28,19 +28,21 @@ export const ToolbarButton = styled('button')`
 	}
 `;
 
-export const Body = styled('div')`
+export const AgentContainer = styled('div')`
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	justify-content: center;
+	position: relative;
 
 	width: 100%;
-	height: calc(100vh - 30rem);
+	height: calc(100vh - 29rem);
 
 	background-color: white;
+	padding: 0 2rem;
 `;
 
 export const Divider = styled('div')`
-	height: 2rem;
+	height: 1rem;
 	width: 100%;
 `;
 
