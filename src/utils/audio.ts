@@ -34,9 +34,9 @@ export function stopAudio() {
 	if (!audio.paused) void audio.pause();
 }
 
-export const checkMute =
+export const checkPause =
 	(newStatus: SystemStatus) => (status: SystemStatus) => {
-		if (status === SystemStatus.MUTE) return status;
+		if (status === SystemStatus.PAUSE) return status;
 		else return newStatus;
 	};
 
@@ -44,18 +44,18 @@ interface IToggleVoiceArguments {
 	voiceVolume: number;
 	systemStatus: SystemStatus;
 	setSystemStatus: React.Dispatch<React.SetStateAction<SystemStatus>>;
+	isMute: boolean;
 }
 
 export function toggleSystemStatusOnVolume({
 	voiceVolume,
 	systemStatus,
 	setSystemStatus,
+	isMute,
 }: IToggleVoiceArguments) {
-	if (
-		voiceVolume > ACTIVATION_VOLUME &&
-		systemStatus === SystemStatus.HIBERNATE
-	) {
-		setSystemStatus(checkMute(SystemStatus.LISTEN));
+	if (isMute) return;
+	if (voiceVolume > ACTIVATION_VOLUME && systemStatus === SystemStatus.READY) {
+		setSystemStatus(checkPause(SystemStatus.LISTEN));
 		stopAudio();
 	} else if (
 		voiceVolume < DEACTIVATION_VOLUME &&
@@ -63,7 +63,7 @@ export function toggleSystemStatusOnVolume({
 		timeoutRef.current === null
 	) {
 		timeoutRef.current = setTimeout(() => {
-			setSystemStatus(checkMute(SystemStatus.TRANSCRIBE));
+			setSystemStatus(checkPause(SystemStatus.TRANSCRIBE));
 			if (timeoutRef.current) {
 				clearTimeout(timeoutRef.current);
 				timeoutRef.current = null;

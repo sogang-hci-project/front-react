@@ -48,7 +48,7 @@ export const InputModal = styled('div')`
 	gap: 1rem;
 `;
 
-export const ModalField = styled('textarea')`
+export const ModalTextarea = styled('textarea')`
 	width: 100%;
 	height: 90%;
 	resize: none;

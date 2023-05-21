@@ -10,20 +10,20 @@ import {
 } from './style';
 import {
 	AgentCanvas,
-	MuteButton,
+	PlayButton,
 	UserMessage,
 	KeyboardButton,
-	VolumeIndicator,
 	AgentMessage,
 	Toolbar,
 	KeyboardInputModal,
+	MuteButton,
 } from '@components/interact';
 import { requestChatCompletion } from '@api/openai';
 import useAudioStream from '@hooks/useAudioStream';
 import useGoogleRecognition from '@hooks/useGoogleRecognition';
 import useLocalRecognition from '~/hooks/useLocalRecognition';
 import {
-	checkMute,
+	checkPause,
 	playTextToAudio,
 	stopAudio,
 	toggleSystemStatusOnVolume,
@@ -50,9 +50,9 @@ async function answerQuestion(
 	if (systemStatus !== SystemStatus.GENERATE || question.length === 0) return;
 	const answer = await generateAnswer(question);
 	setAgentMessage(answer);
-	setSystemState(checkMute(SystemStatus.SPEAK));
+	setSystemState(checkPause(SystemStatus.SPEAK));
 	await playTextToAudio(answer);
-	setSystemState(checkMute(SystemStatus.HIBERNATE));
+	setSystemState(checkPause(SystemStatus.READY));
 }
 
 function useRecognition() {
@@ -68,9 +68,10 @@ function Interact() {
 	const [userMessage, setUserMessage] = useState<string>('');
 	const [agentMessage, setAgentMessage] = useState<string>('');
 	const [systemStatus, setSystemStatus] = useState<SystemStatus>(
-		SystemStatus.MUTE
+		SystemStatus.PAUSE
 	);
 	const [showInputPopup, setShowInputPopup] = useState<boolean>(false);
+	const [isMute, setIsMute] = useState<boolean>(false);
 	const { volume: voiceVolume, stream: voiceStream } = useAudioStream();
 
 	const { transcript } = useRecognition()({
@@ -79,36 +80,42 @@ function Interact() {
 		setSystemStatus,
 	});
 
+	function handleKeyboardSubmit(text: string) {
+		setUserMessage(text);
+		setSystemStatus(SystemStatus.GENERATE);
+	}
+
 	useEffect(() => {
-		console.log(transcript, systemStatus);
 		if (transcript.length === 0) return;
-		if (systemStatus === SystemStatus.LISTEN) setUserMessage(transcript);
-		else if (systemStatus === SystemStatus.HIBERNATE) setUserMessage('');
-		else if (systemStatus === SystemStatus.GENERATE) {
-			setUserMessage(transcript);
+		setUserMessage(transcript);
+	}, [transcript]);
+
+	useEffect(() => {
+		console.log(userMessage, systemStatus);
+		if (systemStatus === SystemStatus.GENERATE)
 			void answerQuestion(
-				transcript,
+				userMessage,
 				systemStatus,
 				setSystemStatus,
 				setAgentMessage
 			);
-		}
-	}, [transcript, systemStatus]);
+	}, [userMessage]);
 
 	useEffect(() => {
 		toggleSystemStatusOnVolume({
+			isMute,
 			voiceVolume,
 			systemStatus,
 			setSystemStatus,
 		});
 	}, [voiceVolume]);
 
-	const handleMuteButton = () => {
+	const handlePlayButton = () => {
 		void clickSound.play();
-		if (systemStatus === SystemStatus.MUTE) {
-			setSystemStatus(SystemStatus.HIBERNATE);
+		if (systemStatus === SystemStatus.PAUSE) {
+			setSystemStatus(SystemStatus.READY);
 		} else {
-			setSystemStatus(SystemStatus.MUTE);
+			setSystemStatus(SystemStatus.PAUSE);
 			stopAudio();
 		}
 	};
@@ -119,6 +126,7 @@ function Interact() {
 				<KeyboardInputModal
 					showInputPopup={showInputPopup}
 					setShowInputPopup={setShowInputPopup}
+					handleKeyboardSubmit={handleKeyboardSubmit}
 				/>
 				<ToolbarContainer>
 					<Toolbar />
@@ -135,14 +143,18 @@ function Interact() {
 					<UserMessage message={userMessage} systemStatus={systemStatus} />
 				</MessageContainer>
 				<ButtonContainer>
-					<VolumeIndicator volume={voiceVolume} systemStatus={systemStatus} />
 					<MuteButton
+						isMute={isMute}
+						setIsMute={setIsMute}
+						volume={voiceVolume}
+					/>
+					<PlayButton
 						systemStatus={systemStatus}
-						handleMuteButton={handleMuteButton}
+						handlePlayButton={handlePlayButton}
 					/>
 					<KeyboardButton
 						handleKeyboardButton={() => {
-							setShowInputPopup(true);
+							if (systemStatus === SystemStatus.READY) setShowInputPopup(true);
 						}}
 					/>
 				</ButtonContainer>

@@ -1,25 +1,25 @@
-import { Button } from './style';
+import { MuteButtonWrapper, ThresholdIndicator } from './style';
 import { Text } from '@components/atom/Text';
-import { RxEyeOpen, RxEyeClosed } from 'react-icons/rx';
+import { MdMicOff, MdMicNone } from 'react-icons/md';
+import { ACTIVATION_VOLUME } from '~/constants/setting';
 import { SystemStatus } from '~/types/common';
 
-const activeMessage = <RxEyeOpen />;
-const inactiveMessage = <RxEyeClosed />;
-
 interface MuteButtonProps {
-	systemStatus: SystemStatus;
-	handleMuteButton?: () => void;
+	isMute: boolean;
+	setIsMute: React.Dispatch<React.SetStateAction<boolean>>;
+	volume: number;
 }
 
 export default function MuteButton({
-	systemStatus,
-	handleMuteButton,
+	isMute,
+	setIsMute,
+	volume,
 }: MuteButtonProps) {
 	return (
-		<Button onClick={handleMuteButton}>
-			<Text size={1.2}>
-				{systemStatus === SystemStatus.MUTE ? inactiveMessage : activeMessage}
-			</Text>
-		</Button>
+		<MuteButtonWrapper volume={volume} onClick={() => setIsMute(!isMute)}>
+			<ThresholdIndicator threshold={ACTIVATION_VOLUME}>
+				<Text size={1.2}>{isMute ? <MdMicOff /> : <MdMicNone />}</Text>
+			</ThresholdIndicator>
+		</MuteButtonWrapper>
 	);
 }

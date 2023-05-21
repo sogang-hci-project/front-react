@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { LANG } from '@constants/setting';
 import { SystemStatus } from '~/types/common';
-import { checkMute } from '~/utils/audio';
+import { checkPause } from '~/utils/audio';
 import { handleError } from '~/utils/common';
 
 const SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
@@ -55,13 +55,13 @@ function useLocalRecognition({
 	}, []);
 
 	useEffect(() => {
-		if (systemStatus === SystemStatus.MUTE) {
+		if (systemStatus === SystemStatus.PAUSE) {
 			recognition.abort();
 			setTranscript('');
 		} else if (systemStatus === SystemStatus.TRANSCRIBE) {
 			recognition.stop();
-			setSystemStatus(checkMute(SystemStatus.GENERATE));
-		} else if (systemStatus === SystemStatus.HIBERNATE) {
+			setSystemStatus(checkPause(SystemStatus.GENERATE));
+		} else if (systemStatus === SystemStatus.READY) {
 			recognition.abort();
 			recognition.startAsync();
 			setTranscript('');

@@ -7,6 +7,7 @@ import {
 } from './style';
 import { RxAccessibility, RxTokens } from 'react-icons/rx';
 import { PAINTING_NAME, PAINTER_NAME, LANG } from '~/constants/setting';
+import { SystemStatus } from '~/types/common';
 
 function Toolbar() {
 	return (

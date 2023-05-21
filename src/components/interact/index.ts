@@ -1,19 +1,19 @@
 import AgentCanvas from './AgentCanvas';
-import MuteButton from './MuteButton';
+import PlayButton from './PlayButton';
 import UserMessage from './UserMessage';
 import AgentMessage from './AgentMessage';
 import KeyboardButton from './KeyboardButton';
-import VolumeIndicator from './VolumeIndicator';
 import Toolbar from './Toolbar';
 import KeyboardInputModal from './KeyboardInputModal';
+import MuteButton from './MuteButton';
 
 export {
 	AgentCanvas,
-	MuteButton,
+	PlayButton,
 	UserMessage,
 	AgentMessage,
 	KeyboardButton,
-	VolumeIndicator,
 	Toolbar,
 	KeyboardInputModal,
+	MuteButton,
 };

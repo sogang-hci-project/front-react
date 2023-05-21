@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { getGoogleTranscript } from '@api/googlecloud';
 import { SystemStatus } from '~/types/common';
-import { blobToAudioBase64, checkMute } from '@utils/audio';
+import { blobToAudioBase64, checkPause } from '@utils/audio';
 
 const chunks: Blob[] = [];
 const INTERVAL = 2000;
@@ -37,7 +37,7 @@ function useGoogleRecognition({
 		if (systemStatus === SystemStatus.LISTEN) return;
 		if (mediaRecorder.current?.state === 'recording')
 			mediaRecorder.current.stop();
-		if (systemStatus === SystemStatus.HIBERNATE) {
+		if (systemStatus === SystemStatus.READY) {
 			mediaRecorder.current = new MediaRecorder(stream);
 			mediaRecorder.current.onstop = () => {
 				const blob = new Blob(chunks, { type: 'audio/webm;codecs=opus' });
@@ -59,7 +59,7 @@ function useGoogleRecognition({
 				const blobBase64 = await blobToAudioBase64(audioBlob);
 				const script = await getGoogleTranscript(blobBase64);
 				setTranscript(script);
-				setSystemStatus(checkMute(SystemStatus.GENERATE));
+				setSystemStatus(checkPause(SystemStatus.GENERATE));
 			})();
 	}, [audioBlob]);
 
