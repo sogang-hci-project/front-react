@@ -1,4 +1,3 @@
-import React from 'react';
 import {
 	PainterName,
 	PaintingName,
@@ -7,7 +6,7 @@ import {
 	ToolbarWrapper,
 } from './style';
 import { RxAccessibility, RxTokens } from 'react-icons/rx';
-import { PAINTING_NAME, PAINTER_NAME } from '~/constants/setting';
+import { PAINTING_NAME, PAINTER_NAME, LANG } from '~/constants/setting';
 
 function Toolbar() {
 	return (
@@ -17,7 +16,7 @@ function Toolbar() {
 			</ToolbarButton>
 			<TitleWrapper>
 				<PaintingName>{PAINTING_NAME}</PaintingName>
-				<PainterName>by {PAINTER_NAME}</PainterName>
+				<PainterName>{PAINTER_NAME}</PainterName>
 			</TitleWrapper>
 			<ToolbarButton>
 				<RxTokens />

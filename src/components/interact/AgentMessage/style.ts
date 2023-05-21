@@ -40,7 +40,7 @@ export const MessageContent = styled('div')`
 
 export const Message = styled('p')`
 	width: 100%;
-	/* line-height: 100%; */
 	text-align: left;
 	font-size: 1.1rem;
+	line-height: 1.5;
 `;
