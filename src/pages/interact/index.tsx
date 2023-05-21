@@ -2,11 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Viewport } from '@components/common';
 import {
-	Toolbar,
-	ToolbarButton,
 	AgentContainer,
 	MessageContainer,
 	ButtonContainer,
+	ToolbarContainer,
 	Divider,
 } from './style';
 import {
@@ -16,8 +15,8 @@ import {
 	KeyboardButton,
 	VolumeIndicator,
 	AgentMessage,
+	Toolbar,
 } from '@components/interact';
-import { RxTokens, RxAccessibility, RxShadow } from 'react-icons/rx';
 import { requestChatCompletion } from '@api/openai';
 import useAudioStream from '@hooks/useAudioStream';
 import useGoogleRecognition from '@hooks/useGoogleRecognition';
@@ -31,7 +30,6 @@ import {
 import { SystemStatus } from '~/types/common';
 import { isChrome, isSafari } from '~/utils/common';
 
-const dummyTitle = 'american gothics';
 const clickSound = new Audio('/sound/toggle.mp3');
 
 async function generateAnswer(question: string) {
@@ -114,15 +112,9 @@ function Interact() {
 	return (
 		<Container>
 			<Viewport>
-				<Toolbar>
-					<ToolbarButton>
-						<RxAccessibility />
-					</ToolbarButton>
-					<div>{dummyTitle}</div>
-					<ToolbarButton>
-						<RxTokens />
-					</ToolbarButton>
-				</Toolbar>
+				<ToolbarContainer>
+					<Toolbar />
+				</ToolbarContainer>
 				<AgentContainer>
 					<AgentMessage message={agentMessage} systemStatus={systemStatus} />
 					<AgentCanvas

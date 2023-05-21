@@ -4,6 +4,7 @@ import UserMessage from './UserMessage';
 import AgentMessage from './AgentMessage';
 import KeyboardButton from './KeyboardButton';
 import VolumeIndicator from './VolumeIndicator';
+import Toolbar from './Toolbar';
 
 export {
 	AgentCanvas,
@@ -12,4 +13,5 @@ export {
 	AgentMessage,
 	KeyboardButton,
 	VolumeIndicator,
+	Toolbar,
 };
