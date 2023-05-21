@@ -16,6 +16,7 @@ import {
 	VolumeIndicator,
 	AgentMessage,
 	Toolbar,
+	KeyboardInputModal,
 } from '@components/interact';
 import { requestChatCompletion } from '@api/openai';
 import useAudioStream from '@hooks/useAudioStream';
@@ -69,6 +70,7 @@ function Interact() {
 	const [systemStatus, setSystemStatus] = useState<SystemStatus>(
 		SystemStatus.MUTE
 	);
+	const [showInputPopup, setShowInputPopup] = useState<boolean>(false);
 	const { volume: voiceVolume, stream: voiceStream } = useAudioStream();
 
 	const { transcript } = useRecognition()({
@@ -114,6 +116,10 @@ function Interact() {
 	return (
 		<Container>
 			<Viewport>
+				<KeyboardInputModal
+					showInputPopup={showInputPopup}
+					setShowInputPopup={setShowInputPopup}
+				/>
 				<ToolbarContainer>
 					<Toolbar />
 				</ToolbarContainer>
@@ -134,7 +140,11 @@ function Interact() {
 						systemStatus={systemStatus}
 						handleMuteButton={handleMuteButton}
 					/>
-					<KeyboardButton handleKeyboardButton={() => {}} />
+					<KeyboardButton
+						handleKeyboardButton={() => {
+							setShowInputPopup(true);
+						}}
+					/>
 				</ButtonContainer>
 			</Viewport>
 		</Container>

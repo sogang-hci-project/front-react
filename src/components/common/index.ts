@@ -14,6 +14,7 @@ export const Viewport = styled('div')`
 	max-width: calc(100vh * 0.66);
 	width: 100%;
 	box-shadow: 0px 0px 20px 10px rgba(0, 0, 0, 0.2);
+	position: relative;
 	background-color: white;
 	display: flex;
 	flex-direction: column;
