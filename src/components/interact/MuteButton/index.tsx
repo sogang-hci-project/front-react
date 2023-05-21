@@ -2,7 +2,6 @@ import { MuteButtonWrapper, ThresholdIndicator } from './style';
 import { Text } from '@components/atom/Text';
 import { MdMicOff, MdMicNone } from 'react-icons/md';
 import { ACTIVATION_VOLUME } from '~/constants/setting';
-import { SystemStatus } from '~/types/common';
 
 interface MuteButtonProps {
 	isMute: boolean;

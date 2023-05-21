@@ -52,7 +52,7 @@ async function answerQuestion(
 	setAgentMessage(answer);
 	setSystemState(checkPause(SystemStatus.SPEAK));
 	await playTextToAudio(answer);
-	setSystemState(checkPause(SystemStatus.READY));
+	setSystemState(checkPause(SystemStatus.WAIT));
 }
 
 function useRecognition() {
@@ -85,6 +85,16 @@ function Interact() {
 		setSystemStatus(SystemStatus.GENERATE);
 	}
 
+	const handlePlayButton = () => {
+		void clickSound.play();
+		if (systemStatus === SystemStatus.PAUSE) {
+			setSystemStatus(SystemStatus.READY);
+		} else {
+			setSystemStatus(SystemStatus.PAUSE);
+			stopAudio();
+		}
+	};
+
 	useEffect(() => {
 		if (transcript.length === 0) return;
 		setUserMessage(transcript);
@@ -109,16 +119,6 @@ function Interact() {
 			setSystemStatus,
 		});
 	}, [voiceVolume]);
-
-	const handlePlayButton = () => {
-		void clickSound.play();
-		if (systemStatus === SystemStatus.PAUSE) {
-			setSystemStatus(SystemStatus.READY);
-		} else {
-			setSystemStatus(SystemStatus.PAUSE);
-			stopAudio();
-		}
-	};
 
 	return (
 		<Container>
@@ -154,7 +154,10 @@ function Interact() {
 					/>
 					<KeyboardButton
 						handleKeyboardButton={() => {
-							if (systemStatus === SystemStatus.READY) setShowInputPopup(true);
+							if (
+								[SystemStatus.READY, SystemStatus.WAIT].includes(systemStatus)
+							)
+								setShowInputPopup(true);
 						}}
 					/>
 				</ButtonContainer>

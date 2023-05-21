@@ -5,5 +5,6 @@ export enum SystemStatus {
 	TRANSCRIBE = 'TRANSCRIBE',
 	GENERATE = 'GENERATE',
 	SPEAK = 'SPEAK',
+	WAIT = 'WAIT',
 	MUTE = 'MUTE',
 }

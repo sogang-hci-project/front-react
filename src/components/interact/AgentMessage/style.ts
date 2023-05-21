@@ -10,7 +10,7 @@ export const AgentMessageWrapper = styled('div')<IAgentMessageWrapperProps>`
 	height: 100%;
 
 	opacity: ${({ systemStatus }) =>
-		systemStatus === SystemStatus.SPEAK ? '1' : '0'};
+		[SystemStatus.SPEAK, SystemStatus.WAIT].includes(systemStatus) ? '1' : '0'};
 
 	position: relative;
 	z-index: 1;

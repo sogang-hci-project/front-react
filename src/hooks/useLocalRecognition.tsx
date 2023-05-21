@@ -61,7 +61,7 @@ function useLocalRecognition({
 		} else if (systemStatus === SystemStatus.TRANSCRIBE) {
 			recognition.stop();
 			setSystemStatus(checkPause(SystemStatus.GENERATE));
-		} else if (systemStatus === SystemStatus.READY) {
+		} else if ([SystemStatus.READY, SystemStatus.WAIT].includes(systemStatus)) {
 			recognition.abort();
 			recognition.startAsync();
 			setTranscript('');

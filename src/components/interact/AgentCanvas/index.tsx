@@ -28,7 +28,7 @@ function Rig({ systemStatus, voiceVolume }: RigProps) {
 			positionVector.set(0, 0, 3.5 - voiceVolume / 100);
 		} else if (systemStatus === SystemStatus.GENERATE) {
 			directionVector.set(0, timeIncrement, 0);
-		} else if (systemStatus === SystemStatus.SPEAK) {
+		} else if ([SystemStatus.SPEAK, SystemStatus.WAIT].includes(systemStatus)) {
 			positionVector.set(0, 0, 12);
 			directionVector.set(0, 4, 0);
 		}
@@ -84,7 +84,7 @@ function AgentCanvas({ systemStatus, voiceVolume }: AgentCanvasProps) {
 				<ActionSphereGroup systemStatus={systemStatus} />
 				{/** 시각적 도움을 받기 위해 축을 생성합니다 */}
 				{/* <primitive object={new THREE.AxesHelper(10)} /> */}
-				<OrbitControls />
+				{/* <OrbitControls /> */}
 				<EffectComposer>
 					<Bloom luminanceThreshold={0} luminanceSmoothing={0.9} height={300} />
 				</EffectComposer>

@@ -37,7 +37,7 @@ function useGoogleRecognition({
 		if (systemStatus === SystemStatus.LISTEN) return;
 		if (mediaRecorder.current?.state === 'recording')
 			mediaRecorder.current.stop();
-		if (systemStatus === SystemStatus.READY) {
+		if ([SystemStatus.READY, SystemStatus.WAIT].includes(systemStatus)) {
 			mediaRecorder.current = new MediaRecorder(stream);
 			mediaRecorder.current.onstop = () => {
 				const blob = new Blob(chunks, { type: 'audio/webm;codecs=opus' });

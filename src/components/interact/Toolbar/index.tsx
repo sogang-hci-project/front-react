@@ -6,8 +6,7 @@ import {
 	ToolbarWrapper,
 } from './style';
 import { RxAccessibility, RxTokens } from 'react-icons/rx';
-import { PAINTING_NAME, PAINTER_NAME, LANG } from '~/constants/setting';
-import { SystemStatus } from '~/types/common';
+import { PAINTING_NAME, PAINTER_NAME } from '~/constants/setting';
 
 function Toolbar() {
 	return (
