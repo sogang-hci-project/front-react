@@ -68,7 +68,7 @@ function Interact() {
 	const [userMessage, setUserMessage] = useState<string>('');
 	const [agentMessage, setAgentMessage] = useState<string>('');
 	const [systemStatus, setSystemStatus] = useState<SystemStatus>(
-		SystemStatus.MUTE
+		SystemStatus.PAUSE
 	);
 	const [showInputPopup, setShowInputPopup] = useState<boolean>(false);
 	const [isMute, setIsMute] = useState<boolean>(true);
@@ -154,6 +154,7 @@ function Interact() {
 					/>
 					<KeyboardButton
 						handleKeyboardButton={() => {
+							console.log(systemStatus);
 							if (
 								[SystemStatus.READY, SystemStatus.WAIT].includes(systemStatus)
 							)
