@@ -15,5 +15,5 @@ export function handleError(message: string) {
 	if (kAFErrorRegex.test(message))
 		message += ' Reload the browser to fix issue.';
 	alert('System Malfunction: ' + message);
-	history.go(0);
+	// history.go(0);
 }

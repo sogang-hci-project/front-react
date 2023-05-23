@@ -31,6 +31,17 @@ export const Message = styled('p')`
 	font-size: 1.1rem;
 `;
 
+export const PlaceHolder = styled('div')`
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1rem;
+	color: rgba(0, 0, 0, 0.5);
+`;
+
 export const DotContainer = styled('div')`
 	width: 100%;
 	height: 100%;

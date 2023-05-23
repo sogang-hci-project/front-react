@@ -85,7 +85,11 @@ export async function getGoogleTranscript(blobString: string) {
 		return transcript;
 	} catch (error) {
 		const message = (error as Error).message;
-		handleError(message === 'undefined' ? 'Unrecognizable Voice' : message);
+		handleError(
+			'Google cloud: ' + message === 'undefined'
+				? 'Unrecognizable Voice'
+				: message
+		);
 		return Promise.reject(error);
 	}
 }

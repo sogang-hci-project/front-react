@@ -33,7 +33,8 @@ const recognition = new AsyncSpeechRecognition(START_ASYNC_DELAY);
 recognition.lang = LANG;
 recognition.interimResults = true;
 recognition.continuous = true;
-recognition.onerror = (error) => handleError(error.message);
+recognition.onerror = (error) =>
+	handleError('Local Recognition' + error.message);
 
 interface IUseLocalRecognitionProps {
 	systemStatus: SystemStatus;

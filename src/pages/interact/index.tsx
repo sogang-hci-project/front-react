@@ -91,6 +91,7 @@ function Interact() {
 			setSystemStatus(SystemStatus.READY);
 		} else {
 			setSystemStatus(SystemStatus.PAUSE);
+			setUserMessage('');
 			stopAudio();
 		}
 	};
