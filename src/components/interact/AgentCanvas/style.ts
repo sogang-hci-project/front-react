@@ -19,4 +19,5 @@ export const AgentCanvasWrapper = styled('div')<IAgentCanvasWrapperProps>`
 
 	-webkit-transition-duration: 0.4s;
 	transition-duration: 0.4s;
+	pointer-events: none;
 `;

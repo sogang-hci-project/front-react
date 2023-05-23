@@ -12,7 +12,7 @@ export const AgentContainer = styled('div')`
 	position: relative;
 
 	width: 100%;
-	height: calc(100vh - 29rem);
+	height: calc(100vh - 26rem);
 
 	background-color: white;
 	padding: 0 2rem;
@@ -25,7 +25,7 @@ export const Divider = styled('div')`
 
 export const MessageContainer = styled('div')`
 	width: 100%;
-	height: 16rem;
+	height: 13rem;
 	padding: 0 2rem;
 `;
 

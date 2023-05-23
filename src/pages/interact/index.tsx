@@ -68,10 +68,10 @@ function Interact() {
 	const [userMessage, setUserMessage] = useState<string>('');
 	const [agentMessage, setAgentMessage] = useState<string>('');
 	const [systemStatus, setSystemStatus] = useState<SystemStatus>(
-		SystemStatus.PAUSE
+		SystemStatus.WAIT
 	);
 	const [showInputPopup, setShowInputPopup] = useState<boolean>(false);
-	const [isMute, setIsMute] = useState<boolean>(false);
+	const [isMute, setIsMute] = useState<boolean>(true);
 	const { volume: voiceVolume, stream: voiceStream } = useAudioStream();
 
 	const { transcript } = useRecognition()({

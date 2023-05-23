@@ -30,11 +30,16 @@ export const AgentMessageWrapper = styled('div')<IAgentMessageWrapperProps>`
 
 export const MessageContent = styled('div')`
 	width: 100%;
-	height: 77%;
+	height: 80%;
+
+	border-bottom: 1px solid rgba(0, 0, 0, 0.3);
 
 	overflow-y: scroll;
-	::-webkit-scrollbar {
+	::-webkit-scrollbar-track {
 		display: none;
+	}
+	::-webkit-scrollbar {
+		width: 5px;
 	}
 `;
 

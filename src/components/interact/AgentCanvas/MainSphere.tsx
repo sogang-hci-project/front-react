@@ -65,10 +65,10 @@ export default function MainSphere({
 		bg: '#ffffff',
 	};
 
-	useFrame((state, delta) => {
-		// shape morphing
-		// texture morphing
-	});
+	// useFrame((state, delta) => {
+	// shape morphing
+	// texture morphing
+	// });
 
 	return (
 		<Center>

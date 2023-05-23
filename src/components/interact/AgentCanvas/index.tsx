@@ -29,8 +29,8 @@ function Rig({ systemStatus, voiceVolume }: RigProps) {
 		} else if (systemStatus === SystemStatus.GENERATE) {
 			directionVector.set(0, timeIncrement, 0);
 		} else if ([SystemStatus.SPEAK, SystemStatus.WAIT].includes(systemStatus)) {
-			positionVector.set(0, 0, 12);
-			directionVector.set(0, 4, 0);
+			positionVector.set(0, 0, 17);
+			directionVector.set(0, 6, 0);
 		}
 		camera.position.lerp(positionVector, 0.125);
 		camera.lookAt(directionVector);
@@ -76,7 +76,11 @@ interface AgentCanvasProps {
 function AgentCanvas({ systemStatus, voiceVolume }: AgentCanvasProps) {
 	return (
 		<AgentCanvasWrapper systemStatus={systemStatus}>
-			<Canvas shadows camera={{ position: [0, 0, 3], fov: 50 }}>
+			<Canvas
+				shadows
+				camera={{ position: [0, 0, 3], fov: 50 }}
+				style={{ pointerEvents: 'none' }}
+			>
 				{/* <CircularMesh /> */}
 				<Rig systemStatus={systemStatus} voiceVolume={voiceVolume} />
 				<LightGroup systemStatus={systemStatus} voiceVolume={voiceVolume} />
