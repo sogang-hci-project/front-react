@@ -23,12 +23,17 @@ interface IChoice {
 	finish_reason: string;
 }
 
-const MAX_QUERY_COUNT = 50;
+const MAX_QUERY_COUNT = 70;
 const MAX_TOKEN_COUNT = (() => {
 	if ((LANG as LANGUAGE) === LANGUAGE.KR) return 256;
-	else if ((LANG as LANGUAGE) === LANGUAGE.US) return 64;
+	else if ((LANG as LANGUAGE) === LANGUAGE.US) return 256;
 	else return 64;
 })();
+
+const context = {
+	previousQuestion: '',
+	previousAnswer: '',
+};
 
 const configuration = new Configuration({
 	organization: process.env.REACT_APP_OPEN_AI_ORGANIZATION_KEY,
@@ -37,9 +42,36 @@ const configuration = new Configuration({
 
 const promptBase = (() => {
 	if ((LANG as LANGUAGE) === LANGUAGE.KR) {
-		return '당신은 클로드 모네입니다. 질문에 대해 클로드 모네의 입장에서 대답하시오. 질문: ';
+		return `당신은 파블로 피카소입니다. 당신은 게르니카에 대해 관객에게 시각적 사고 전략(visual thinking strategy)을 수행하고 있습니다. 관객의 이야기에 대해 파블로 피카소의 입장에서 자세히 대답하고 관객에게 한번 질문하세요. 관객의 이야기: `;
 	} else if ((LANG as LANGUAGE) === LANGUAGE.US) {
-		return 'this is role play. answer to following question as a Claude Monet. question: ';
+		return `You are the Pablo Picasso. You're performing visual thinking strategy to audience about your painting the Guernica. Reply to audience as a Pablo Picasso then give further questions. Audience's : `;
+	}
+	return '';
+})();
+
+const promptPostPosition = (() => {
+	if ((LANG as LANGUAGE) === LANGUAGE.KR) {
+		return ' . 파블로 피카소의 대답과 관객에 대한 질문: ';
+	} else if ((LANG as LANGUAGE) === LANGUAGE.US) {
+		return ' . Answer of Pablo Picasso: ';
+	}
+	return '';
+})();
+
+const prevQPrompt = (() => {
+	if ((LANG as LANGUAGE) === LANGUAGE.KR) {
+		return ' . 과거 관객의 이야기: ';
+	} else if ((LANG as LANGUAGE) === LANGUAGE.US) {
+		return ' . Previous Audience Question: ';
+	}
+	return '';
+})();
+
+const prevAPrompt = (() => {
+	if ((LANG as LANGUAGE) === LANGUAGE.KR) {
+		return ' . 과거 파블로 피카소의 대답과 질문: ';
+	} else if ((LANG as LANGUAGE) === LANGUAGE.US) {
+		return ' . Previous Pablo Picasso Answer: ';
 	}
 	return '';
 })();
@@ -49,7 +81,12 @@ export async function requestChatCompletion(query: string) {
 	if (query.length === 0) handleError('OpenAI query is empty');
 	if (query.length > MAX_QUERY_COUNT)
 		handleError('OpenAI query exceeds maximum length');
-	const modifiedQuery = promptBase + query;
+	const modifiedQuery =
+		context.previousQuestion +
+		context.previousAnswer +
+		promptBase +
+		query +
+		promptPostPosition;
 	try {
 		const res = await fetch('https://api.openai.com/v1/chat/completions', {
 			method: 'POST',
@@ -64,6 +101,9 @@ export async function requestChatCompletion(query: string) {
 			}),
 		});
 		const data = (await res.json()) as IChatCompletion;
+		context.previousQuestion = prevQPrompt + query + ' ';
+		context.previousAnswer =
+			prevAPrompt + data.choices[0].message.content + ' ';
 		return data;
 	} catch (error) {
 		handleError((error as Error).message);

@@ -1,9 +1,11 @@
+const isEN = false;
+
 export enum LANGUAGE {
 	US = 'en-US',
 	KR = 'ko-KR',
 }
 
-export const LANG = LANGUAGE.KR;
+export const LANG = isEN ? LANGUAGE.US : LANGUAGE.KR;
 
 export const ACTIVATION_VOLUME = 60;
 export const DEACTIVATION_VOLUME = 60;
