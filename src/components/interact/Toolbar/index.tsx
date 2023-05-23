@@ -5,7 +5,7 @@ import {
 	ToolbarButton,
 	ToolbarWrapper,
 } from './style';
-import { RxAccessibility, RxTokens } from 'react-icons/rx';
+import { RxAccessibility, RxMixerVertical } from 'react-icons/rx';
 import { PAINTING_NAME, PAINTER_NAME } from '~/constants/setting';
 
 function Toolbar() {
@@ -19,7 +19,7 @@ function Toolbar() {
 				<PainterName>{PAINTER_NAME}</PainterName>
 			</TitleWrapper>
 			<ToolbarButton>
-				<RxTokens />
+				<RxMixerVertical />
 			</ToolbarButton>
 		</ToolbarWrapper>
 	);

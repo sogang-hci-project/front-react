@@ -18,7 +18,7 @@ export default function PlayButton({
 	return (
 		<Button onClick={handlePlayButton}>
 			<Text size={1.2}>
-				{systemStatus === SystemStatus.PAUSE ? inactiveMessage : activeMessage}
+				{systemStatus === SystemStatus.PAUSE ? activeMessage : inactiveMessage}
 			</Text>
 		</Button>
 	);

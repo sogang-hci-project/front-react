@@ -7,6 +7,7 @@ export const ToolbarWrapper = styled('div')`
 	flex-direction: row;
 	align-items: center;
 	justify-content: space-between;
+	padding: 0 1rem;
 `;
 
 export const ToolbarButton = styled('button')`
@@ -17,13 +18,16 @@ export const ToolbarButton = styled('button')`
 	width: 6rem;
 	height: 6rem;
 	font-size: 2rem;
-	color: #000;
+	color: rgba(0, 0, 0, 0.7);
 
 	-webkit-transition-duration: 0.4s;
 	transition-duration: 0.4s;
 
 	:active {
-		filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.2));
+		filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.4));
+	}
+	:hover {
+		filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.4));
 	}
 `;
 

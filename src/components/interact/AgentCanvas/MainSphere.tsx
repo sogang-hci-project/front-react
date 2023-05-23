@@ -1,7 +1,6 @@
 /* eslint-disable react/no-unknown-property */
 // [#14] 이슈: eslint-react와 three.js간 호환성
 import { useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
 import { Center, MeshTransmissionMaterial } from '@react-three/drei';
 import { Vector3, SphereGeometry } from 'three';
 import { SystemStatus } from '~/types/common';

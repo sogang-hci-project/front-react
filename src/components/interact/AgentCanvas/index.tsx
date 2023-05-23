@@ -2,7 +2,6 @@
 // [#14] 이슈: eslint-react와 three.js간 호환성
 
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
 import { AmbientLight, Vector3 } from 'three';
 
 import { EffectComposer, Bloom } from '@react-three/postprocessing';

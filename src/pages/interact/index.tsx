@@ -68,7 +68,7 @@ function Interact() {
 	const [userMessage, setUserMessage] = useState<string>('');
 	const [agentMessage, setAgentMessage] = useState<string>('');
 	const [systemStatus, setSystemStatus] = useState<SystemStatus>(
-		SystemStatus.WAIT
+		SystemStatus.MUTE
 	);
 	const [showInputPopup, setShowInputPopup] = useState<boolean>(false);
 	const [isMute, setIsMute] = useState<boolean>(true);
