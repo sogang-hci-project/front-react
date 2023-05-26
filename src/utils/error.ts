@@ -26,11 +26,14 @@ const errorTextEnglish = [
 	"I'm sorry, could you please restate your comment?",
 ];
 
-const errorReply = setValueOnLanguage(
-	errorTextKorean[Math.floor(Math.random() * 8)],
-	errorTextEnglish[Math.floor(Math.random() * 8)],
-	''
-);
+const errorReply = () => {
+	const index = Math.floor(Math.random() * 8);
+	return setValueOnLanguage(
+		errorTextKorean[index],
+		errorTextEnglish[index],
+		''
+	);
+};
 
 interface IHandleError {
 	message: string;
@@ -51,7 +54,7 @@ export function handleError({ message, origin }: IHandleError) {
 		case ServiceType.LOCAL_STT:
 		case ServiceType.OPENAI:
 		case ServiceType.PAPAGO_TRANS:
-			void playTextToAudio(errorReply).then(() => {
+			void playTextToAudio(errorReply()).then(() => {
 				setDialogueState(SystemStatus.READY);
 			});
 			break;
