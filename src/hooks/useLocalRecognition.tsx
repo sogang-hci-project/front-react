@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { LANG } from '@constants/setting';
 import { ServiceType, SystemStatus } from '~/types/common';
-import { checkPause } from '~/utils/audio';
 import { handleError } from '@utils/error';
 import {
 	setDialogueStateBypassPause,

@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { getGoogleTranscript } from '@api/googlecloud';
 import { SystemStatus } from '~/types/common';
-import { blobToAudioBase64, checkPause } from '@utils/audio';
+import { blobToAudioBase64 } from '@utils/audio';
 import {
 	useAppDispatch,
 	useAppSelector,

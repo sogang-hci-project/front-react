@@ -2,12 +2,8 @@ import { postPapagoTranslation } from '~/api/papago';
 import { LANG, LANGUAGE } from '~/constants/setting';
 import { requestChatCompletion } from '@api/openai';
 import { SystemStatus } from '~/types/common';
-import { checkPause, playTextToAudio } from './audio';
-import {
-	getDialogueState,
-	setDialogueState,
-	setDialogueStateBypassPause,
-} from '~/states/store';
+import { playTextToAudio } from './audio';
+import { getDialogueState, setDialogueStateBypassPause } from '~/states/store';
 
 async function generateAgentDialogue(question: string) {
 	const res = await requestChatCompletion(question);

@@ -38,12 +38,6 @@ export function stopAudio() {
 	if (!audio.paused) void audio.pause();
 }
 
-export const checkPause =
-	(newStatus: SystemStatus) => (status: SystemStatus) => {
-		if (status === SystemStatus.PAUSE) return status;
-		else return newStatus;
-	};
-
 interface IToggleVoiceArguments {
 	voiceVolume: number;
 	isMute: boolean;
