@@ -12,8 +12,8 @@ export const isSafari = navigator.userAgent.indexOf('Safari') !== -1;
 const kAFErrorRegex = /kAFAssistantErrorDomain/;
 
 export function handleError(message: string) {
-	if (kAFErrorRegex.test(message))
+	if (kAFErrorRegex.test(message)) {
 		message += ' Reload the browser to fix issue.';
-	alert('System Malfunction: ' + message);
-	// history.go(0);
+		alert('System Malfunction: ' + message);
+	}
 }
