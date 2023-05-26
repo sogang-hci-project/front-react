@@ -1,6 +1,7 @@
 import { ServiceType } from '~/types/common';
 import { LANG, LANGUAGE } from '../constants/setting';
-import { getQueryString, handleError } from '../utils/common';
+import { getQueryString, setValueOnLanguage } from '../utils/common';
+import { handleError } from '@utils/error';
 
 const transcriptConfig = {
 	encoding: 'WEBM_OPUS',
@@ -20,14 +21,11 @@ const transcriptQueries = {
 
 const MAX_TRANS_LENGTH = 300000;
 
-const textToSpeechVoice = (() => {
-	if ((LANG as LANGUAGE) === LANGUAGE.KR) {
-		return 'ko-KR-Standard-D';
-	} else if ((LANG as LANGUAGE) === LANGUAGE.US) {
-		return 'en-US-Neural2-J';
-	}
-	return '';
-})();
+const textToSpeechVoice = setValueOnLanguage(
+	'ko-KR-Standard-D',
+	'en-US-Neural2-J',
+	''
+);
 
 interface IGoogleTranscriptResponse {
 	requestId: string;

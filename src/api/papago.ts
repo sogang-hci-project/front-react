@@ -1,6 +1,6 @@
 import { LANGUAGE } from '~/constants/setting';
 import { ServiceType } from '~/types/common';
-import { handleError } from '~/utils/common';
+import { handleError } from '@utils/error';
 
 const body = new URLSearchParams();
 body.append('honorific', 'true');

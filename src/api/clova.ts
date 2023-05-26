@@ -1,6 +1,7 @@
 import { LANG, LANGUAGE } from '~/constants/setting';
 import { ServiceType } from '~/types/common';
-import { handleError } from '~/utils/common';
+import { setValueOnLanguage } from '~/utils/common';
+import { handleError } from '@utils/error';
 
 const headers = new Headers();
 headers.append('Content-Type', 'application/x-www-form-urlencoded');
@@ -13,14 +14,7 @@ headers.append(
 	process.env.REACT_APP_NAVER_CLOUD_AI_SECRET_KEY || ''
 );
 
-const textToSpeechVoice = (() => {
-	if ((LANG as LANGUAGE) === LANGUAGE.KR) {
-		return 'nwontak';
-	} else if ((LANG as LANGUAGE) === LANGUAGE.US) {
-		return 'clara';
-	}
-	return '';
-})();
+const textToSpeechVoice = setValueOnLanguage('nwontak', 'clara', '');
 
 const dataParam = new URLSearchParams();
 dataParam.append('speaker', textToSpeechVoice);

@@ -1,6 +1,7 @@
 import { Configuration, OpenAIApi } from 'openai';
 import { LANG, LANGUAGE } from '../constants/setting';
-import { handleError } from '~/utils/common';
+import { setValueOnLanguage } from '~/utils/common';
+import { handleError } from '@utils/error';
 import { ServiceType } from '~/types/common';
 
 interface IChatCompletion {
@@ -25,11 +26,7 @@ interface IChoice {
 }
 
 const MAX_QUERY_COUNT = 100;
-const MAX_TOKEN_COUNT = (() => {
-	if ((LANG as LANGUAGE) === LANGUAGE.KR) return 64;
-	else if ((LANG as LANGUAGE) === LANGUAGE.US) return 64;
-	else return 64;
-})();
+const MAX_TOKEN_COUNT = setValueOnLanguage(64, 64, 64);
 
 const context = {
 	previousQuestion: '',

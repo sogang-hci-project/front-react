@@ -7,6 +7,7 @@ import {
 	ModalButton,
 } from './style';
 import { LANG, LANGUAGE } from '~/constants/setting';
+import { setValueOnLanguage } from '~/utils/common';
 
 interface IKeyboardInputModal {
 	showInputPopup: boolean;
@@ -14,8 +15,8 @@ interface IKeyboardInputModal {
 	handleKeyboardSubmit: (text: string) => void;
 }
 
-const cancelText = LANG === LANGUAGE.KR ? '취소하기' : 'cancel';
-const sendText = LANG === LANGUAGE.KR ? '보내기' : 'send';
+const cancelText = setValueOnLanguage('취소하기', 'cancel', '');
+const sendText = setValueOnLanguage('보내기', 'send', '');
 
 function KeyboardInputModal({
 	showInputPopup,
