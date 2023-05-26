@@ -3,6 +3,11 @@ import { LANG } from '@constants/setting';
 import { SystemStatus } from '~/types/common';
 import { checkPause } from '~/utils/audio';
 import { handleError } from '~/utils/common';
+import {
+	setDialogueStateBypassPause,
+	useAppDispatch,
+	useAppSelector,
+} from '~/states/store';
 
 const SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
 
@@ -36,16 +41,10 @@ recognition.continuous = true;
 recognition.onerror = (error) =>
 	handleError('Local Recognition' + error.message);
 
-interface IUseLocalRecognitionProps {
-	systemStatus: SystemStatus;
-	setSystemStatus: React.Dispatch<React.SetStateAction<SystemStatus>>;
-}
-
-function useLocalRecognition({
-	systemStatus,
-	setSystemStatus,
-}: IUseLocalRecognitionProps) {
+function useLocalRecognition() {
 	const [transcript, setTranscript] = useState<string>('');
+	const systemStatus = useAppSelector((state) => state.dialogue.status);
+	const dispatch = useAppDispatch();
 
 	useEffect(() => {
 		if (recognition.onresult === null)
@@ -61,7 +60,7 @@ function useLocalRecognition({
 			setTranscript('');
 		} else if (systemStatus === SystemStatus.TRANSCRIBE) {
 			recognition.stop();
-			setSystemStatus(checkPause(SystemStatus.GENERATE));
+			dispatch(setDialogueStateBypassPause(SystemStatus.GENERATE));
 		} else if ([SystemStatus.READY, SystemStatus.WAIT].includes(systemStatus)) {
 			recognition.abort();
 			recognition.startAsync();

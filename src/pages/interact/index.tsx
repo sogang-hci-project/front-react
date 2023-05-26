@@ -23,8 +23,13 @@ import useGoogleRecognition from '@hooks/useGoogleRecognition';
 import useLocalRecognition from '~/hooks/useLocalRecognition';
 import { stopAudio, toggleSystemStatusOnVolume } from '@utils/audio';
 import { SystemStatus } from '~/types/common';
-import { isChrome, isSafari } from '~/utils/common';
-import { answerUserDialogue } from '~/utils/dialogue';
+import { isChrome, isSafari } from '@utils/common';
+import { answerUserDialogue } from '@utils/dialogue';
+import {
+	useAppDispatch,
+	useAppSelector,
+	setDialogueState,
+} from '@states/store';
 
 const clickSound = new Audio('/sound/toggle.mp3');
 
@@ -40,30 +45,25 @@ function useRecognition() {
 function Interact() {
 	const [userMessage, setUserMessage] = useState<string>('');
 	const [agentMessage, setAgentMessage] = useState<string>('');
-	const [systemStatus, setSystemStatus] = useState<SystemStatus>(
-		SystemStatus.PAUSE
-	);
 	const [showInputPopup, setShowInputPopup] = useState<boolean>(false);
 	const [isMute, setIsMute] = useState<boolean>(true);
+	const systemStatus = useAppSelector((state) => state.dialogue.status);
+	const dispatch = useAppDispatch();
 	const { volume: voiceVolume, stream: voiceStream } = useAudioStream();
 
-	const { transcript } = useRecognition()({
-		stream: voiceStream,
-		systemStatus,
-		setSystemStatus,
-	});
+	const { transcript } = useRecognition()({ stream: voiceStream });
 
 	function handleKeyboardSubmit(text: string) {
 		setUserMessage(text);
-		setSystemStatus(SystemStatus.GENERATE);
+		dispatch(setDialogueState(SystemStatus.GENERATE));
 	}
 
 	const handlePlayButton = () => {
 		void clickSound.play();
 		if (systemStatus === SystemStatus.PAUSE) {
-			setSystemStatus(SystemStatus.READY);
+			dispatch(setDialogueState(SystemStatus.READY));
 		} else {
-			setSystemStatus(SystemStatus.PAUSE);
+			dispatch(setDialogueState(SystemStatus.PAUSE));
 			setUserMessage('');
 			stopAudio();
 		}
@@ -77,20 +77,13 @@ function Interact() {
 	useEffect(() => {
 		console.log(userMessage, systemStatus);
 		if (systemStatus === SystemStatus.GENERATE)
-			void answerUserDialogue(
-				userMessage,
-				systemStatus,
-				setSystemStatus,
-				setAgentMessage
-			);
+			void answerUserDialogue(userMessage, setAgentMessage);
 	}, [userMessage]);
 
 	useEffect(() => {
 		toggleSystemStatusOnVolume({
 			isMute,
 			voiceVolume,
-			systemStatus,
-			setSystemStatus,
 		});
 	}, [voiceVolume]);
 

@@ -9,6 +9,7 @@ import {
 	VOICE_DEACTIVATION_TIME,
 } from '~/constants/setting';
 import { postNaverTextToSpeech } from '~/api/clova';
+import { getDialogueState, setDialogueStateBypassPause } from '~/states/store';
 
 interface ITimeoutRef {
 	current: null | NodeJS.Timeout;
@@ -45,23 +46,20 @@ export const checkPause =
 
 interface IToggleVoiceArguments {
 	voiceVolume: number;
-	systemStatus: SystemStatus;
-	setSystemStatus: React.Dispatch<React.SetStateAction<SystemStatus>>;
 	isMute: boolean;
 }
 
 export function toggleSystemStatusOnVolume({
 	voiceVolume,
-	systemStatus,
-	setSystemStatus,
 	isMute,
 }: IToggleVoiceArguments) {
 	if (isMute) return;
+	const systemStatus = getDialogueState();
 	if (
 		voiceVolume > ACTIVATION_VOLUME &&
 		[SystemStatus.READY, SystemStatus.WAIT].includes(systemStatus)
 	) {
-		setSystemStatus(checkPause(SystemStatus.LISTEN));
+		setDialogueStateBypassPause(SystemStatus.LISTEN);
 		stopAudio();
 	} else if (
 		voiceVolume < DEACTIVATION_VOLUME &&
@@ -69,7 +67,7 @@ export function toggleSystemStatusOnVolume({
 		timeoutRef.current === null
 	) {
 		timeoutRef.current = setTimeout(() => {
-			setSystemStatus(checkPause(SystemStatus.TRANSCRIBE));
+			setDialogueStateBypassPause(SystemStatus.TRANSCRIBE);
 			if (timeoutRef.current) {
 				clearTimeout(timeoutRef.current);
 				timeoutRef.current = null;

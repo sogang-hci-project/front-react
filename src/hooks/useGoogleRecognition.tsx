@@ -2,26 +2,28 @@ import { useEffect, useState, useRef } from 'react';
 import { getGoogleTranscript } from '@api/googlecloud';
 import { SystemStatus } from '~/types/common';
 import { blobToAudioBase64, checkPause } from '@utils/audio';
+import {
+	useAppDispatch,
+	useAppSelector,
+	setDialogueStateBypassPause,
+} from '~/states/store';
 
 const chunks: Blob[] = [];
 const INTERVAL = 2000;
 
 interface IUseGoogleRecognitionProps {
 	stream: MediaStream | null;
-	systemStatus: SystemStatus;
-	setSystemStatus: React.Dispatch<React.SetStateAction<SystemStatus>>;
 }
 
-function useGoogleRecognition({
-	stream,
-	systemStatus,
-	setSystemStatus,
-}: IUseGoogleRecognitionProps) {
+function useGoogleRecognition({ stream }: IUseGoogleRecognitionProps) {
 	const [transcript, setTranscript] = useState<string>('');
 	const [timerObject, setTimerObject] = useState<object>({});
 	const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
 	const mediaRecorder = useRef<MediaRecorder | null>(null);
 	const timerIntervalRef = useRef<NodeJS.Timer | null>(null);
+
+	const systemStatus = useAppSelector((state) => state.dialogue.status);
+	const dispatch = useAppDispatch();
 
 	useEffect(() => {
 		timerIntervalRef.current = setInterval(() => {
@@ -59,7 +61,7 @@ function useGoogleRecognition({
 				const blobBase64 = await blobToAudioBase64(audioBlob);
 				const script = await getGoogleTranscript(blobBase64);
 				setTranscript(script);
-				setSystemStatus(checkPause(SystemStatus.GENERATE));
+				dispatch(setDialogueStateBypassPause(SystemStatus.GENERATE));
 			})();
 	}, [audioBlob]);
 
