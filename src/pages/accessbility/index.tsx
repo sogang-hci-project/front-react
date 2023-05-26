@@ -1,12 +1,35 @@
-import styled from '@emotion/styled';
+import { Container, Viewport } from '~/components/common';
+import {
+	ToolbarContainer,
+	ToolbarWrapper,
+	ToolbarButton,
+	TitleWrapper,
+} from './style';
+import { setValueOnLanguage } from '~/utils/common';
+import { RxCaretLeft } from 'react-icons/rx';
 
-export const TempComponent = styled('div')`
-	background-color: 'yellow';
-	font-size: '100px';
-`;
+const toolBarName = setValueOnLanguage(
+	'접근성',
+	'Accessibility',
+	'Accessibility'
+);
 
 function Accessibility() {
-	return <TempComponent>setting</TempComponent>;
+	return (
+		<Container>
+			<Viewport>
+				<ToolbarContainer>
+					<ToolbarWrapper>
+						<ToolbarButton>
+							<RxCaretLeft />
+						</ToolbarButton>
+						<TitleWrapper>{toolBarName}</TitleWrapper>
+						<ToolbarButton></ToolbarButton>
+					</ToolbarWrapper>
+				</ToolbarContainer>
+			</Viewport>
+		</Container>
+	);
 }
 
 export default Accessibility;
