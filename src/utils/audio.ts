@@ -4,8 +4,11 @@ import { getGoogleTextToSpeech } from '@api/googlecloud';
 import {
 	ACTIVATION_VOLUME,
 	DEACTIVATION_VOLUME,
+	LANG,
+	LANGUAGE,
 	VOICE_DEACTIVATION_TIME,
 } from '~/constants/setting';
+import { postNaverTextToSpeech } from '~/api/clova';
 
 interface ITimeoutRef {
 	current: null | NodeJS.Timeout;
@@ -95,6 +98,12 @@ export async function blobToAudioBase64(blob: Blob) {
 	});
 }
 
+export function unit8ArrayToUrl(uint8Array: Uint8Array) {
+	const blob = new Blob([uint8Array], { type: 'audio/mpeg' });
+	const url = URL.createObjectURL(blob);
+	return url;
+}
+
 export function base64ToAudioBlob(audioString: string) {
 	const binaryString = atob(audioString);
 
@@ -104,15 +113,18 @@ export function base64ToAudioBlob(audioString: string) {
 		uint8Array[i] = binaryString.charCodeAt(i);
 	}
 
-	const blob = new Blob([uint8Array], { type: 'audio/mpeg' });
-	const url = URL.createObjectURL(blob);
-
-	return url;
+	return unit8ArrayToUrl(uint8Array);
 }
 
 export async function playTextToAudio(text: string) {
-	const audioString = await getGoogleTextToSpeech(text);
-	const audioBlob = base64ToAudioBlob(audioString);
-	await playAudio(audioBlob);
+	if (LANG === LANGUAGE.KR) {
+		const data = (await postNaverTextToSpeech(text)) || new Uint8Array();
+		const audioBlobUrl = unit8ArrayToUrl(data);
+		void playAudio(audioBlobUrl);
+	} else if (LANG === LANGUAGE.US) {
+		const audioString = await getGoogleTextToSpeech(text);
+		const audioBlobUrl = base64ToAudioBlob(audioString);
+		void playAudio(audioBlobUrl);
+	}
 	return;
 }
