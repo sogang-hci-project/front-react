@@ -6,13 +6,7 @@ export const CustomComponent = styled('div')`
 `;
 
 function Setting() {
-	return (
-		<CustomComponent>
-			{/* <CustomComponent style={{ backgroundColor: 'yellow', fontSize: '100px' }}> */}
-			setting
-		</CustomComponent>
-		// <CustomComponent>setting</CustomComponent>
-	);
+	return <CustomComponent>setting</CustomComponent>;
 }
 
 export default Setting;
