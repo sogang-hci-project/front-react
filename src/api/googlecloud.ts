@@ -1,3 +1,4 @@
+import { ServiceType } from '~/types/common';
 import { LANG, LANGUAGE } from '../constants/setting';
 import { getQueryString, handleError } from '../utils/common';
 
@@ -57,10 +58,16 @@ interface IGoogleTextToSpeechResponse {
 
 export async function getGoogleTranscript(blobString: string) {
 	if (!blobString || blobString.length === 0)
-		handleError('Google STT input is empty');
+		handleError({
+			message: 'Google STT input is empty',
+			origin: ServiceType.GCLOUD_STT,
+		});
 
 	if (blobString.length > MAX_TRANS_LENGTH)
-		handleError('Google STT input exceeds maximum length');
+		handleError({
+			message: 'Google STT input exceeds maximum length',
+			origin: ServiceType.GCLOUD_STT,
+		});
 	try {
 		const res = await fetch(
 			`https://speech.googleapis.com/v1/speech:recognize?${getQueryString(
@@ -85,11 +92,11 @@ export async function getGoogleTranscript(blobString: string) {
 		return transcript;
 	} catch (error) {
 		const message = (error as Error).message;
-		handleError(
+		const errorMessage =
 			'Google cloud: ' + message === 'undefined'
 				? 'Unrecognizable Voice'
-				: message
-		);
+				: message;
+		handleError({ message: errorMessage, origin: ServiceType.GCLOUD_STT });
 		return Promise.reject(error);
 	}
 }
@@ -122,6 +129,10 @@ export async function getGoogleTextToSpeech(inputText: string) {
 		const body = (await res.json()) as IGoogleTextToSpeechResponse;
 		return body.audioContent;
 	} catch (error) {
-		return Promise.reject(error);
+		handleError({
+			message: (error as Error).message,
+			origin: ServiceType.GCLOUD_STT,
+		});
+		return '';
 	}
 }

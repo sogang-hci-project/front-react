@@ -8,3 +8,12 @@ export enum SystemStatus {
 	WAIT = 'WAIT',
 	MUTE = 'MUTE',
 }
+
+export enum ServiceType {
+	CLOVA_TTS = 'CLOVA_TTS',
+	OPENAI = 'OPENAI',
+	GCLOUD_TTS = 'GCLOUD_TTS',
+	GCLOUD_STT = 'GCLOUD_STT',
+	PAPAGO_TRANS = 'PAPAGO_TRANS',
+	LOCAL_STT = 'LOCAL_STT',
+}

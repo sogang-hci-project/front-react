@@ -1,6 +1,7 @@
 import { Configuration, OpenAIApi } from 'openai';
 import { LANG, LANGUAGE } from '../constants/setting';
 import { handleError } from '~/utils/common';
+import { ServiceType } from '~/types/common';
 
 interface IChatCompletion {
 	id: string;
@@ -47,9 +48,16 @@ const prevAPrompt = ' . Previous Pablo Picasso Answer: ';
 
 const openai = new OpenAIApi(configuration);
 export async function requestChatCompletion(query: string) {
-	if (query.length === 0) handleError('OpenAI query is empty');
+	if (query.length === 0)
+		handleError({
+			message: 'OpenAI query is empty',
+			origin: ServiceType.OPENAI,
+		});
 	if (query.length > MAX_QUERY_COUNT)
-		handleError('OpenAI query exceeds maximum length');
+		handleError({
+			message: 'OpenAI query exceeds maximum length',
+			origin: ServiceType.OPENAI,
+		});
 	const modifiedQuery =
 		context.previousQuestion +
 		context.previousAnswer +
@@ -76,7 +84,10 @@ export async function requestChatCompletion(query: string) {
 			prevAPrompt + data.choices[0].message.content + ' ';
 		return data;
 	} catch (error) {
-		handleError((error as Error).message);
+		handleError({
+			message: (error as Error).message,
+			origin: ServiceType.OPENAI,
+		});
 		return;
 	}
 }

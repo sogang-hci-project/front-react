@@ -1,4 +1,5 @@
 import { LANGUAGE } from '~/constants/setting';
+import { ServiceType } from '~/types/common';
 import { handleError } from '~/utils/common';
 
 const body = new URLSearchParams();
@@ -49,7 +50,10 @@ export async function postPapagoTranslation(
 		return (JSON.parse(result) as ITranslateResult).message.result
 			.translatedText;
 	} catch (error) {
-		handleError((error as Error).message);
+		handleError({
+			message: (error as Error).message,
+			origin: ServiceType.PAPAGO_TRANS,
+		});
 		return '';
 	}
 }

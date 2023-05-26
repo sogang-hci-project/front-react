@@ -120,7 +120,7 @@ export async function playTextToAudio(text: string) {
 		const audioBlobUrl = unit8ArrayToUrl(data);
 		void playAudio(audioBlobUrl);
 	} else if (LANG === LANGUAGE.US) {
-		const audioString = await getGoogleTextToSpeech(text);
+		const audioString = (await getGoogleTextToSpeech(text)) || '';
 		const audioBlobUrl = base64ToAudioBlob(audioString);
 		void playAudio(audioBlobUrl);
 	}

@@ -1,4 +1,5 @@
 import { LANG, LANGUAGE } from '~/constants/setting';
+import { ServiceType } from '~/types/common';
 import { handleError } from '~/utils/common';
 
 const headers = new Headers();
@@ -68,7 +69,10 @@ export async function postNaverTextToSpeech(text: string) {
 		const audioUint8Array = concatenate(audioUint8Set);
 		return audioUint8Array;
 	} catch (error) {
-		handleError((error as Error).message);
+		handleError({
+			message: (error as Error).message,
+			origin: ServiceType.CLOVA_TTS,
+		});
 		return;
 	}
 }

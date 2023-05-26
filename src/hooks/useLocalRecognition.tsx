@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { LANG } from '@constants/setting';
-import { SystemStatus } from '~/types/common';
+import { ServiceType, SystemStatus } from '~/types/common';
 import { checkPause } from '~/utils/audio';
 import { handleError } from '~/utils/common';
 import {
@@ -39,7 +39,10 @@ recognition.lang = LANG;
 recognition.interimResults = true;
 recognition.continuous = true;
 recognition.onerror = (error) =>
-	handleError('Local Recognition' + error.message);
+	handleError({
+		message: 'Local Recognition' + error.message,
+		origin: ServiceType.LOCAL_STT,
+	});
 
 function useLocalRecognition() {
 	const [transcript, setTranscript] = useState<string>('');

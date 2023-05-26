@@ -11,7 +11,7 @@ const initialState: DialogueState = {
 };
 
 const dialogueSlice = createSlice({
-	name: 'counter',
+	name: 'dialogue',
 	initialState,
 	reducers: {
 		setStatus: (state, action: PayloadAction<SystemStatus>) => {
