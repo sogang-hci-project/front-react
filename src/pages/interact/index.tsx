@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { useState, useEffect } from 'react';
 import { Container, Viewport } from '@components/common';
 import {
@@ -18,42 +17,16 @@ import {
 	KeyboardInputModal,
 	MuteButton,
 } from '@components/interact';
-import { requestChatCompletion } from '@api/openai';
+
 import useAudioStream from '@hooks/useAudioStream';
 import useGoogleRecognition from '@hooks/useGoogleRecognition';
 import useLocalRecognition from '~/hooks/useLocalRecognition';
-import {
-	checkPause,
-	playTextToAudio,
-	stopAudio,
-	toggleSystemStatusOnVolume,
-} from '@utils/audio';
+import { stopAudio, toggleSystemStatusOnVolume } from '@utils/audio';
 import { SystemStatus } from '~/types/common';
 import { isChrome, isSafari } from '~/utils/common';
+import { answerUserDialogue } from '~/utils/dialogue';
 
 const clickSound = new Audio('/sound/toggle.mp3');
-
-async function generateAnswer(question: string) {
-	const res = await requestChatCompletion(question);
-	const content = res?.choices[0].message.content || '';
-	console.log('openai answer: ', content);
-	return content;
-}
-
-async function answerQuestion(
-	question: string,
-	systemStatus: SystemStatus,
-	setSystemState: React.Dispatch<React.SetStateAction<SystemStatus>>,
-	setAgentMessage: React.Dispatch<React.SetStateAction<string>>
-) {
-	console.log('user question: ', question);
-	if (systemStatus !== SystemStatus.GENERATE || question.length === 0) return;
-	const answer = await generateAnswer(question);
-	setAgentMessage(answer);
-	setSystemState(checkPause(SystemStatus.SPEAK));
-	await playTextToAudio(answer);
-	setSystemState(checkPause(SystemStatus.WAIT));
-}
 
 function useRecognition() {
 	if (isChrome) return useGoogleRecognition;
@@ -104,7 +77,7 @@ function Interact() {
 	useEffect(() => {
 		console.log(userMessage, systemStatus);
 		if (systemStatus === SystemStatus.GENERATE)
-			void answerQuestion(
+			void answerUserDialogue(
 				userMessage,
 				systemStatus,
 				setSystemStatus,
@@ -155,7 +128,6 @@ function Interact() {
 					/>
 					<KeyboardButton
 						handleKeyboardButton={() => {
-							console.log(systemStatus);
 							if (
 								[SystemStatus.READY, SystemStatus.WAIT].includes(systemStatus)
 							)
