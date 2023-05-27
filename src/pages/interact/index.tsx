@@ -78,7 +78,8 @@ function Interact() {
 		console.log(userMessage, systemStatus);
 		if (systemStatus === SystemStatus.GENERATE)
 			void answerUserDialogue(userMessage, setAgentMessage);
-	}, [userMessage]);
+		// if ([SystemStatus.WAIT].includes(systemStatus)) setUserMessage('');
+	}, [systemStatus, userMessage]);
 
 	useEffect(() => {
 		toggleSystemStatusOnVolume({

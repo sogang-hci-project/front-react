@@ -112,11 +112,11 @@ export async function playTextToAudio(text: string) {
 	if (LANG === LANGUAGE.KR) {
 		const data = (await postNaverTextToSpeech(text)) || new Uint8Array();
 		const audioBlobUrl = unit8ArrayToUrl(data);
-		void playAudio(audioBlobUrl);
+		await playAudio(audioBlobUrl);
 	} else if (LANG === LANGUAGE.US) {
 		const audioString = (await getGoogleTextToSpeech(text)) || '';
 		const audioBlobUrl = base64ToAudioBlob(audioString);
-		void playAudio(audioBlobUrl);
+		await playAudio(audioBlobUrl);
 	}
 	return;
 }

@@ -59,14 +59,12 @@ function useLocalRecognition() {
 	useEffect(() => {
 		if (systemStatus === SystemStatus.PAUSE) {
 			recognition.abort();
-			setTranscript('');
 		} else if (systemStatus === SystemStatus.TRANSCRIBE) {
-			recognition.stop();
 			dispatch(setDialogueStateBypassPause(SystemStatus.GENERATE));
+			recognition.stop();
 		} else if ([SystemStatus.READY, SystemStatus.WAIT].includes(systemStatus)) {
 			recognition.abort();
 			recognition.startAsync();
-			setTranscript('');
 		}
 	}, [systemStatus]);
 

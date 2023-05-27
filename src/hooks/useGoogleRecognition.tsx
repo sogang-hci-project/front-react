@@ -51,7 +51,7 @@ function useGoogleRecognition({ stream }: IUseGoogleRecognitionProps) {
 			};
 			mediaRecorder.current.start();
 		}
-		setTranscript('');
+		// setTranscript('');
 	}, [timerObject]);
 
 	useEffect(() => {
