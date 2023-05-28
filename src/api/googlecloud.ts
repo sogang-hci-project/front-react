@@ -1,5 +1,5 @@
 import { ServiceType } from '~/types/common';
-import { LANG, LANGUAGE } from '../constants/setting';
+import { LANG } from '../constants/setting';
 import { getQueryString, setValueOnLanguage } from '../utils/common';
 import { handleError } from '@utils/error';
 

@@ -41,7 +41,6 @@ interface IHandleError {
 }
 
 export function handleError({ message, origin }: IHandleError) {
-	console.log('error toggled');
 	if (kAFErrorRegex.test(message)) {
 		message += ' Reload the browser to fix issue.';
 		alert('System Malfunction: ' + message);

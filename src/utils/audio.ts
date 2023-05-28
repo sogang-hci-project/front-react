@@ -1,4 +1,3 @@
-import React from 'react';
 import { SystemStatus } from '~/types/common';
 import { getGoogleTextToSpeech } from '@api/googlecloud';
 import {

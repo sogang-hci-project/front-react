@@ -115,7 +115,7 @@ export async function getWhisperTranscript(audioFile: File) {
 		const reader = res.body?.getReader();
 		const uint8res = (await reader?.read())?.value || new Uint8Array();
 		const result = new TextDecoder().decode(uint8res);
-		return (JSON.parse(result) as IWhisperTranscript).text;
+		return (JSON.parse(result) as IWhisperTranscript).text || '';
 	} catch (error) {
 		handleError({
 			message: (error as Error).message,
