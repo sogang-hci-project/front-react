@@ -29,7 +29,7 @@ function UserMessage({ message, systemStatus }: IUserMessageProps) {
 	const placeHolderMessage = useMemo(() => {
 		if (LANG === LANGUAGE.KR) {
 			if (systemStatus === SystemStatus.READY) {
-				return '이야기에 참여하세요';
+				return '말하여 이야기에 참여하세요';
 			} else if (systemStatus === SystemStatus.WAIT) {
 				return '질문에 대해 대답하세요';
 			} else if (systemStatus === SystemStatus.PAUSE) {
@@ -42,13 +42,15 @@ function UserMessage({ message, systemStatus }: IUserMessageProps) {
 			return '에러';
 		} else if (LANG === LANGUAGE.US) {
 			if (systemStatus === SystemStatus.READY) {
-				return 'Engage in conversation';
+				return 'Engage in conversation by speaking';
 			} else if (systemStatus === SystemStatus.WAIT) {
 				return 'Make a response';
 			} else if (systemStatus === SystemStatus.PAUSE) {
-				return 'Activate button below to activate';
+				return 'Press the button below to activate';
 			} else if (systemStatus === SystemStatus.LISTEN) {
 				return 'Listening';
+			} else if (systemStatus === SystemStatus.TRANSCRIBE) {
+				return <DotContainer>{onGenerateDot}</DotContainer>;
 			}
 			return 'Error';
 		}

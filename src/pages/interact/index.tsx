@@ -34,27 +34,16 @@ import useNaverRecognition from '~/hooks/useNaverRecognition';
 
 const clickSound = new Audio('/sound/toggle.mp3');
 
-function useRecognition() {
-	// if (isChrome) return useGoogleRecognition;
-	// if (isChrome) return useNaverRecognition;
-	// else if (isSafari) return useLocalRecognition;
-	// else
-	// 	return () => {
-	// 		return { transcript: 'browser not supported' };
-	// 	};
-	return useNaverRecognition;
-}
-
 function Interact() {
 	const [userMessage, setUserMessage] = useState<string>('');
 	const [agentMessage, setAgentMessage] = useState<string>('');
 	const [showInputPopup, setShowInputPopup] = useState<boolean>(false);
 	const [isMute, setIsMute] = useState<boolean>(true);
+	const { volume: voiceVolume, stream: voiceStream } = useAudioStream();
+	const { transcript } = useNaverRecognition({ stream: voiceStream });
+
 	const systemStatus = useAppSelector((state) => state.dialogue.status);
 	const dispatch = useAppDispatch();
-	const { volume: voiceVolume, stream: voiceStream } = useAudioStream();
-
-	const { transcript } = useRecognition()({ stream: voiceStream });
 
 	function handleKeyboardSubmit(text: string) {
 		setUserMessage(text);
@@ -80,7 +69,9 @@ function Interact() {
 	useEffect(() => {
 		console.log('[Message]: ', userMessage, '[Status]: ', systemStatus);
 		if (systemStatus === SystemStatus.GENERATE)
-			void answerUserDialogue(userMessage, setAgentMessage);
+			void answerUserDialogue(userMessage, setAgentMessage).then(() => {
+				setUserMessage('');
+			});
 	}, [userMessage]);
 
 	useEffect(() => {

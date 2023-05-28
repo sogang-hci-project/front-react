@@ -18,7 +18,7 @@ const textToSpeechVoice = setValueOnLanguage('nwontak', 'clara', '');
 const dataParam = new URLSearchParams();
 dataParam.append('speaker', textToSpeechVoice);
 dataParam.append('volume', '0');
-dataParam.append('speed', '0');
+dataParam.append('speed', '-1');
 dataParam.append('pitch', '0');
 dataParam.append('end-pitch', '-2');
 
@@ -82,7 +82,7 @@ speechToTextHeader.append(
 );
 
 const speechToTextQueries = {
-	lang: 'Kor',
+	lang: setValueOnLanguage('Kor', 'Eng', 'Eng'),
 };
 
 interface INaverSpeechToTextResult {
