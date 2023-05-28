@@ -1,11 +1,12 @@
 import { useEffect, useState, useRef } from 'react';
-import { SystemStatus } from '~/types/common';
+import { ServiceType, SystemStatus } from '~/types/common';
 import {
 	useAppDispatch,
 	useAppSelector,
 	setDialogueStateBypassPause,
 } from '~/states/store';
 import { getWhisperTranscript } from '~/api/openai';
+import { handleError } from '~/utils/error';
 
 const chunks: Blob[] = [];
 const INTERVAL = 2000;
@@ -53,7 +54,16 @@ function useWhisperRecognition({ stream }: IUseWhisperRecognitionProps) {
 	}, [timerObject]);
 
 	useEffect(() => {
-		if (systemStatus === SystemStatus.TRANSCRIBE) mediaRecorder.current?.stop();
+		if (systemStatus === SystemStatus.TRANSCRIBE) {
+			if (mediaRecorder.current === null) {
+				handleError({
+					message: 'recorder not initialized',
+					origin: ServiceType.OPENAI,
+				});
+				return;
+			}
+			mediaRecorder.current.stop();
+		}
 	}, [systemStatus]);
 
 	useEffect(() => {
