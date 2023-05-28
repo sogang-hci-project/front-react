@@ -1,5 +1,9 @@
 import { ServiceType } from '~/types/common';
-import { getQueryString, setValueOnLanguage } from '~/utils/common';
+import {
+	getQueryString,
+	setValueOnEnvironment,
+	setValueOnLanguage,
+} from '~/utils/common';
 import { handleError } from '@utils/error';
 
 const textToSpeechHeader = new Headers();
@@ -41,7 +45,7 @@ export async function postNaverTextToSpeech(text: string) {
 		dataParam.delete('text');
 		dataParam.append('text', text);
 
-		const res = await fetch('/naver/tts', {
+		const res = await fetch('/naver/tts-premium/v1/tts', {
 			method: 'POST',
 			headers: textToSpeechHeader,
 			body: dataParam,
@@ -85,6 +89,12 @@ const speechToTextQueries = {
 	lang: setValueOnLanguage('Kor', 'Eng', 'Eng'),
 };
 
+const naverApiUrl = setValueOnEnvironment(
+	'/naver',
+	'https://naveropenapi.apigw.ntruss.com',
+	'https://naveropenapi.apigw.ntruss.com'
+);
+
 interface INaverSpeechToTextResult {
 	text: string;
 }
@@ -92,7 +102,7 @@ interface INaverSpeechToTextResult {
 export async function postNaverSpeechToText(binaryString: Uint8Array) {
 	try {
 		const res = await fetch(
-			`/naver/stt?${getQueryString(speechToTextQueries)}`,
+			`${naverApiUrl}/recog/v1/stt?${getQueryString(speechToTextQueries)}`,
 			{
 				method: 'POST',
 				headers: speechToTextHeader,

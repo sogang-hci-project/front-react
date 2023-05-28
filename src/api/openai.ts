@@ -1,4 +1,4 @@
-import { setValueOnLanguage } from '~/utils/common';
+import { setValueOnEnvironment, setValueOnLanguage } from '~/utils/common';
 import { handleError } from '@utils/error';
 import { ServiceType } from '~/types/common';
 
@@ -81,6 +81,11 @@ export async function requestChatCompletion(query: string) {
 	}
 }
 
+const whisperRequestUrl = setValueOnEnvironment(
+	'/openai',
+	'https://api.openai.com',
+	'https://api.openai.com'
+);
 const whisperTranscriptForm = new FormData();
 const whisperPrompt = setValueOnLanguage(
 	'이것은 파블로 피카소와 그림 게르니카에 대한 대화입니다. 스페인 내전 과정에서 나타난 참혹함과 그것을 표현한 게르니카에 대해 다루고 있습니다.',
@@ -100,7 +105,7 @@ export async function getWhisperTranscript(audioFile: File) {
 	whisperTranscriptForm.append('file', audioFile);
 
 	try {
-		const res = await fetch('/openai/transcription', {
+		const res = await fetch(`${whisperRequestUrl}/v1/audio/transcriptions`, {
 			method: 'POST',
 			headers: {
 				Authorization: `Bearer ${process.env.REACT_APP_OPEN_AI_API_KEY || ''}`,

@@ -23,3 +23,18 @@ export const setValueOnLanguage = <T>(
 	}
 	return fallback;
 };
+
+export const setValueOnEnvironment = <T>(
+	devValue: T,
+	prodValue: T,
+	fallback: T
+) => {
+	if (process.env.NODE_ENV === 'development') {
+		return devValue;
+	} else if (process.env.NODE_ENV === 'production') {
+		return prodValue;
+	} else if (process.env.NODE_ENV === 'test') {
+		return prodValue;
+	}
+	return fallback;
+};

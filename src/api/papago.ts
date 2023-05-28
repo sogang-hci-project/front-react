@@ -1,6 +1,7 @@
 import { LANGUAGE } from '~/constants/setting';
 import { ServiceType } from '~/types/common';
 import { handleError } from '@utils/error';
+import { setValueOnEnvironment } from '~/utils/common';
 
 const body = new URLSearchParams();
 body.append('honorific', 'true');
@@ -12,6 +13,12 @@ const headers = {
 		process.env.REACT_APP_NAVER_CLOUD_PAPAGO_SECRET_KEY || '',
 	'Content-Type': 'application/x-www-form-urlencoded',
 };
+
+const naverApiUrl = setValueOnEnvironment(
+	'/naver',
+	'https://naveropenapi.apigw.ntruss.com',
+	'https://naveropenapi.apigw.ntruss.com'
+);
 
 interface ITranslateResult {
 	message: {
@@ -39,7 +46,7 @@ export async function postPapagoTranslation(
 	body.append('target', langTarget);
 
 	try {
-		const res = await fetch('/naver/translation', {
+		const res = await fetch(`${naverApiUrl}/nmt/v1/translation`, {
 			method: 'POST',
 			headers,
 			body,

@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
-import { getGoogleTranscript } from '@api/googlecloud';
 import { SystemStatus } from '~/types/common';
-import { blobToAudioBase64, blobToBinary } from '@utils/audio';
+import { blobToBinary } from '@utils/audio';
 import {
 	useAppDispatch,
 	useAppSelector,
