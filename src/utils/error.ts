@@ -49,6 +49,7 @@ export function handleError({ message, origin }: IHandleError) {
 
 	switch (origin) {
 		case ServiceType.CLOVA_TTS:
+		case ServiceType.CLOVA_STT:
 		case ServiceType.GCLOUD_STT:
 		case ServiceType.GCLOUD_TTS:
 		case ServiceType.LOCAL_STT:

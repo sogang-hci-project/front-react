@@ -11,6 +11,7 @@ export enum SystemStatus {
 
 export enum ServiceType {
 	CLOVA_TTS = 'CLOVA_TTS',
+	CLOVA_STT = 'CLOVA_STT',
 	OPENAI = 'OPENAI',
 	GCLOUD_TTS = 'GCLOUD_TTS',
 	GCLOUD_STT = 'GCLOUD_STT',

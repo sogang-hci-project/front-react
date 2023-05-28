@@ -1,21 +1,22 @@
 import { useEffect, useState, useRef } from 'react';
 import { getGoogleTranscript } from '@api/googlecloud';
 import { SystemStatus } from '~/types/common';
-import { blobToAudioBase64 } from '@utils/audio';
+import { blobToAudioBase64, blobToBinary } from '@utils/audio';
 import {
 	useAppDispatch,
 	useAppSelector,
 	setDialogueStateBypassPause,
 } from '~/states/store';
+import { postNaverSpeechToText } from '~/api/clova';
 
 const chunks: Blob[] = [];
 const INTERVAL = 2000;
 
-interface IUseGoogleRecognitionProps {
+interface IUseNaverRecognitionProps {
 	stream: MediaStream | null;
 }
 
-function useGoogleRecognition({ stream }: IUseGoogleRecognitionProps) {
+function useNaverRecognition({ stream }: IUseNaverRecognitionProps) {
 	const [transcript, setTranscript] = useState<string>('');
 	const [timerObject, setTimerObject] = useState<object>({});
 	const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
@@ -42,7 +43,7 @@ function useGoogleRecognition({ stream }: IUseGoogleRecognitionProps) {
 		if ([SystemStatus.READY, SystemStatus.WAIT].includes(systemStatus)) {
 			mediaRecorder.current = new MediaRecorder(stream);
 			mediaRecorder.current.onstop = () => {
-				const blob = new Blob(chunks, { type: 'audio/webm;codecs=opus' });
+				const blob = new Blob(chunks, { type: 'audio/mpeg-3' });
 				chunks.splice(0);
 				setAudioBlob(blob);
 			};
@@ -58,17 +59,18 @@ function useGoogleRecognition({ stream }: IUseGoogleRecognitionProps) {
 	}, [systemStatus]);
 
 	useEffect(() => {
-		if (systemStatus === SystemStatus.TRANSCRIBE)
+		if (systemStatus === SystemStatus.TRANSCRIBE) {
 			void (async () => {
 				if (audioBlob === null) return;
-				const blobBase64 = await blobToAudioBase64(audioBlob);
-				const script = await getGoogleTranscript(blobBase64);
+				const binaryString = await blobToBinary(audioBlob);
+				const script = await postNaverSpeechToText(binaryString);
 				setTranscript(script);
 				dispatch(setDialogueStateBypassPause(SystemStatus.GENERATE));
 			})();
+		}
 	}, [audioBlob]);
 
 	return { transcript };
 }
 
-export default useGoogleRecognition;
+export default useNaverRecognition;

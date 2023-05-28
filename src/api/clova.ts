@@ -1,15 +1,14 @@
-import { LANG, LANGUAGE } from '~/constants/setting';
 import { ServiceType } from '~/types/common';
-import { setValueOnLanguage } from '~/utils/common';
+import { getQueryString, setValueOnLanguage } from '~/utils/common';
 import { handleError } from '@utils/error';
 
-const headers = new Headers();
-headers.append('Content-Type', 'application/x-www-form-urlencoded');
-headers.append(
+const textToSpeechHeader = new Headers();
+textToSpeechHeader.append('Content-Type', 'application/x-www-form-urlencoded');
+textToSpeechHeader.append(
 	'X-NCP-APIGW-API-KEY-ID',
 	process.env.REACT_APP_NAVER_CLOUD_AI_ID_KEY || ''
 );
-headers.append(
+textToSpeechHeader.append(
 	'X-NCP-APIGW-API-KEY',
 	process.env.REACT_APP_NAVER_CLOUD_AI_SECRET_KEY || ''
 );
@@ -44,7 +43,7 @@ export async function postNaverTextToSpeech(text: string) {
 
 		const res = await fetch('/naver/tts', {
 			method: 'POST',
-			headers,
+			headers: textToSpeechHeader,
 			body: dataParam,
 		});
 
@@ -68,5 +67,48 @@ export async function postNaverTextToSpeech(text: string) {
 			origin: ServiceType.CLOVA_TTS,
 		});
 		return;
+	}
+}
+
+const speechToTextHeader = new Headers();
+speechToTextHeader.append('Content-Type', 'application/octet-stream');
+speechToTextHeader.append(
+	'X-NCP-APIGW-API-KEY-ID',
+	process.env.REACT_APP_NAVER_CLOUD_AI_ID_KEY || ''
+);
+speechToTextHeader.append(
+	'X-NCP-APIGW-API-KEY',
+	process.env.REACT_APP_NAVER_CLOUD_AI_SECRET_KEY || ''
+);
+
+const speechToTextQueries = {
+	lang: 'Kor',
+};
+
+interface INaverSpeechToTextResult {
+	text: string;
+}
+
+export async function postNaverSpeechToText(binaryString: Uint8Array) {
+	try {
+		const res = await fetch(
+			`/naver/stt?${getQueryString(speechToTextQueries)}`,
+			{
+				method: 'POST',
+				headers: speechToTextHeader,
+				body: binaryString,
+			}
+		);
+		const reader = res.body?.getReader();
+		const uint8res = (await reader?.read())?.value || new Uint8Array();
+		const result = new TextDecoder().decode(uint8res);
+
+		return (JSON.parse(result) as INaverSpeechToTextResult).text;
+	} catch (error) {
+		handleError({
+			message: (error as Error).message,
+			origin: ServiceType.CLOVA_STT,
+		});
+		return '';
 	}
 }

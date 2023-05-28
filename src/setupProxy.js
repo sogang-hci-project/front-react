@@ -21,4 +21,14 @@ module.exports = (app) => {
 			},
 		})
 	);
+	app.use(
+		'/naver/stt',
+		createProxyMiddleware({
+			target: 'https://naveropenapi.apigw.ntruss.com',
+			changeOrigin: true,
+			pathRewrite: {
+				'^/naver/stt': '/recog/v1/stt',
+			},
+		})
+	);
 };

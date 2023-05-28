@@ -30,16 +30,19 @@ import {
 	useAppSelector,
 	setDialogueState,
 } from '@states/store';
+import useNaverRecognition from '~/hooks/useNaverRecognition';
 
 const clickSound = new Audio('/sound/toggle.mp3');
 
 function useRecognition() {
-	if (isChrome) return useGoogleRecognition;
-	else if (isSafari) return useLocalRecognition;
-	else
-		return () => {
-			return { transcript: 'browser not supported' };
-		};
+	// if (isChrome) return useGoogleRecognition;
+	// if (isChrome) return useNaverRecognition;
+	// else if (isSafari) return useLocalRecognition;
+	// else
+	// 	return () => {
+	// 		return { transcript: 'browser not supported' };
+	// 	};
+	return useNaverRecognition;
 }
 
 function Interact() {
@@ -75,11 +78,10 @@ function Interact() {
 	}, [transcript]);
 
 	useEffect(() => {
-		console.log(userMessage, systemStatus);
+		console.log('[Message]: ', userMessage, '[Status]: ', systemStatus);
 		if (systemStatus === SystemStatus.GENERATE)
 			void answerUserDialogue(userMessage, setAgentMessage);
-		// if ([SystemStatus.WAIT].includes(systemStatus)) setUserMessage('');
-	}, [systemStatus, userMessage]);
+	}, [userMessage]);
 
 	useEffect(() => {
 		toggleSystemStatusOnVolume({

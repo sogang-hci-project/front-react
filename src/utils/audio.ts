@@ -120,3 +120,18 @@ export async function playTextToAudio(text: string) {
 	}
 	return;
 }
+
+export function blobToBinary(blob: Blob) {
+	return new Promise<Uint8Array>((resolve, reject) => {
+		const reader = new FileReader();
+		reader.onloadend = () => {
+			if (reader.readyState === FileReader.DONE) {
+				const data = new Uint8Array(reader.result as ArrayBuffer);
+				resolve(data);
+			} else {
+				reject(new Uint8Array());
+			}
+		};
+		reader.readAsArrayBuffer(blob);
+	});
+}
