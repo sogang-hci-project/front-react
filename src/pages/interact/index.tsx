@@ -19,18 +19,15 @@ import {
 } from '@components/interact';
 
 import useAudioStream from '@hooks/useAudioStream';
-import useGoogleRecognition from '@hooks/useGoogleRecognition';
-import useLocalRecognition from '~/hooks/useLocalRecognition';
 import { stopAudio, toggleSystemStatusOnVolume } from '@utils/audio';
 import { SystemStatus } from '~/types/common';
-import { isChrome, isSafari } from '@utils/common';
 import { answerUserDialogue } from '@utils/dialogue';
 import {
 	useAppDispatch,
 	useAppSelector,
 	setDialogueState,
 } from '@states/store';
-import useNaverRecognition from '~/hooks/useNaverRecognition';
+import useWhisperRecognition from '~/hooks/useWhisperRecognition';
 
 const clickSound = new Audio('/sound/toggle.mp3');
 
@@ -40,7 +37,7 @@ function Interact() {
 	const [showInputPopup, setShowInputPopup] = useState<boolean>(false);
 	const [isMute, setIsMute] = useState<boolean>(true);
 	const { volume: voiceVolume, stream: voiceStream } = useAudioStream();
-	const { transcript } = useNaverRecognition({ stream: voiceStream });
+	const { transcript } = useWhisperRecognition({ stream: voiceStream });
 
 	const systemStatus = useAppSelector((state) => state.dialogue.status);
 	const dispatch = useAppDispatch();

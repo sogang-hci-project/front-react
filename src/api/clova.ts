@@ -13,7 +13,7 @@ textToSpeechHeader.append(
 	process.env.REACT_APP_NAVER_CLOUD_AI_SECRET_KEY || ''
 );
 
-const textToSpeechVoice = setValueOnLanguage('nwontak', 'clara', '');
+const textToSpeechVoice = setValueOnLanguage('nwontak', 'clara', 'nwontak');
 
 const dataParam = new URLSearchParams();
 dataParam.append('speaker', textToSpeechVoice);

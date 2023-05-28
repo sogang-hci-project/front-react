@@ -1,5 +1,3 @@
-import { Configuration, OpenAIApi } from 'openai';
-import { LANG, LANGUAGE } from '../constants/setting';
 import { setValueOnLanguage } from '~/utils/common';
 import { handleError } from '@utils/error';
 import { ServiceType } from '~/types/common';
@@ -33,17 +31,11 @@ const context = {
 	previousAnswer: '',
 };
 
-const configuration = new Configuration({
-	organization: process.env.REACT_APP_OPEN_AI_ORGANIZATION_KEY,
-	apiKey: process.env.REACT_APP_OPEN_AI_API_KEY,
-});
-
 const promptBase = `You are the Pablo Picasso. You're performing visual thinking strategy education to person in front of you about your painting the Guernica. Reply to the person as a Pablo Picasso then give further questions. Person's opinion : `;
 const promptPostPosition = ' . Answer of Pablo Picasso: ';
 const prevQPrompt = ' . Previous Audience opinion: ';
 const prevAPrompt = ' . Previous Pablo Picasso Answer: ';
 
-const openai = new OpenAIApi(configuration);
 export async function requestChatCompletion(query: string) {
 	if (query.length === 0)
 		handleError({
@@ -86,5 +78,44 @@ export async function requestChatCompletion(query: string) {
 			origin: ServiceType.OPENAI,
 		});
 		return;
+	}
+}
+
+const whisperTranscriptForm = new FormData();
+const whisperPrompt = setValueOnLanguage(
+	'이것은 파블로 피카소와 그림 게르니카에 대한 대화입니다. 스페인 내전 과정에서 나타난 참혹함과 그것을 표현한 게르니카에 대해 다루고 있습니다.',
+	`This is a converation about the painting 'Guernica' with Pablo Picasso. It includes details about the gruesome reality of Spanish War and the artpiece 'Guernica' based on it`,
+	'이것은 파블로 피카소와 그림 게르니카에 대한 대화입니다. 스페인 내전 과정에서 나타난 참혹함과 그것을 표현한 게르니카에 대해 다루고 있습니다.'
+);
+
+whisperTranscriptForm.append('model', 'whisper-1');
+whisperTranscriptForm.append('prompt', whisperPrompt);
+
+interface IWhisperTranscript {
+	text: string;
+}
+
+export async function getWhisperTranscript(audioFile: File) {
+	whisperTranscriptForm.delete('file');
+	whisperTranscriptForm.append('file', audioFile);
+
+	try {
+		const res = await fetch('/openai/transcription', {
+			method: 'POST',
+			headers: {
+				Authorization: `Bearer ${process.env.REACT_APP_OPEN_AI_API_KEY || ''}`,
+			},
+			body: whisperTranscriptForm,
+		});
+		const reader = res.body?.getReader();
+		const uint8res = (await reader?.read())?.value || new Uint8Array();
+		const result = new TextDecoder().decode(uint8res);
+		return (JSON.parse(result) as IWhisperTranscript).text;
+	} catch (error) {
+		handleError({
+			message: (error as Error).message,
+			origin: ServiceType.OPENAI,
+		});
+		return '';
 	}
 }

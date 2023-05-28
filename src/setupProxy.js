@@ -31,4 +31,14 @@ module.exports = (app) => {
 			},
 		})
 	);
+	app.use(
+		'/openai/transcription',
+		createProxyMiddleware({
+			target: 'https://api.openai.com',
+			changeOrigin: true,
+			pathRewrite: {
+				'^/openai/transcription': '/v1/audio/transcriptions',
+			},
+		})
+	);
 };
