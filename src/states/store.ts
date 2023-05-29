@@ -6,10 +6,12 @@ import dialogueSlice, {
 	setStatusBypassPause,
 } from '~/states/slice/dialogueSlice';
 import { SystemStatus } from '~/types/common';
+import settingSlice from './slice/settingSlice';
 
 export const store = configureStore({
 	reducer: {
 		dialogue: dialogueSlice,
+		setting: settingSlice,
 	},
 });
 
@@ -22,4 +24,5 @@ export const setDialogueState = (status: SystemStatus) =>
 	store.dispatch(setStatus(status));
 export const setDialogueStateBypassPause = (status: SystemStatus) =>
 	store.dispatch(setStatusBypassPause(status));
-export const getDialogueState = () => store.getState().dialogue.status;
+export const getDialogueStatus = () => store.getState().dialogue.status;
+export const getSettingState = () => store.getState().setting;

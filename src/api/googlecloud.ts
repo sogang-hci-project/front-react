@@ -1,13 +1,14 @@
 import { ServiceType } from '~/types/common';
-import { LANG } from '../constants/setting';
 import { getQueryString, setValueOnLanguage } from '../utils/common';
 import { handleError } from '@utils/error';
+import { getSettingState } from '~/states/store';
+import { LANGUAGE } from '~/constants/setting';
 
 const transcriptConfig = {
 	encoding: 'WEBM_OPUS',
 	sampleRateHertz: 48000,
 	audioChannelCount: 1,
-	languageCode: LANG,
+	languageCode: LANGUAGE.KR,
 	enableWordTimeOffsets: false,
 };
 
@@ -21,11 +22,8 @@ const transcriptQueries = {
 
 const MAX_TRANS_LENGTH = 300000;
 
-const textToSpeechVoice = setValueOnLanguage(
-	'ko-KR-Standard-D',
-	'en-US-Neural2-J',
-	''
-);
+const textToSpeechVoice = () =>
+	setValueOnLanguage('ko-KR-Standard-D', 'en-US-Neural2-J', '');
 
 interface IGoogleTranscriptResponse {
 	requestId: string;
@@ -66,6 +64,9 @@ export async function getGoogleTranscript(blobString: string) {
 			message: 'Google STT input exceeds maximum length',
 			origin: ServiceType.GCLOUD_STT,
 		});
+
+	transcriptConfig.languageCode = getSettingState().language;
+
 	try {
 		const res = await fetch(
 			`https://speech.googleapis.com/v1/speech:recognize?${getQueryString(
@@ -100,6 +101,8 @@ export async function getGoogleTranscript(blobString: string) {
 }
 
 export async function getGoogleTextToSpeech(inputText: string) {
+	const langauge = getSettingState().language;
+
 	try {
 		const res = await fetch(
 			`https://texttospeech.googleapis.com/v1beta1/text:synthesize?${getQueryString(
@@ -113,7 +116,7 @@ export async function getGoogleTextToSpeech(inputText: string) {
 						text: inputText,
 					},
 					voice: {
-						languageCode: LANG,
+						languageCode: langauge,
 						name: textToSpeechVoice,
 						ssmlGender: 'MALE',
 					},

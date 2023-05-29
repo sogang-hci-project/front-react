@@ -3,12 +3,15 @@ import { getGoogleTextToSpeech } from '@api/googlecloud';
 import {
 	ACTIVATION_VOLUME,
 	DEACTIVATION_VOLUME,
-	LANG,
 	LANGUAGE,
 	VOICE_DEACTIVATION_TIME,
 } from '~/constants/setting';
 import { postNaverTextToSpeech } from '~/api/clova';
-import { getDialogueState, setDialogueStateBypassPause } from '~/states/store';
+import {
+	getDialogueStatus,
+	getSettingState,
+	setDialogueStateBypassPause,
+} from '~/states/store';
 
 interface ITimeoutRef {
 	current: null | NodeJS.Timeout;
@@ -47,7 +50,7 @@ export function toggleSystemStatusOnVolume({
 	isMute,
 }: IToggleVoiceArguments) {
 	if (isMute) return;
-	const systemStatus = getDialogueState();
+	const systemStatus = getDialogueStatus();
 	if (
 		voiceVolume > ACTIVATION_VOLUME &&
 		[SystemStatus.READY, SystemStatus.WAIT].includes(systemStatus)
@@ -108,11 +111,12 @@ export function base64ToAudioBlob(audioString: string) {
 }
 
 export async function playTextToAudio(text: string) {
-	if (LANG === LANGUAGE.KR) {
+	const language = getSettingState().language;
+	if (language === LANGUAGE.KR) {
 		const data = (await postNaverTextToSpeech(text)) || new Uint8Array();
 		const audioBlobUrl = unit8ArrayToUrl(data);
 		await playAudio(audioBlobUrl);
-	} else if (LANG === LANGUAGE.US) {
+	} else if (language === LANGUAGE.US) {
 		const audioString = (await getGoogleTextToSpeech(text)) || '';
 		const audioBlobUrl = base64ToAudioBlob(audioString);
 		await playAudio(audioBlobUrl);

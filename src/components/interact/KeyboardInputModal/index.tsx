@@ -6,7 +6,6 @@ import {
 	InputModal,
 	ModalButton,
 } from './style';
-import { LANG, LANGUAGE } from '~/constants/setting';
 import { setValueOnLanguage } from '~/utils/common';
 
 interface IKeyboardInputModal {

@@ -17,10 +17,7 @@ textToSpeechHeader.append(
 	process.env.REACT_APP_NAVER_CLOUD_AI_SECRET_KEY || ''
 );
 
-const textToSpeechVoice = setValueOnLanguage('nwontak', 'clara', 'nwontak');
-
 const dataParam = new URLSearchParams();
-dataParam.append('speaker', textToSpeechVoice);
 dataParam.append('volume', '0');
 dataParam.append('speed', '-1');
 dataParam.append('pitch', '0');
@@ -41,6 +38,10 @@ function concatenate(arrays: Uint8Array[]) {
 }
 
 export async function postNaverTextToSpeech(text: string) {
+	const textToSpeechVoice = setValueOnLanguage('nwontak', 'clara', 'nwontak');
+	dataParam.delete('speaker');
+	dataParam.append('speaker', textToSpeechVoice);
+
 	try {
 		dataParam.delete('text');
 		dataParam.append('text', text);

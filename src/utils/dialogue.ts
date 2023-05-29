@@ -1,9 +1,13 @@
 import { postPapagoTranslation } from '~/api/papago';
-import { LANG, LANGUAGE } from '~/constants/setting';
+import { LANGUAGE } from '~/constants/setting';
 import { requestChatCompletion } from '@api/openai';
 import { SystemStatus } from '~/types/common';
 import { playTextToAudio } from './audio';
-import { getDialogueState, setDialogueStateBypassPause } from '~/states/store';
+import {
+	getDialogueStatus,
+	getSettingState,
+	setDialogueStateBypassPause,
+} from '~/states/store';
 
 async function generateAgentDialogue(question: string) {
 	const res = await requestChatCompletion(question);
@@ -16,9 +20,11 @@ export async function answerUserDialogue(
 	setAgentMessage: React.Dispatch<React.SetStateAction<string>>
 ) {
 	console.log('user question: ', question);
-	const systemStatus = getDialogueState();
+	const systemStatus = getDialogueStatus();
+	const langauge = getSettingState().language;
+	console.log(langauge);
 	if (systemStatus !== SystemStatus.GENERATE || question.length === 0) return;
-	if (LANG === LANGUAGE.KR) {
+	if (langauge === LANGUAGE.KR) {
 		const translatedQuestion = await postPapagoTranslation(
 			question,
 			LANGUAGE.KR,
@@ -35,7 +41,7 @@ export async function answerUserDialogue(
 		setDialogueStateBypassPause(SystemStatus.SPEAK);
 		await playTextToAudio(translatedAnswer);
 		setDialogueStateBypassPause(SystemStatus.WAIT);
-	} else if (LANG === LANGUAGE.US) {
+	} else if (langauge === LANGUAGE.US) {
 		const answer = await generateAgentDialogue(question);
 		setAgentMessage(answer);
 		setDialogueStateBypassPause(SystemStatus.SPEAK);

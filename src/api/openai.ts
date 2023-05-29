@@ -87,22 +87,24 @@ const whisperRequestUrl = setValueOnEnvironment(
 	'https://api.openai.com'
 );
 const whisperTranscriptForm = new FormData();
-const whisperPrompt = setValueOnLanguage(
-	'이것은 파블로 피카소와 그림 게르니카에 대한 대화입니다. 스페인 내전 과정에서 나타난 참혹함과 그것을 표현한 게르니카에 대해 다루고 있습니다.',
-	`This is a converation about the painting 'Guernica' with Pablo Picasso. It includes details about the gruesome reality of Spanish War and the artpiece 'Guernica' based on it`,
-	'이것은 파블로 피카소와 그림 게르니카에 대한 대화입니다. 스페인 내전 과정에서 나타난 참혹함과 그것을 표현한 게르니카에 대해 다루고 있습니다.'
-);
 
 whisperTranscriptForm.append('model', 'whisper-1');
-whisperTranscriptForm.append('prompt', whisperPrompt);
 
 interface IWhisperTranscript {
 	text: string;
 }
 
 export async function getWhisperTranscript(audioFile: File) {
+	const whisperPrompt = setValueOnLanguage(
+		'이것은 파블로 피카소와 그림 게르니카에 대한 대화입니다. 스페인 내전 과정에서 나타난 참혹함과 그것을 표현한 게르니카에 대해 다루고 있습니다.',
+		`This is a converation about the painting 'Guernica' with Pablo Picasso. It includes details about the gruesome reality of Spanish War and the artpiece 'Guernica' based on it`,
+		'이것은 파블로 피카소와 그림 게르니카에 대한 대화입니다. 스페인 내전 과정에서 나타난 참혹함과 그것을 표현한 게르니카에 대해 다루고 있습니다.'
+	);
+
 	whisperTranscriptForm.delete('file');
 	whisperTranscriptForm.append('file', audioFile);
+	whisperTranscriptForm.delete('prompt');
+	whisperTranscriptForm.append('prompt', whisperPrompt);
 
 	try {
 		const res = await fetch(`${whisperRequestUrl}/v1/audio/transcriptions`, {

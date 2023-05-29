@@ -8,7 +8,8 @@ import {
 	UserMessageWrapper,
 } from './style';
 import { SystemStatus } from '~/types/common';
-import { LANG, LANGUAGE } from '~/constants/setting';
+import { LANGUAGE } from '~/constants/setting';
+import { useAppSelector } from '~/states/store';
 
 const onGenerateDot = (
 	<>
@@ -26,8 +27,10 @@ interface IUserMessageProps {
 }
 
 function UserMessage({ message, systemStatus }: IUserMessageProps) {
+	const language = useAppSelector((state) => state.setting.language);
+
 	const placeHolderMessage = useMemo(() => {
-		if (LANG === LANGUAGE.KR) {
+		if (language === LANGUAGE.KR) {
 			if (systemStatus === SystemStatus.READY) {
 				return '말하여 이야기에 참여하세요';
 			} else if (systemStatus === SystemStatus.WAIT) {
@@ -40,7 +43,7 @@ function UserMessage({ message, systemStatus }: IUserMessageProps) {
 				return <DotContainer>{onGenerateDot}</DotContainer>;
 			}
 			return '에러';
-		} else if (LANG === LANGUAGE.US) {
+		} else if (language === LANGUAGE.US) {
 			if (systemStatus === SystemStatus.READY) {
 				return 'Engage in conversation by speaking';
 			} else if (systemStatus === SystemStatus.WAIT) {

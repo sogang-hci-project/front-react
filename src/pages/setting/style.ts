@@ -76,7 +76,7 @@ export const SettingItem = styled('div')`
 `;
 
 export const SettingItemTitle = styled('div')`
-	width: 50%;
+	width: 70%;
 `;
 
 export const SettingItemBody = styled('div')`
@@ -88,7 +88,7 @@ export const SettingItemValue = styled('div')`
 	display: flex;
 	align-items: center;
 	justify-content: flex-end;
-	width: 40%;
+	width: 20%;
 `;
 
 export const SettingDropdownSelect = styled('select')`
@@ -99,7 +99,7 @@ export const SettingDropdownSelect = styled('select')`
 	text-align: center;
 	border-radius: 2rem;
 	font-size: 1rem;
-	width: 5rem;
+	width: 100%;
 `;
 
 export const SettingDropdownOption = styled('option')``;

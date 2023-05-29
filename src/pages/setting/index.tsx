@@ -17,16 +17,39 @@ import {
 import { RxCaretLeft } from 'react-icons/rx';
 import { setValueOnLanguage } from '~/utils/common';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import { LANGUAGE } from '~/constants/setting';
-
-const toolBarName = setValueOnLanguage('설정', 'Setting', 'Setting');
+import { useState, useEffect } from 'react';
+import { LANGUAGE, setting } from '~/constants/setting';
+import { useAppDispatch, useAppSelector } from '~/states/store';
+import { setLanguage } from '~/states/slice/settingSlice';
 
 function Setting() {
-	const [language, setLanguage] = useState<LANGUAGE>(LANGUAGE.KR);
 	const [activation, setActivation] = useState<number>(60);
 	const [deactivation, setDeactivation] = useState<number>(60);
 	const [actInterval, setActInterval] = useState<number>(0);
+	const toolBarName = setValueOnLanguage('설정', 'Setting', 'Setting');
+	const settingName = {
+		langaugeCode: setValueOnLanguage('언어', 'Language', 'Language'),
+		english: setValueOnLanguage('영어', 'English', 'English'),
+		korean: setValueOnLanguage('한국어', 'Korean', 'Korean'),
+		activation: setValueOnLanguage(
+			'음성 활성화 기준',
+			'Recording Activation Threshold',
+			'Recording Activation Threshold'
+		),
+		deactivation: setValueOnLanguage(
+			'음성 비활성화 기준',
+			'Recording Deactivation Threshold',
+			'Recording Deactivation Threshold'
+		),
+		interval: setValueOnLanguage(
+			'음성 활성화 간격',
+			'Recording Activation Interval',
+			'Recording Activation Interval'
+		),
+	};
+
+	const dispatch = useAppDispatch();
+	const language = useAppSelector((state) => state.setting.language);
 
 	const navigate = useNavigate();
 	return (
@@ -47,18 +70,25 @@ function Setting() {
 				</ToolbarContainer>
 				<SettingContainer>
 					<SettingItem>
-						<SettingItemTitle>언어</SettingItemTitle>
+						<SettingItemTitle>{settingName.langaugeCode}</SettingItemTitle>
 						<SettingItemValue>
-							<SettingDropdownSelect>
-								<SettingDropdownOption value="영어">영어</SettingDropdownOption>
-								<SettingDropdownOption value="한국어">
-									한국어
+							<SettingDropdownSelect
+								value={language}
+								onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
+									dispatch(setLanguage(event.target.value as LANGUAGE));
+								}}
+							>
+								<SettingDropdownOption value={LANGUAGE.US}>
+									{settingName.english}
+								</SettingDropdownOption>
+								<SettingDropdownOption value={LANGUAGE.KR}>
+									{settingName.korean}
 								</SettingDropdownOption>
 							</SettingDropdownSelect>
 						</SettingItemValue>
 					</SettingItem>
 					<SettingItem>
-						<SettingItemTitle>음성 활성화 민감도</SettingItemTitle>
+						<SettingItemTitle>{settingName.activation}</SettingItemTitle>
 						<SettingItemValue>
 							<SettingTextInput />
 						</SettingItemValue>
@@ -72,7 +102,7 @@ function Setting() {
 						</SettingItemBody>
 					</SettingItem>
 					<SettingItem>
-						<SettingItemTitle>음성 비활성화 민감도</SettingItemTitle>
+						<SettingItemTitle>{settingName.deactivation}</SettingItemTitle>
 						<SettingItemValue>
 							<SettingTextInput />
 						</SettingItemValue>
@@ -86,7 +116,7 @@ function Setting() {
 						</SettingItemBody>
 					</SettingItem>
 					<SettingItem>
-						<SettingItemTitle>음성 활성화 간격</SettingItemTitle>
+						<SettingItemTitle>{settingName.interval}</SettingItemTitle>
 						<SettingItemValue>
 							<SettingTextInput />
 						</SettingItemValue>
