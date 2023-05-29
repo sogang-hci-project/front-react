@@ -8,9 +8,10 @@ import {
 import { RxAccessibility, RxMixerVertical } from 'react-icons/rx';
 import { useNavigate } from 'react-router-dom';
 import { PAINTING_NAME, PAINTER_NAME } from '~/constants/setting';
+import useAppNavigate from '~/hooks/useAppNavigate';
 
 function Toolbar() {
-	const navigate = useNavigate();
+	const navigate = useAppNavigate();
 
 	return (
 		<ToolbarWrapper>
