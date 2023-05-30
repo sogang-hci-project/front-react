@@ -1,6 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
-import { LANGUAGE, SystemStatus } from '~/types/common';
 
 interface ISessionState {
 	paintingNameKR: string;

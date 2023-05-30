@@ -19,7 +19,7 @@ import {
 import { RxCaretLeft, RxEnter } from 'react-icons/rx';
 import { setValueOnLanguage } from '~/utils/common';
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { LANGUAGE } from '~/types/common';
 import { useAppDispatch, useAppSelector } from '~/states/store';
 import {

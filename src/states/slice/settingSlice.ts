@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { LANGUAGE, SystemStatus } from '~/types/common';
+import { LANGUAGE } from '~/types/common';
 
 interface ISettingState {
 	language: LANGUAGE;
