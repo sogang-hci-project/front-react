@@ -6,12 +6,24 @@ import {
 	ToolbarWrapper,
 } from './style';
 import { RxAccessibility, RxMixerVertical } from 'react-icons/rx';
-import { useNavigate } from 'react-router-dom';
-import { PAINTING_NAME, PAINTER_NAME } from '~/constants/setting';
 import useAppNavigate from '~/hooks/useAppNavigate';
+import { useAppSelector } from '~/states/store';
+import { LANGUAGE } from '~/types/common';
 
 function Toolbar() {
 	const navigate = useAppNavigate();
+	const [painter, painting] = useAppSelector((state) => {
+		if (state.setting.language === LANGUAGE.KR)
+			return [
+				state.session.painterNameKR + ' 작',
+				state.session.paintingNameKR,
+			];
+		else
+			return [
+				'by ' + state.session.painterNameEN,
+				state.session.paintingNameEN,
+			];
+	});
 
 	return (
 		<ToolbarWrapper>
@@ -19,8 +31,8 @@ function Toolbar() {
 				<RxAccessibility />
 			</ToolbarButton>
 			<TitleWrapper>
-				<PaintingName>{PAINTING_NAME}</PaintingName>
-				<PainterName>{PAINTER_NAME}</PainterName>
+				<PaintingName>{painting}</PaintingName>
+				<PainterName>{painter}</PainterName>
 			</TitleWrapper>
 			<ToolbarButton onClick={() => navigate('/setting')}>
 				<RxMixerVertical />

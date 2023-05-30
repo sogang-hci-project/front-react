@@ -21,7 +21,6 @@ export async function answerUserDialogue(
 	console.log('user question: ', question);
 	const systemStatus = getDialogueStatus();
 	const langauge = getSettingState().language;
-	console.log(langauge);
 	if (systemStatus !== SystemStatus.GENERATE || question.length === 0) return;
 	if (langauge === LANGUAGE.KR) {
 		const translatedQuestion = await postPapagoTranslation(

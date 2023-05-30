@@ -7,11 +7,13 @@ import dialogueSlice, {
 } from '~/states/slice/dialogueSlice';
 import { SystemStatus } from '~/types/common';
 import settingSlice from './slice/settingSlice';
+import sessionSlice from './slice/sessionSlice';
 
 export const store = configureStore({
 	reducer: {
 		dialogue: dialogueSlice,
 		setting: settingSlice,
+		session: sessionSlice,
 	},
 });
 
