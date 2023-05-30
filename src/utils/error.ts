@@ -55,6 +55,7 @@ export function handleError({ message, origin }: IHandleError) {
 		case ServiceType.LOCAL_STT:
 		case ServiceType.OPENAI:
 		case ServiceType.PAPAGO_TRANS:
+		case ServiceType.BACKEND:
 			void playTextToAudio(errorReply()).then(() => {
 				setDialogueState(SystemStatus.READY);
 			});

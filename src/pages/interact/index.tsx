@@ -28,6 +28,7 @@ import {
 	setDialogueState,
 } from '@states/store';
 import useWhisperRecognition from '~/hooks/useWhisperRecognition';
+import { postBackendAnswer } from '~/api/backend';
 
 const clickSound = new Audio('/sound/toggle.mp3');
 
@@ -47,7 +48,7 @@ function Interact() {
 		dispatch(setDialogueState(SystemStatus.GENERATE));
 	}
 
-	const handlePlayButton = () => {
+	function handlePlayButton() {
 		void clickSound.play();
 		if (systemStatus === SystemStatus.PAUSE) {
 			dispatch(setDialogueState(SystemStatus.READY));
@@ -56,7 +57,11 @@ function Interact() {
 			setUserMessage('');
 			stopAudio();
 		}
-	};
+	}
+
+	useEffect(() => {
+		void postBackendAnswer('test');
+	}, []);
 
 	useEffect(() => {
 		if (transcript.length === 0) return;
