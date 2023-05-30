@@ -1,4 +1,4 @@
-import { LANGUAGE, setting } from '@constants/setting';
+import { LANGUAGE } from '~/types/common';
 import { getSettingState } from '~/states/store';
 
 export function getQueryString(queries: { [key: string]: string }): string {

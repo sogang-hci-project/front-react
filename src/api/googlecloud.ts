@@ -1,9 +1,7 @@
-import { ServiceType } from '~/types/common';
+import { ServiceType, LANGUAGE } from '~/types/common';
 import { getQueryString, setValueOnLanguage } from '../utils/common';
 import { handleError } from '@utils/error';
 import { getSettingState } from '~/states/store';
-import { LANGUAGE } from '~/constants/setting';
-
 const transcriptConfig = {
 	encoding: 'WEBM_OPUS',
 	sampleRateHertz: 48000,

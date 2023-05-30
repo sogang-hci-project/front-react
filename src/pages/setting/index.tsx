@@ -13,19 +13,35 @@ import {
 	SettingDropdownOption,
 	SettingSliderInput,
 	SettingTextInput,
+	SettingButtonContainer,
+	SettingButton,
 } from './style';
-import { RxCaretLeft } from 'react-icons/rx';
+import { RxCaretLeft, RxEnter } from 'react-icons/rx';
 import { setValueOnLanguage } from '~/utils/common';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { LANGUAGE, setting } from '~/constants/setting';
+import { LANGUAGE } from '~/types/common';
 import { useAppDispatch, useAppSelector } from '~/states/store';
-import { setLanguage } from '~/states/slice/settingSlice';
+import {
+	setLanguage,
+	setVoiceActivationVolume,
+	setVoiceDeactivationInterval,
+	setVoiceDeactivationVolume,
+} from '~/states/slice/settingSlice';
 
 function Setting() {
-	const [activation, setActivation] = useState<number>(60);
-	const [deactivation, setDeactivation] = useState<number>(60);
-	const [actInterval, setActInterval] = useState<number>(0);
+	const dispatch = useAppDispatch();
+	const [language, va, vd, vdi] = useAppSelector((state) => [
+		state.setting.language,
+		state.setting.voiceActivationVolume,
+		state.setting.voiceDeactivationVolume,
+		state.setting.voiceDeacitvationInterval,
+	]);
+	const navigate = useNavigate();
+
+	const [activation, setActivation] = useState<number>(va);
+	const [deactivation, setDeactivation] = useState<number>(vd);
+	const [actInterval, setActInterval] = useState<number>(vdi);
 	const toolBarName = setValueOnLanguage('설정', 'Setting', 'Setting');
 	const settingName = {
 		langaugeCode: setValueOnLanguage('언어', 'Language', 'Language'),
@@ -48,10 +64,13 @@ function Setting() {
 		),
 	};
 
-	const dispatch = useAppDispatch();
-	const language = useAppSelector((state) => state.setting.language);
+	const handleApplySetting = () => {
+		dispatch(setVoiceActivationVolume(activation));
+		dispatch(setVoiceDeactivationVolume(deactivation));
+		dispatch(setVoiceDeactivationInterval(actInterval));
+		navigate('/interact');
+	};
 
-	const navigate = useNavigate();
 	return (
 		<Container>
 			<Viewport>
@@ -90,46 +109,60 @@ function Setting() {
 					<SettingItem>
 						<SettingItemTitle>{settingName.activation}</SettingItemTitle>
 						<SettingItemValue>
-							<SettingTextInput />
+							<SettingTextInput value={activation} disabled />
 						</SettingItemValue>
 						<SettingItemBody>
 							<SettingSliderInput
 								type="range"
 								min="1"
 								max="100"
-								// value="50"
+								value={activation}
+								onChange={(e) => {
+									setActivation(parseInt(e.target.value));
+								}}
 							/>
 						</SettingItemBody>
 					</SettingItem>
 					<SettingItem>
 						<SettingItemTitle>{settingName.deactivation}</SettingItemTitle>
 						<SettingItemValue>
-							<SettingTextInput />
+							<SettingTextInput value={deactivation} disabled />
 						</SettingItemValue>
 						<SettingItemBody>
 							<SettingSliderInput
 								type="range"
 								min="1"
 								max="100"
-								// value="50"
+								value={deactivation}
+								onChange={(e) => {
+									setDeactivation(parseInt(e.target.value));
+								}}
 							/>
 						</SettingItemBody>
 					</SettingItem>
 					<SettingItem>
 						<SettingItemTitle>{settingName.interval}</SettingItemTitle>
 						<SettingItemValue>
-							<SettingTextInput />
+							<SettingTextInput value={actInterval} disabled />
 						</SettingItemValue>
 						<SettingItemBody>
 							<SettingSliderInput
 								type="range"
-								min="1"
-								max="100"
-								// value="50"
+								min="200"
+								max="2000"
+								value={actInterval}
+								onChange={(e) => {
+									setActInterval(parseInt(e.target.value));
+								}}
 							/>
 						</SettingItemBody>
 					</SettingItem>
 				</SettingContainer>
+				<SettingButtonContainer>
+					<SettingButton onClick={handleApplySetting}>
+						<RxEnter />
+					</SettingButton>
+				</SettingButtonContainer>
 			</Viewport>
 		</Container>
 	);

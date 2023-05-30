@@ -1,7 +1,6 @@
 import { postPapagoTranslation } from '~/api/papago';
-import { LANGUAGE } from '~/constants/setting';
+import { LANGUAGE, SystemStatus } from '~/types/common';
 import { requestChatCompletion } from '@api/openai';
-import { SystemStatus } from '~/types/common';
 import { playTextToAudio } from './audio';
 import {
 	getDialogueStatus,

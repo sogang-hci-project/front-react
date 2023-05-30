@@ -1,18 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { LANGUAGE, setting } from '~/constants/setting';
-import { SystemStatus } from '~/types/common';
+import { LANGUAGE, SystemStatus } from '~/types/common';
 
 interface ISettingState {
 	language: LANGUAGE;
 	voiceActivationVolume: number;
 	voiceDeactivationVolume: number;
 	voiceDeacitvationInterval: number;
-}
-
-interface ISetSettingRequest {
-	key: string;
-	value: any;
 }
 
 const initialState: ISettingState = {

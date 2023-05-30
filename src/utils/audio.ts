@@ -1,11 +1,5 @@
-import { SystemStatus } from '~/types/common';
+import { SystemStatus, LANGUAGE } from '~/types/common';
 import { getGoogleTextToSpeech } from '@api/googlecloud';
-import {
-	ACTIVATION_VOLUME,
-	DEACTIVATION_VOLUME,
-	LANGUAGE,
-	VOICE_DEACTIVATION_TIME,
-} from '~/constants/setting';
 import { postNaverTextToSpeech } from '~/api/clova';
 import {
 	getDialogueStatus,
@@ -51,6 +45,12 @@ export function toggleSystemStatusOnVolume({
 }: IToggleVoiceArguments) {
 	if (isMute) return;
 	const systemStatus = getDialogueStatus();
+	const settingState = getSettingState();
+	const [ACTIVATION_VOLUME, DEACTIVATION_VOLUME, VOICE_DEACTIVATION_TIME] = [
+		settingState.voiceActivationVolume,
+		settingState.voiceDeactivationVolume,
+		settingState.voiceDeacitvationInterval,
+	];
 	if (
 		voiceVolume > ACTIVATION_VOLUME &&
 		[SystemStatus.READY, SystemStatus.WAIT].includes(systemStatus)

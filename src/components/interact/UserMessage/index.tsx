@@ -7,8 +7,7 @@ import {
 	PlaceHolder,
 	UserMessageWrapper,
 } from './style';
-import { SystemStatus } from '~/types/common';
-import { LANGUAGE } from '~/constants/setting';
+import { SystemStatus, LANGUAGE } from '~/types/common';
 import { useAppSelector } from '~/states/store';
 
 const onGenerateDot = (

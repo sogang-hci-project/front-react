@@ -137,3 +137,35 @@ export const SettingTextInput = styled('input')`
 	border-radius: 2rem;
 	font-size: 1rem;
 `;
+
+export const SettingButtonContainer = styled('div')`
+	height: 6rem;
+	width: 100%;
+	padding: 2rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 1rem;
+`;
+
+export const SettingButton = styled('button')`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex: 1;
+
+	height: 4rem;
+	background-color: white;
+	border: 1px solid black;
+	font-size: 1.2rem;
+	border-radius: 2rem;
+
+	border: 1px solid rgba(0, 0, 0, 0.3);
+	box-shadow: 0 0px 2px 1px rgba(0, 0, 0, 0.1);
+
+	-webkit-transition-duration: 0.4s;
+	transition-duration: 0.4s;
+	:active {
+		background-color: rgba(220, 220, 220, 1);
+	}
+`;

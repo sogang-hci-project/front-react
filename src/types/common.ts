@@ -18,3 +18,8 @@ export enum ServiceType {
 	PAPAGO_TRANS = 'PAPAGO_TRANS',
 	LOCAL_STT = 'LOCAL_STT',
 }
+
+export enum LANGUAGE {
+	US = 'en-US',
+	KR = 'ko-KR',
+}

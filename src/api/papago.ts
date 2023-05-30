@@ -1,5 +1,4 @@
-import { LANGUAGE } from '~/constants/setting';
-import { ServiceType } from '~/types/common';
+import { LANGUAGE, ServiceType } from '~/types/common';
 import { handleError } from '@utils/error';
 import { setValueOnEnvironment } from '~/utils/common';
 
