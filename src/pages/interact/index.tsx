@@ -21,14 +21,18 @@ import {
 import useAudioStream from '@hooks/useAudioStream';
 import { stopAudio, toggleSystemStatusOnVolume } from '@utils/audio';
 import { SystemStatus } from '~/types/common';
-import { answerUserDialogue } from '@utils/dialogue';
+import {
+	answerUserDialogue,
+	progressDialogue,
+	startDialogue,
+} from '@utils/dialogue';
 import {
 	useAppDispatch,
 	useAppSelector,
 	setDialogueState,
 } from '@states/store';
 import useWhisperRecognition from '~/hooks/useWhisperRecognition';
-import { postBackendAnswer } from '~/api/backend';
+import { getSession, startSession } from '~/api/backend';
 
 const clickSound = new Audio('/sound/toggle.mp3');
 
@@ -51,7 +55,9 @@ function Interact() {
 	function handlePlayButton() {
 		void clickSound.play();
 		if (systemStatus === SystemStatus.PAUSE) {
-			dispatch(setDialogueState(SystemStatus.READY));
+			void startSession().then((message) => {
+				void startDialogue(message, setAgentMessage);
+			});
 		} else {
 			dispatch(setDialogueState(SystemStatus.PAUSE));
 			setUserMessage('');
@@ -60,7 +66,7 @@ function Interact() {
 	}
 
 	useEffect(() => {
-		void postBackendAnswer('test');
+		void getSession();
 	}, []);
 
 	useEffect(() => {
@@ -71,7 +77,7 @@ function Interact() {
 	useEffect(() => {
 		console.log('[Message]: ', userMessage, '[Status]: ', systemStatus);
 		if (systemStatus === SystemStatus.GENERATE)
-			void answerUserDialogue(userMessage, setAgentMessage).then(() => {
+			void progressDialogue(userMessage, setAgentMessage).then(() => {
 				setUserMessage('');
 			});
 	}, [userMessage]);

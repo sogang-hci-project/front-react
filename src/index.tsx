@@ -11,11 +11,8 @@ import { Global } from '@emotion/react';
 import { Provider } from 'react-redux';
 import { store } from '~/states/store';
 import Accessibility from './pages/accessbility';
-import { getCookie } from './api/backend';
 
 const root = createRoot(document.getElementById('root') as HTMLElement);
-
-void getCookie();
 
 const router = createBrowserRouter([
 	{ path: '/', element: <App /> },

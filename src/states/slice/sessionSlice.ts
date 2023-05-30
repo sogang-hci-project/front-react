@@ -7,6 +7,7 @@ interface ISessionState {
 	painterNameKR: string;
 	painterNameEN: string;
 	stage: string;
+	id: string;
 }
 
 const initialState: ISessionState = {
@@ -14,7 +15,8 @@ const initialState: ISessionState = {
 	paintingNameEN: 'Guernica',
 	painterNameKR: '파블로 피카소',
 	painterNameEN: 'Pablo Picasso',
-	stage: '/session/greeting',
+	stage: '',
+	id: '',
 };
 
 const sessionSlice = createSlice({
@@ -24,9 +26,12 @@ const sessionSlice = createSlice({
 		setStage: (state, action: PayloadAction<string>) => {
 			state.stage = action.payload;
 		},
+		setId: (state, action: PayloadAction<string>) => {
+			state.id = action.payload;
+		},
 	},
 });
 
-export const { setStage } = sessionSlice.actions;
+export const { setStage, setId } = sessionSlice.actions;
 
 export default sessionSlice.reducer;
