@@ -33,34 +33,39 @@ import {
 } from '@states/store';
 import useWhisperRecognition from '~/hooks/useWhisperRecognition';
 import { getSession, startSession } from '~/api/backend';
+import { setUserMesasge } from '~/states/slice/dialogueSlice';
 
 const clickSound = new Audio('/sound/toggle.mp3');
 
 function Interact() {
-	const [userMessage, setUserMessage] = useState<string>('');
 	const [agentMessage, setAgentMessage] = useState<string>('');
 	const [showInputPopup, setShowInputPopup] = useState<boolean>(false);
 	const [isMute, setIsMute] = useState<boolean>(true);
 	const { volume: voiceVolume, stream: voiceStream } = useAudioStream();
-	const { transcript } = useWhisperRecognition({ stream: voiceStream });
+	useWhisperRecognition({ stream: voiceStream });
 
-	const systemStatus = useAppSelector((state) => state.dialogue.status);
+	const [systemStatus, userMessage] = useAppSelector((state) => [
+		state.dialogue.status,
+		state.dialogue.userMessage,
+	]);
 	const dispatch = useAppDispatch();
 
 	function handleKeyboardSubmit(text: string) {
-		setUserMessage(text);
+		dispatch(setUserMesasge(text));
 		dispatch(setDialogueState(SystemStatus.GENERATE));
 	}
 
 	function handlePlayButton() {
 		void clickSound.play();
 		if (systemStatus === SystemStatus.PAUSE) {
+			// [DEPRECATED]
+			// dispatch(setDialogueState(SystemStatus.READY));
 			void startSession().then((message) => {
 				void startDialogue(message, setAgentMessage);
 			});
 		} else {
+			dispatch(setUserMesasge(''));
 			dispatch(setDialogueState(SystemStatus.PAUSE));
-			setUserMessage('');
 			stopAudio();
 		}
 	}
@@ -70,17 +75,15 @@ function Interact() {
 	}, []);
 
 	useEffect(() => {
-		if (transcript.length === 0) return;
-		setUserMessage(transcript);
-	}, [transcript]);
-
-	useEffect(() => {
 		console.log('[Message]: ', userMessage, '[Status]: ', systemStatus);
 		if (systemStatus === SystemStatus.GENERATE)
 			void progressDialogue(userMessage, setAgentMessage).then(() => {
-				setUserMessage('');
+				dispatch(setUserMesasge(''));
 			});
-	}, [userMessage]);
+		// [DEPRECATED]
+		// if (systemStatus === SystemStatus.GENERATE)
+		// 	void answerUserDialogue(userMessage, setAgentMessage);
+	}, [systemStatus]);
 
 	useEffect(() => {
 		toggleSystemStatusOnVolume({

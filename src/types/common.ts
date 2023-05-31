@@ -18,6 +18,7 @@ export enum ServiceType {
 	PAPAGO_TRANS = 'PAPAGO_TRANS',
 	LOCAL_STT = 'LOCAL_STT',
 	BACKEND = 'BACKEND',
+	BACKEND_INIT = 'BACKEND_INIT',
 }
 
 export enum LANGUAGE {

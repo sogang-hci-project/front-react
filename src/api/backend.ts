@@ -49,11 +49,16 @@ export async function startSession() {
 		const res = await axios.get(`${backendApiUrl}/api/v1/session/pre`, {
 			params: { sessionID: sessionId },
 		});
+		console.log(res);
 		const data = res.data as IStartSessionResponse;
 		setSessionStage(data.nextStage);
 		return data.contents.agent;
 	} catch (error) {
 		console.error(error);
+		handleError({
+			message: 'start session error',
+			origin: ServiceType.BACKEND_INIT,
+		});
 		return '';
 	}
 }
@@ -108,6 +113,10 @@ export async function progressSession(message: string) {
 		return agentMessage.join('.');
 	} catch (error) {
 		console.error(error);
+		handleError({
+			message: 'start session error',
+			origin: ServiceType.BACKEND,
+		});
 		return '';
 	}
 }

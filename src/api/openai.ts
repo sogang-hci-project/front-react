@@ -24,7 +24,7 @@ interface IChoice {
 }
 
 const MAX_QUERY_COUNT = 100;
-const MAX_TOKEN_COUNT = setValueOnLanguage(64, 64, 64);
+const MAX_TOKEN_COUNT = setValueOnLanguage(5, 5, 5);
 
 const context = {
 	previousQuestion: '',
