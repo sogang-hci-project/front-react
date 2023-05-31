@@ -97,20 +97,18 @@ export async function progressSession(message: string) {
 
 		const urlParams = new URLSearchParams(data.nextStage);
 		const isAdditional = urlParams.get('additional');
-		const gotQuiz =
-			data.contents?.quiz !== 'quiz none' && data.contents?.quiz != undefined;
 		if (data.contents.answer) {
 			agentMessage.push(data.contents.answer || '');
 		} else {
 			agentMessage.push(data.contents.agent);
 		}
-		if (gotQuiz) {
+		if (data.contents.quiz) {
 			agentMessage.push(data.contents.quiz || '');
 		} else {
 			agentMessage.push(data.VTS_QUESTION || '');
 		}
 		setSessionStage(data.nextStage);
-		return agentMessage.join('.');
+		return agentMessage.join('. ');
 	} catch (error) {
 		console.error(error);
 		handleError({
