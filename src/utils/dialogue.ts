@@ -57,7 +57,6 @@ export async function startDialogue(
 	message: string,
 	setAgentMessage: React.Dispatch<React.SetStateAction<string>>
 ) {
-	if (message.length === 0) return;
 	const langauge = getSettingState().language;
 	if (langauge === LANGUAGE.KR) {
 		const translatedMessage = await postPapagoTranslation(
@@ -83,7 +82,7 @@ export async function progressDialogue(
 	console.log('user message: ', message);
 	const systemStatus = getDialogueStatus();
 	const langauge = getSettingState().language;
-	if (systemStatus !== SystemStatus.GENERATE || message.length === 0) return;
+	if (systemStatus !== SystemStatus.GENERATE) return;
 	if (langauge === LANGUAGE.KR) {
 		const translatedMessage = await postPapagoTranslation(
 			message,

@@ -37,6 +37,8 @@ import { setUserMesasge } from '~/states/slice/dialogueSlice';
 
 const clickSound = new Audio('/sound/toggle.mp3');
 
+void getSession();
+
 function Interact() {
 	const [agentMessage, setAgentMessage] = useState<string>('');
 	const [showInputPopup, setShowInputPopup] = useState<boolean>(false);
@@ -69,11 +71,6 @@ function Interact() {
 			stopAudio();
 		}
 	}
-
-	useEffect(() => {
-		void getSession();
-	}, []);
-
 	useEffect(() => {
 		console.log('[Message]: ', userMessage, '[Status]: ', systemStatus);
 		if (systemStatus === SystemStatus.GENERATE)

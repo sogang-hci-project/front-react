@@ -28,6 +28,7 @@ export async function getSession() {
 		const data = res.data as IGetSessionDataResponse;
 		setSessionId(data.sessionID);
 		setSessionStage(data.nextStage);
+		console.log(data);
 	} catch (error) {
 		alert('Session initialization failed, reload the page');
 		console.error(error);
@@ -93,12 +94,14 @@ export async function progressSession(message: string) {
 		);
 
 		const data = res.data as ISessionDataResponse;
-		console.log(data);
+		const regex = /Question:.*?/;
 
 		const urlParams = new URLSearchParams(data.nextStage);
 		const isAdditional = urlParams.get('additional');
 		if (data.contents.answer) {
-			agentMessage.push(data.contents.answer || '');
+			const tempAnswer = data.contents.answer || '';
+			const finalAnswer = tempAnswer.replace(regex, '');
+			agentMessage.push(finalAnswer || '');
 		} else {
 			agentMessage.push(data.contents.agent);
 		}
