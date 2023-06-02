@@ -1,21 +1,21 @@
 import { useEffect, useState, useRef } from 'react';
-import { getGoogleTranscript } from '@api/googlecloud';
-import { SystemStatus } from '~/types/common';
-import { blobToAudioBase64 } from '@utils/audio';
+import { ServiceType, SystemStatus } from '~/types/common';
 import {
 	useAppDispatch,
 	useAppSelector,
 	setDialogueStateBypassPause,
 } from '~/states/store';
+import { getWhisperTranscript } from '~/api/openai';
+import { handleError } from '~/utils/error';
 
 const chunks: Blob[] = [];
 const INTERVAL = 2000;
 
-interface IUseGoogleRecognitionProps {
+interface IUseWhisperRecognitionProps {
 	stream: MediaStream | null;
 }
 
-function useGoogleRecognition({ stream }: IUseGoogleRecognitionProps) {
+function useWhisperRecognition({ stream }: IUseWhisperRecognitionProps) {
 	const [transcript, setTranscript] = useState<string>('');
 	const [timerObject, setTimerObject] = useState<object>({});
 	const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
@@ -42,7 +42,7 @@ function useGoogleRecognition({ stream }: IUseGoogleRecognitionProps) {
 		if ([SystemStatus.READY, SystemStatus.WAIT].includes(systemStatus)) {
 			mediaRecorder.current = new MediaRecorder(stream);
 			mediaRecorder.current.onstop = () => {
-				const blob = new Blob(chunks, { type: 'audio/webm;codecs=opus' });
+				const blob = new Blob(chunks, { type: 'audio/mpeg-3' });
 				chunks.splice(0);
 				setAudioBlob(blob);
 			};
@@ -54,21 +54,33 @@ function useGoogleRecognition({ stream }: IUseGoogleRecognitionProps) {
 	}, [timerObject]);
 
 	useEffect(() => {
-		if (systemStatus === SystemStatus.TRANSCRIBE) mediaRecorder.current?.stop();
+		if (systemStatus === SystemStatus.TRANSCRIBE) {
+			if (mediaRecorder.current === null) {
+				handleError({
+					message: 'recorder not initialized',
+					origin: ServiceType.OPENAI,
+				});
+				return;
+			}
+			mediaRecorder.current.stop();
+		}
 	}, [systemStatus]);
 
 	useEffect(() => {
-		if (systemStatus === SystemStatus.TRANSCRIBE)
+		if (systemStatus === SystemStatus.TRANSCRIBE) {
 			void (async () => {
 				if (audioBlob === null) return;
-				const blobBase64 = await blobToAudioBase64(audioBlob);
-				const script = await getGoogleTranscript(blobBase64);
+				const audioFile = new File([audioBlob], 'voice.mp3', {
+					type: 'audio/mp3',
+				});
+				const script = await getWhisperTranscript(audioFile);
 				setTranscript(script);
 				dispatch(setDialogueStateBypassPause(SystemStatus.GENERATE));
 			})();
+		}
 	}, [audioBlob]);
 
 	return { transcript };
 }
 
-export default useGoogleRecognition;
+export default useWhisperRecognition;

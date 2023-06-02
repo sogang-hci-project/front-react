@@ -5,6 +5,7 @@ function App() {
 		<div style={{ display: 'flex', flexDirection: 'column' }}>
 			<Link to="/interact">interact</Link>
 			<Link to="/setting">Setting</Link>
+			<Link to="/accessibility">Accessibility</Link>
 		</div>
 	);
 }

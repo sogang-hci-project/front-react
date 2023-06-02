@@ -1,3 +1,6 @@
+import { LANGUAGE } from '~/types/common';
+import { getSettingState } from '~/states/store';
+
 export function getQueryString(queries: { [key: string]: string }): string {
 	const res: string[] = [];
 	for (const [key, value] of Object.entries(queries)) {
@@ -9,11 +12,31 @@ export function getQueryString(queries: { [key: string]: string }): string {
 export const isChrome = navigator.userAgent.indexOf('Chrome') !== -1;
 export const isSafari = navigator.userAgent.indexOf('Safari') !== -1;
 
-const kAFErrorRegex = /kAFAssistantErrorDomain/;
+export const setValueOnLanguage = <T>(
+	korValue: T,
+	engValue: T,
+	fallback: T
+) => {
+	const language = getSettingState().language;
+	if (language === LANGUAGE.KR) {
+		return korValue;
+	} else if (language === LANGUAGE.US) {
+		return engValue;
+	}
+	return fallback;
+};
 
-export function handleError(message: string) {
-	if (kAFErrorRegex.test(message))
-		message += ' Reload the browser to fix issue.';
-	alert('System Malfunction: ' + message);
-	history.go(0);
-}
+export const setValueOnEnvironment = <T>(
+	devValue: T,
+	prodValue: T,
+	fallback: T
+) => {
+	if (process.env.NODE_ENV === 'development') {
+		return devValue;
+	} else if (process.env.NODE_ENV === 'production') {
+		return prodValue;
+	} else if (process.env.NODE_ENV === 'test') {
+		return prodValue;
+	}
+	return fallback;
+};

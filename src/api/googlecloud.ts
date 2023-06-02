@@ -1,11 +1,12 @@
-import { LANG, LANGUAGE } from '../constants/setting';
-import { getQueryString, handleError } from '../utils/common';
-
+import { ServiceType, LANGUAGE } from '~/types/common';
+import { getQueryString, setValueOnLanguage } from '../utils/common';
+import { handleError } from '@utils/error';
+import { getSettingState } from '~/states/store';
 const transcriptConfig = {
 	encoding: 'WEBM_OPUS',
 	sampleRateHertz: 48000,
 	audioChannelCount: 1,
-	languageCode: LANG,
+	languageCode: LANGUAGE.KR,
 	enableWordTimeOffsets: false,
 };
 
@@ -19,14 +20,8 @@ const transcriptQueries = {
 
 const MAX_TRANS_LENGTH = 300000;
 
-const textToSpeechVoice = (() => {
-	if ((LANG as LANGUAGE) === LANGUAGE.KR) {
-		return 'ko-KR-Standard-D';
-	} else if ((LANG as LANGUAGE) === LANGUAGE.US) {
-		return 'en-US-Neural2-J';
-	}
-	return '';
-})();
+const textToSpeechVoice = () =>
+	setValueOnLanguage('ko-KR-Standard-D', 'en-US-Neural2-J', '');
 
 interface IGoogleTranscriptResponse {
 	requestId: string;
@@ -57,10 +52,19 @@ interface IGoogleTextToSpeechResponse {
 
 export async function getGoogleTranscript(blobString: string) {
 	if (!blobString || blobString.length === 0)
-		handleError('Google STT input is empty');
+		handleError({
+			message: 'Google STT input is empty',
+			origin: ServiceType.GCLOUD_STT,
+		});
 
 	if (blobString.length > MAX_TRANS_LENGTH)
-		handleError('Google STT input exceeds maximum length');
+		handleError({
+			message: 'Google STT input exceeds maximum length',
+			origin: ServiceType.GCLOUD_STT,
+		});
+
+	transcriptConfig.languageCode = getSettingState().language;
+
 	try {
 		const res = await fetch(
 			`https://speech.googleapis.com/v1/speech:recognize?${getQueryString(
@@ -85,12 +89,18 @@ export async function getGoogleTranscript(blobString: string) {
 		return transcript;
 	} catch (error) {
 		const message = (error as Error).message;
-		handleError(message === 'undefined' ? 'Unrecognizable Voice' : message);
+		const errorMessage =
+			'Google cloud: ' + message === 'undefined'
+				? 'Unrecognizable Voice'
+				: message;
+		handleError({ message: errorMessage, origin: ServiceType.GCLOUD_STT });
 		return Promise.reject(error);
 	}
 }
 
 export async function getGoogleTextToSpeech(inputText: string) {
+	const langauge = getSettingState().language;
+
 	try {
 		const res = await fetch(
 			`https://texttospeech.googleapis.com/v1beta1/text:synthesize?${getQueryString(
@@ -104,7 +114,7 @@ export async function getGoogleTextToSpeech(inputText: string) {
 						text: inputText,
 					},
 					voice: {
-						languageCode: LANG,
+						languageCode: langauge,
 						name: textToSpeechVoice,
 						ssmlGender: 'MALE',
 					},
@@ -118,6 +128,10 @@ export async function getGoogleTextToSpeech(inputText: string) {
 		const body = (await res.json()) as IGoogleTextToSpeechResponse;
 		return body.audioContent;
 	} catch (error) {
-		return Promise.reject(error);
+		handleError({
+			message: (error as Error).message,
+			origin: ServiceType.GCLOUD_STT,
+		});
+		return '';
 	}
 }

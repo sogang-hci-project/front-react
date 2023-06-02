@@ -1,8 +1,25 @@
 export enum SystemStatus {
-	MUTE = 'MUTE',
-	HIBERNATE = 'HIBERNATE',
+	PAUSE = 'PAUSE',
+	READY = 'READY',
 	LISTEN = 'LISTEN',
 	TRANSCRIBE = 'TRANSCRIBE',
 	GENERATE = 'GENERATE',
 	SPEAK = 'SPEAK',
+	WAIT = 'WAIT',
+	MUTE = 'MUTE',
+}
+
+export enum ServiceType {
+	CLOVA_TTS = 'CLOVA_TTS',
+	CLOVA_STT = 'CLOVA_STT',
+	OPENAI = 'OPENAI',
+	GCLOUD_TTS = 'GCLOUD_TTS',
+	GCLOUD_STT = 'GCLOUD_STT',
+	PAPAGO_TRANS = 'PAPAGO_TRANS',
+	LOCAL_STT = 'LOCAL_STT',
+}
+
+export enum LANGUAGE {
+	US = 'en-US',
+	KR = 'ko-KR',
 }

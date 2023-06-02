@@ -1,36 +1,53 @@
 import styled from '@emotion/styled';
 
-export const MessageCover = styled('div')`
+export const UserMessageWrapper = styled('div')`
 	width: 100%;
-	height: 8rem;
-	position: sticky;
-	top: 0;
-	left: 0;
-	/* background-color: rgba(0, 0, 0, 0.1); */
-	box-shadow: inset 0 0 30px 30px rgba(255, 255, 255, 1);
-	pointer-events: none;
-	z-index: 1;
+	height: 100%;
+
+	background-color: white;
+	border-radius: 2rem;
+	border: 1px solid rgba(0, 0, 0, 0.3);
+	padding: 1.5rem;
+
+	display: flex;
+	align-items: center;
+	box-shadow: 0 0px 2px 1px rgba(0, 0, 0, 0.1);
 `;
 
 export const MessageContent = styled('div')`
 	width: 100%;
-	padding: 0 2rem;
-	position: absolute;
-	z-index: 0;
-	left: 0;
+	height: 100%;
+
+	overflow-y: scroll;
+	::-webkit-scrollbar {
+		display: none;
+	}
 `;
 
 export const Message = styled('p')`
-	font-size: 1.2rem;
 	width: 100%;
-	/* line-height: 100%; */
+	line-height: 1.5;
+	text-align: left;
+	font-size: 1.1rem;
+`;
+
+export const PlaceHolder = styled('div')`
+	width: 100%;
+	height: 100%;
 	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1rem;
+	color: rgba(0, 0, 0, 0.5);
 `;
 
 export const DotContainer = styled('div')`
 	width: 100%;
+	height: 100%;
 	display: flex;
 	justify-content: center;
+	align-items: center;
 `;
 
 export const Dot = styled('p')`

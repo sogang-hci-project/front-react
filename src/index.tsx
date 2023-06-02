@@ -8,6 +8,9 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Interact from '@pages/interact';
 import Setting from '@pages/setting';
 import { Global } from '@emotion/react';
+import { Provider } from 'react-redux';
+import { store } from '~/states/store';
+import Accessibility from './pages/accessbility';
 
 const root = createRoot(document.getElementById('root') as HTMLElement);
 
@@ -15,12 +18,15 @@ const router = createBrowserRouter([
 	{ path: '/', element: <App /> },
 	{ path: 'interact/', element: <Interact /> },
 	{ path: 'setting/', element: <Setting /> },
+	{ path: 'accessibility/', element: <Accessibility /> },
 ]);
 
 root.render(
 	<React.StrictMode>
-		<Global styles={globalStyle} />
-		<RouterProvider router={router} />
+		<Provider store={store}>
+			<Global styles={globalStyle} />
+			<RouterProvider router={router} />
+		</Provider>
 	</React.StrictMode>
 );
 
