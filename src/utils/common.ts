@@ -1,4 +1,5 @@
-import { LANG, LANGUAGE } from '@constants/setting';
+import { LANGUAGE } from '~/types/common';
+import { getSettingState } from '~/states/store';
 
 export function getQueryString(queries: { [key: string]: string }): string {
 	const res: string[] = [];
@@ -16,9 +17,10 @@ export const setValueOnLanguage = <T>(
 	engValue: T,
 	fallback: T
 ) => {
-	if (LANG === LANGUAGE.KR) {
+	const language = getSettingState().language;
+	if (language === LANGUAGE.KR) {
 		return korValue;
-	} else if (LANG === LANGUAGE.US) {
+	} else if (language === LANGUAGE.US) {
 		return engValue;
 	}
 	return fallback;

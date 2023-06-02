@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { LANG } from '@constants/setting';
 import { ServiceType, SystemStatus } from '~/types/common';
 import { handleError } from '@utils/error';
 import {
@@ -34,7 +33,6 @@ class AsyncSpeechRecognition extends SpeechRecognition {
 
 const START_ASYNC_DELAY = 200;
 const recognition = new AsyncSpeechRecognition(START_ASYNC_DELAY);
-recognition.lang = LANG;
 recognition.interimResults = true;
 recognition.continuous = true;
 recognition.onerror = (error) =>
@@ -45,10 +43,15 @@ recognition.onerror = (error) =>
 
 function useLocalRecognition() {
 	const [transcript, setTranscript] = useState<string>('');
-	const systemStatus = useAppSelector((state) => state.dialogue.status);
+	const [systemStatus, language] = useAppSelector((state) => [
+		state.dialogue.status,
+		state.setting.language,
+	]);
+
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {
+		recognition.lang = language;
 		if (recognition.onresult === null)
 			recognition.onresult = (event) => {
 				const [[{ transcript: result }]] = event.results;

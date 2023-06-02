@@ -1,7 +1,7 @@
 import { MuteButtonWrapper, ThresholdIndicator } from './style';
 import { Text } from '@components/atom/Text';
 import { MdMicOff, MdMicNone } from 'react-icons/md';
-import { ACTIVATION_VOLUME } from '~/constants/setting';
+import { useAppSelector } from '~/states/store';
 
 interface MuteButtonProps {
 	isMute: boolean;
@@ -14,6 +14,9 @@ export default function MuteButton({
 	setIsMute,
 	volume,
 }: MuteButtonProps) {
+	const ACTIVATION_VOLUME = useAppSelector(
+		(state) => state.setting.voiceActivationVolume
+	);
 	return (
 		<MuteButtonWrapper volume={volume} onClick={() => setIsMute(!isMute)}>
 			<ThresholdIndicator threshold={ACTIVATION_VOLUME}>
