@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react';
 import { LANG } from '@constants/setting';
-import { SystemStatus } from '~/types/common';
-import { checkMute } from '~/utils/audio';
-import { handleError } from '~/utils/common';
+import { ServiceType, SystemStatus } from '~/types/common';
+import { handleError } from '@utils/error';
+import {
+	setDialogueStateBypassPause,
+	useAppDispatch,
+	useAppSelector,
+} from '~/states/store';
 
 const SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
 
@@ -33,18 +37,16 @@ const recognition = new AsyncSpeechRecognition(START_ASYNC_DELAY);
 recognition.lang = LANG;
 recognition.interimResults = true;
 recognition.continuous = true;
-recognition.onerror = (error) => handleError(error.message);
+recognition.onerror = (error) =>
+	handleError({
+		message: 'Local Recognition' + error.message,
+		origin: ServiceType.LOCAL_STT,
+	});
 
-interface IUseLocalRecognitionProps {
-	systemStatus: SystemStatus;
-	setSystemStatus: React.Dispatch<React.SetStateAction<SystemStatus>>;
-}
-
-function useLocalRecognition({
-	systemStatus,
-	setSystemStatus,
-}: IUseLocalRecognitionProps) {
+function useLocalRecognition() {
 	const [transcript, setTranscript] = useState<string>('');
+	const systemStatus = useAppSelector((state) => state.dialogue.status);
+	const dispatch = useAppDispatch();
 
 	useEffect(() => {
 		if (recognition.onresult === null)
@@ -55,16 +57,14 @@ function useLocalRecognition({
 	}, []);
 
 	useEffect(() => {
-		if (systemStatus === SystemStatus.MUTE) {
+		if (systemStatus === SystemStatus.PAUSE) {
 			recognition.abort();
-			setTranscript('');
 		} else if (systemStatus === SystemStatus.TRANSCRIBE) {
+			dispatch(setDialogueStateBypassPause(SystemStatus.GENERATE));
 			recognition.stop();
-			setSystemStatus(checkMute(SystemStatus.GENERATE));
-		} else if (systemStatus === SystemStatus.HIBERNATE) {
+		} else if ([SystemStatus.READY, SystemStatus.WAIT].includes(systemStatus)) {
 			recognition.abort();
 			recognition.startAsync();
-			setTranscript('');
 		}
 	}, [systemStatus]);
 

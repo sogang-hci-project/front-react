@@ -1,5 +1,19 @@
-import VoiceCanvas from './VoiceCanvas';
-import MuteButtonWrapper from './MuteButtonWrapper';
-import MessageWrapper from './MessageWrapper';
+import AgentCanvas from './AgentCanvas';
+import PlayButton from './PlayButton';
+import UserMessage from './UserMessage';
+import AgentMessage from './AgentMessage';
+import KeyboardButton from './KeyboardButton';
+import Toolbar from './Toolbar';
+import KeyboardInputModal from './KeyboardInputModal';
+import MuteButton from './MuteButton';
 
-export { VoiceCanvas, MuteButtonWrapper, MessageWrapper };
+export {
+	AgentCanvas,
+	PlayButton,
+	UserMessage,
+	AgentMessage,
+	KeyboardButton,
+	Toolbar,
+	KeyboardInputModal,
+	MuteButton,
+};

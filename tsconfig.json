@@ -25,5 +25,8 @@
   "include": [
     "src",
   ],
-  "extends": "./tsconfig.paths.json" 
+  "exclude": [
+    "src/setupProxy.js"
+  ],
+  "extends": "./tsconfig.paths.json"
 }

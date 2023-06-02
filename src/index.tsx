@@ -8,6 +8,8 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Interact from '@pages/interact';
 import Setting from '@pages/setting';
 import { Global } from '@emotion/react';
+import { Provider } from 'react-redux';
+import { store } from '~/states/store';
 
 const root = createRoot(document.getElementById('root') as HTMLElement);
 
@@ -19,8 +21,10 @@ const router = createBrowserRouter([
 
 root.render(
 	<React.StrictMode>
-		<Global styles={globalStyle} />
-		<RouterProvider router={router} />
+		<Provider store={store}>
+			<Global styles={globalStyle} />
+			<RouterProvider router={router} />
+		</Provider>
 	</React.StrictMode>
 );
 

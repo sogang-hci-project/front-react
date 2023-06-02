@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
-export const MuteButton = styled('button')`
-	width: 12rem;
+export const Button = styled('button')`
+	width: 4rem;
 	height: 4rem;
 	background-color: white;
 	border: 1px solid black;
@@ -10,6 +10,8 @@ export const MuteButton = styled('button')`
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	border: 1px solid rgba(0, 0, 0, 0.3);
+	box-shadow: 0 0px 2px 1px rgba(0, 0, 0, 0.1);
 
 	-webkit-transition-duration: 0.4s;
 	transition-duration: 0.4s;
