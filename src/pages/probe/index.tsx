@@ -13,7 +13,6 @@ import {
 	UserMessage,
 	KeyboardButton,
 	AgentMessage,
-	Toolbar,
 	KeyboardInputModal,
 	MuteButton,
 } from '@components/interact';
@@ -21,21 +20,19 @@ import {
 import useAudioStream from '@hooks/useAudioStream';
 import { stopAudio, toggleSystemStatusOnVolume } from '@utils/audio';
 import { SystemStatus } from '~/types/common';
-import { progressDialogue, startDialogue } from '@utils/dialogue';
+import { answerUserDialogue, startProbeDialogue } from '@utils/dialogue';
 import {
 	useAppDispatch,
 	useAppSelector,
 	setDialogueState,
 } from '@states/store';
 import useWhisperRecognition from '~/hooks/useWhisperRecognition';
-import { getSession, startSession } from '~/api/backend';
 import { setUserMesasge } from '~/states/slice/dialogueSlice';
+import { ProbeToolbar } from '~/components/probe';
 
 const clickSound = new Audio('/sound/toggle.mp3');
 
-// void getSession();
-
-function Interact() {
+function Probe() {
 	const [agentMessage, setAgentMessage] = useState<string>('');
 	const [showInputPopup, setShowInputPopup] = useState<boolean>(false);
 	const [isMute, setIsMute] = useState<boolean>(true);
@@ -56,9 +53,7 @@ function Interact() {
 	function handlePlayButton() {
 		void clickSound.play();
 		if (systemStatus === SystemStatus.PAUSE) {
-			void startSession().then((message) => {
-				void startDialogue(message, setAgentMessage);
-			});
+			void startProbeDialogue(setAgentMessage);
 		} else {
 			dispatch(setUserMesasge(''));
 			dispatch(setDialogueState(SystemStatus.PAUSE));
@@ -68,9 +63,7 @@ function Interact() {
 	useEffect(() => {
 		console.log('[Message]: ', userMessage, '[Status]: ', systemStatus);
 		if (systemStatus === SystemStatus.GENERATE)
-			void progressDialogue(userMessage, setAgentMessage).then(() => {
-				dispatch(setUserMesasge(''));
-			});
+			void answerUserDialogue(userMessage, setAgentMessage);
 	}, [systemStatus]);
 
 	useEffect(() => {
@@ -89,7 +82,7 @@ function Interact() {
 					handleKeyboardSubmit={handleKeyboardSubmit}
 				/>
 				<ToolbarContainer>
-					<Toolbar />
+					<ProbeToolbar />
 				</ToolbarContainer>
 				<AgentContainer>
 					<AgentMessage message={agentMessage} systemStatus={systemStatus} />
@@ -126,4 +119,4 @@ function Interact() {
 	);
 }
 
-export default Interact;
+export default Probe;
