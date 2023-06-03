@@ -88,7 +88,7 @@ export async function progressDialogue(
 	message: string,
 	setAgentMessage: React.Dispatch<React.SetStateAction<string>>
 ) {
-	console.log('user message: ', message);
+	console.log('User Message: ', message);
 	const systemStatus = getDialogueStatus();
 	const langauge = getSettingState().language;
 	if (systemStatus !== SystemStatus.GENERATE) return;
@@ -105,7 +105,7 @@ export async function progressDialogue(
 			LANGUAGE.KR
 		);
 		setAgentMessage(translatedAnswer);
-		console.log('agent message: ', translatedAnswer);
+		console.log('Agent Message: ', translatedAnswer);
 		setDialogueStateBypassPause(SystemStatus.SPEAK);
 		await playTextToAudio(translatedAnswer);
 		setDialogueStateBypassPause(SystemStatus.WAIT);
@@ -114,7 +114,7 @@ export async function progressDialogue(
 		setAgentMessage(answer);
 		setDialogueStateBypassPause(SystemStatus.SPEAK);
 		await playTextToAudio(answer);
-		console.log('agent answer: ', answer);
+		console.log('Agent Answer: ', answer);
 		setDialogueStateBypassPause(SystemStatus.WAIT);
 	}
 }

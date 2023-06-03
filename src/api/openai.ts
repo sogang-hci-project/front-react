@@ -29,16 +29,16 @@ interface IChatContextItem {
 }
 
 const MAX_QUERY_COUNT = 100;
-const MAX_TOKEN_COUNT = setValueOnLanguage(32, 32, 32);
+const MAX_TOKEN_COUNT = setValueOnLanguage(64, 64, 64);
 
 const context = new Array<IChatContextItem>();
 
 context.push({
 	name: 'Helenos',
-	message: `Hi there, I'm your AI friend, Helenos. What is your name?`,
+	message: `Hi there, I'm your friend, Helenos. What is your name?`,
 });
 
-const promptBase = `You're a person named Helenos. You're now introduced a new person. reply to person's message then add question. Make reference on the context provided below to generate life-like dialogue.`;
+const promptBase = `You're a person named Helenos. You're now introduced a new person in art museum picturing picasso's Guernica. Reply to person's message then add question and get to know each other. Make reference on the context provided below to generate life-like dialogue. Finish the sentence as Helenos only.`;
 
 export async function generateAgentDialogue(friendMessage: string) {
 	if (friendMessage.length === 0)
@@ -56,8 +56,7 @@ export async function generateAgentDialogue(friendMessage: string) {
 		.map((item) => item.name + ': ' + item.message + '.')
 		.join('\n');
 
-	const modifiedQuery =
-		promptBase + '\nCONTEXT\n' + previousContext + 'Helenos: ';
+	const query = promptBase + '\nCONTEXT\n' + previousContext + 'Helenos: ';
 	try {
 		const res = await fetch('https://api.openai.com/v1/chat/completions', {
 			method: 'POST',
@@ -67,8 +66,7 @@ export async function generateAgentDialogue(friendMessage: string) {
 			},
 			body: JSON.stringify({
 				model: 'gpt-3.5-turbo',
-				// model: 'gpt-4',
-				messages: [{ role: 'user', content: modifiedQuery }],
+				messages: [{ role: 'user', content: query }],
 				max_tokens: MAX_TOKEN_COUNT,
 			}),
 		});

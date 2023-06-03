@@ -25,3 +25,9 @@ export enum LANGUAGE {
 	US = 'en-US',
 	KR = 'ko-KR',
 }
+
+export enum LocalPATH {
+	INTERACT = 'interact',
+	PROBE = 'probe',
+	SETTING = 'setting',
+}

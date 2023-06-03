@@ -13,7 +13,7 @@ const initialState: ISettingState = {
 	language: LANGUAGE.KR,
 	voiceActivationVolume: 70,
 	voiceDeactivationVolume: 70,
-	voiceDeacitvationInterval: 1000,
+	voiceDeacitvationInterval: 3000,
 };
 
 const settingSlice = createSlice({

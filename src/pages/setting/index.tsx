@@ -68,7 +68,7 @@ function Setting() {
 		dispatch(setVoiceActivationVolume(activation));
 		dispatch(setVoiceDeactivationVolume(deactivation));
 		dispatch(setVoiceDeactivationInterval(actInterval));
-		navigate('/interact');
+		navigate(-1);
 	};
 
 	return (
@@ -76,11 +76,7 @@ function Setting() {
 			<Viewport>
 				<ToolbarContainer>
 					<ToolbarWrapper>
-						<ToolbarButton
-							onClick={() => {
-								navigate('/interact');
-							}}
-						>
+						<ToolbarButton onClick={handleApplySetting}>
 							<RxCaretLeft />
 						</ToolbarButton>
 						<TitleWrapper>{toolBarName}</TitleWrapper>
@@ -148,8 +144,8 @@ function Setting() {
 						<SettingItemBody>
 							<SettingSliderInput
 								type="range"
-								min="200"
-								max="2000"
+								min="1000"
+								max="5000"
 								value={actInterval}
 								onChange={(e) => {
 									setActInterval(parseInt(e.target.value));

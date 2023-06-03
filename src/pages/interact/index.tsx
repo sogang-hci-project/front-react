@@ -33,7 +33,7 @@ import { setUserMesasge } from '~/states/slice/dialogueSlice';
 
 const clickSound = new Audio('/sound/toggle.mp3');
 
-// void getSession();
+void getSession();
 
 function Interact() {
 	const [agentMessage, setAgentMessage] = useState<string>('');
