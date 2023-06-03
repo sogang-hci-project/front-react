@@ -5,7 +5,8 @@ import {
 	ToolbarButton,
 	ToolbarWrapper,
 } from './style';
-import { RxAccessibility, RxMixerVertical } from 'react-icons/rx';
+import { RxMixerVertical } from 'react-icons/rx';
+import { IoTelescopeOutline } from 'react-icons/io5';
 import useAppNavigate from '~/hooks/useAppNavigate';
 import { useAppSelector } from '~/states/store';
 import { LANGUAGE } from '~/types/common';
@@ -28,7 +29,7 @@ function Toolbar() {
 	return (
 		<ToolbarWrapper>
 			<ToolbarButton>
-				<RxAccessibility />
+				<IoTelescopeOutline onClick={() => navigate('/probe')} />
 			</ToolbarButton>
 			<TitleWrapper>
 				<PaintingName>{painting}</PaintingName>

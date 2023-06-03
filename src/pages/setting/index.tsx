@@ -15,6 +15,8 @@ import {
 	SettingTextInput,
 	SettingButtonContainer,
 	SettingButton,
+	SettingThresholdIndicator,
+	SettingThresholdContainer,
 } from './style';
 import { RxCaretLeft, RxEnter } from 'react-icons/rx';
 import { setValueOnLanguage } from '~/utils/common';
@@ -64,11 +66,25 @@ function Setting() {
 		),
 	};
 
+	function handleSetActivationChange(e: React.ChangeEvent<HTMLInputElement>) {
+		const newThreshold = parseInt(e.target.value);
+		if (newThreshold >= deactivation) {
+			setActivation(newThreshold);
+		}
+	}
+
+	function handleSetDeactivationChange(e: React.ChangeEvent<HTMLInputElement>) {
+		const newThreshold = parseInt(e.target.value);
+		if (newThreshold <= activation) {
+			setDeactivation(newThreshold);
+		}
+	}
+
 	const handleApplySetting = () => {
 		dispatch(setVoiceActivationVolume(activation));
 		dispatch(setVoiceDeactivationVolume(deactivation));
 		dispatch(setVoiceDeactivationInterval(actInterval));
-		navigate('/interact');
+		navigate(-1);
 	};
 
 	return (
@@ -76,11 +92,7 @@ function Setting() {
 			<Viewport>
 				<ToolbarContainer>
 					<ToolbarWrapper>
-						<ToolbarButton
-							onClick={() => {
-								navigate('/interact');
-							}}
-						>
+						<ToolbarButton onClick={handleApplySetting}>
 							<RxCaretLeft />
 						</ToolbarButton>
 						<TitleWrapper>{toolBarName}</TitleWrapper>
@@ -112,14 +124,15 @@ function Setting() {
 							<SettingTextInput value={activation} disabled />
 						</SettingItemValue>
 						<SettingItemBody>
+							<SettingThresholdContainer>
+								<SettingThresholdIndicator boundary={deactivation} />
+							</SettingThresholdContainer>
 							<SettingSliderInput
 								type="range"
 								min="1"
 								max="100"
 								value={activation}
-								onChange={(e) => {
-									setActivation(parseInt(e.target.value));
-								}}
+								onChange={handleSetActivationChange}
 							/>
 						</SettingItemBody>
 					</SettingItem>
@@ -129,14 +142,15 @@ function Setting() {
 							<SettingTextInput value={deactivation} disabled />
 						</SettingItemValue>
 						<SettingItemBody>
+							<SettingThresholdContainer>
+								<SettingThresholdIndicator boundary={activation} />
+							</SettingThresholdContainer>
 							<SettingSliderInput
 								type="range"
 								min="1"
 								max="100"
 								value={deactivation}
-								onChange={(e) => {
-									setDeactivation(parseInt(e.target.value));
-								}}
+								onChange={handleSetDeactivationChange}
 							/>
 						</SettingItemBody>
 					</SettingItem>
@@ -148,8 +162,8 @@ function Setting() {
 						<SettingItemBody>
 							<SettingSliderInput
 								type="range"
-								min="200"
-								max="2000"
+								min="1000"
+								max="5000"
 								value={actInterval}
 								onChange={(e) => {
 									setActInterval(parseInt(e.target.value));

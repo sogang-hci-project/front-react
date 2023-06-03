@@ -7,6 +7,7 @@ import {
 } from '~/states/store';
 import { getWhisperTranscript } from '~/api/openai';
 import { handleError } from '~/utils/error';
+import { setUserMesasge } from '~/states/slice/dialogueSlice';
 
 const chunks: Blob[] = [];
 const INTERVAL = 2000;
@@ -16,7 +17,6 @@ interface IUseWhisperRecognitionProps {
 }
 
 function useWhisperRecognition({ stream }: IUseWhisperRecognitionProps) {
-	const [transcript, setTranscript] = useState<string>('');
 	const [timerObject, setTimerObject] = useState<object>({});
 	const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
 	const mediaRecorder = useRef<MediaRecorder | null>(null);
@@ -51,7 +51,7 @@ function useWhisperRecognition({ stream }: IUseWhisperRecognitionProps) {
 			};
 			mediaRecorder.current.start();
 		}
-	}, [timerObject]);
+	}, [timerObject, systemStatus]);
 
 	useEffect(() => {
 		if (systemStatus === SystemStatus.TRANSCRIBE) {
@@ -68,19 +68,22 @@ function useWhisperRecognition({ stream }: IUseWhisperRecognitionProps) {
 
 	useEffect(() => {
 		if (systemStatus === SystemStatus.TRANSCRIBE) {
-			void (async () => {
-				if (audioBlob === null) return;
-				const audioFile = new File([audioBlob], 'voice.mp3', {
-					type: 'audio/mp3',
+			if (audioBlob === null) {
+				handleError({
+					message: 'recorder not initialized',
+					origin: ServiceType.OPENAI,
 				});
-				const script = await getWhisperTranscript(audioFile);
-				setTranscript(script);
+				return;
+			}
+			const audioFile = new File([audioBlob], 'voice.mp3', {
+				type: 'audio/mp3',
+			});
+			void getWhisperTranscript(audioFile).then((script) => {
+				dispatch(setUserMesasge(script));
 				dispatch(setDialogueStateBypassPause(SystemStatus.GENERATE));
-			})();
+			});
 		}
 	}, [audioBlob]);
-
-	return { transcript };
 }
 
 export default useWhisperRecognition;

@@ -41,6 +41,7 @@ interface IHandleError {
 }
 
 export function handleError({ message, origin }: IHandleError) {
+	console.error(message);
 	if (kAFErrorRegex.test(message)) {
 		message += ' Reload the browser to fix issue.';
 		alert('System Malfunction: ' + message);
@@ -55,8 +56,14 @@ export function handleError({ message, origin }: IHandleError) {
 		case ServiceType.LOCAL_STT:
 		case ServiceType.OPENAI:
 		case ServiceType.PAPAGO_TRANS:
+		case ServiceType.BACKEND:
 			void playTextToAudio(errorReply()).then(() => {
-				setDialogueState(SystemStatus.READY);
+				setDialogueState(SystemStatus.WAIT);
+			});
+			break;
+		case ServiceType.BACKEND_INIT:
+			void playTextToAudio('죄송하지만, 잠시후 다시 시도해주세요').then(() => {
+				setDialogueState(SystemStatus.PAUSE);
 			});
 			break;
 		default:

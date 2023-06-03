@@ -1,4 +1,4 @@
-import { ServiceType } from '~/types/common';
+import { LocalPATH, ServiceType } from '~/types/common';
 import {
 	getQueryString,
 	setValueOnEnvironment,
@@ -38,7 +38,15 @@ function concatenate(arrays: Uint8Array[]) {
 }
 
 export async function postNaverTextToSpeech(text: string) {
-	const textToSpeechVoice = setValueOnLanguage('nwontak', 'clara', 'nwontak');
+	const textToSpeechVoice = (() => {
+		const location = window.location.href.split('/').pop();
+		if (location === LocalPATH.INTERACT) {
+			return setValueOnLanguage('nwontak', 'clara', 'nwontak');
+		} else if (location === LocalPATH.PROBE) {
+			return setValueOnLanguage('vhyeri', 'clara', 'vhyeri');
+		}
+		return setValueOnLanguage('nwontak', 'clara', 'nwontak');
+	})();
 	dataParam.delete('speaker');
 	dataParam.append('speaker', textToSpeechVoice);
 

@@ -10,15 +10,16 @@ import Setting from '@pages/setting';
 import { Global } from '@emotion/react';
 import { Provider } from 'react-redux';
 import { store } from '~/states/store';
-import Accessibility from './pages/accessbility';
+import Probe from './pages/probe';
+import { LocalPATH } from './types/common';
 
 const root = createRoot(document.getElementById('root') as HTMLElement);
 
 const router = createBrowserRouter([
 	{ path: '/', element: <App /> },
-	{ path: 'interact/', element: <Interact /> },
-	{ path: 'setting/', element: <Setting /> },
-	{ path: 'accessibility/', element: <Accessibility /> },
+	{ path: LocalPATH.INTERACT, element: <Interact /> },
+	{ path: LocalPATH.SETTING, element: <Setting /> },
+	{ path: LocalPATH.PROBE, element: <Probe /> },
 ]);
 
 root.render(

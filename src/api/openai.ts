@@ -23,36 +23,40 @@ interface IChoice {
 	finish_reason: string;
 }
 
+interface IChatContextItem {
+	name: string;
+	message: string;
+}
+
 const MAX_QUERY_COUNT = 100;
 const MAX_TOKEN_COUNT = setValueOnLanguage(64, 64, 64);
 
-const context = {
-	previousQuestion: '',
-	previousAnswer: '',
-};
+const context = new Array<IChatContextItem>();
 
-const promptBase = `You are the Pablo Picasso. You're performing visual thinking strategy education to person in front of you about your painting the Guernica. Reply to the person as a Pablo Picasso then give further questions. Person's opinion : `;
-const promptPostPosition = ' . Answer of Pablo Picasso: ';
-const prevQPrompt = ' . Previous Audience opinion: ';
-const prevAPrompt = ' . Previous Pablo Picasso Answer: ';
+context.push({
+	name: 'Helenos',
+	message: `Hi there, I'm your friend, Helenos. What is your name?`,
+});
 
-export async function requestChatCompletion(query: string) {
-	if (query.length === 0)
+const promptBase = `You're a person named Helenos. You're now introduced a new person in art museum picturing picasso's Guernica. Reply to person's message then add question and get to know each other. Make reference on the context provided below to generate life-like dialogue. Finish the sentence as Helenos only.`;
+
+export async function generateAgentDialogue(friendMessage: string) {
+	if (friendMessage.length === 0)
 		handleError({
 			message: 'OpenAI query is empty',
 			origin: ServiceType.OPENAI,
 		});
-	if (query.length > MAX_QUERY_COUNT)
+	if (friendMessage.length > MAX_QUERY_COUNT)
 		handleError({
 			message: 'OpenAI query exceeds maximum length',
 			origin: ServiceType.OPENAI,
 		});
-	const modifiedQuery =
-		context.previousQuestion +
-		context.previousAnswer +
-		promptBase +
-		query +
-		promptPostPosition;
+	context.push({ name: 'friend', message: friendMessage });
+	const previousContext = context
+		.map((item) => item.name + ': ' + item.message + '.')
+		.join('\n');
+
+	const query = promptBase + '\nCONTEXT\n' + previousContext + 'Helenos: ';
 	try {
 		const res = await fetch('https://api.openai.com/v1/chat/completions', {
 			method: 'POST',
@@ -62,22 +66,20 @@ export async function requestChatCompletion(query: string) {
 			},
 			body: JSON.stringify({
 				model: 'gpt-3.5-turbo',
-				// model: 'gpt-4',
-				messages: [{ role: 'user', content: modifiedQuery }],
+				messages: [{ role: 'user', content: query }],
 				max_tokens: MAX_TOKEN_COUNT,
 			}),
 		});
 		const data = (await res.json()) as IChatCompletion;
-		context.previousQuestion = prevQPrompt + query + ' ';
-		context.previousAnswer =
-			prevAPrompt + data.choices[0].message.content + ' ';
-		return data;
+		const helenosMessage = data.choices[0].message.content;
+		context.push({ name: 'Helenos', message: helenosMessage });
+		return helenosMessage || '';
 	} catch (error) {
 		handleError({
 			message: (error as Error).message,
 			origin: ServiceType.OPENAI,
 		});
-		return;
+		return '';
 	}
 }
 

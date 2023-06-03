@@ -1,8 +1,4 @@
 import styled from '@emotion/styled';
-export const ToolbarContainer = styled('div')`
-	width: 100%;
-	height: 6rem;
-`;
 
 export const ToolbarWrapper = styled('div')`
 	width: 100%;
@@ -45,4 +41,8 @@ export const TitleWrapper = styled('div')`
 	align-items: center;
 	justify-content: center;
 	gap: 0.2rem;
+`;
+
+export const Title = styled('p')`
+	font-size: 1.1rem;
 `;
