@@ -1,4 +1,4 @@
-import { ServiceType, LANGUAGE } from '~/types/common';
+import { ServiceType, LANGUAGE, LocalPATH } from '~/types/common';
 import { getQueryString, setValueOnLanguage } from '../utils/common';
 import { handleError } from '@utils/error';
 import { getSettingState } from '~/states/store';
@@ -19,9 +19,6 @@ const transcriptQueries = {
 };
 
 const MAX_TRANS_LENGTH = 300000;
-
-const textToSpeechVoice = () =>
-	setValueOnLanguage('ko-KR-Standard-D', 'en-US-Neural2-J', '');
 
 interface IGoogleTranscriptResponse {
 	requestId: string;
@@ -101,6 +98,28 @@ export async function getGoogleTranscript(blobString: string) {
 export async function getGoogleTextToSpeech(inputText: string) {
 	const langauge = getSettingState().language;
 
+	const textToSpeechVoice = (() => {
+		const location = window.location.href.split('/').pop();
+		if (location === LocalPATH.INTERACT) {
+			return setValueOnLanguage(
+				'ko-KR-Standard-D',
+				'en-US-Neural2-J',
+				'en-US-Neural2-J'
+			);
+		} else if (location === LocalPATH.PROBE) {
+			return setValueOnLanguage(
+				'ko-KR-Standard-A',
+				'en-US-Neural2-H',
+				'en-US-Neural2-H'
+			);
+		}
+		return setValueOnLanguage(
+			'ko-KR-Standard-A',
+			'en-US-Neural2-H',
+			'en-US-Neural2-H'
+		);
+	})();
+
 	try {
 		const res = await fetch(
 			`https://texttospeech.googleapis.com/v1beta1/text:synthesize?${getQueryString(
@@ -116,7 +135,7 @@ export async function getGoogleTextToSpeech(inputText: string) {
 					voice: {
 						languageCode: langauge,
 						name: textToSpeechVoice,
-						ssmlGender: 'MALE',
+						ssmlGender: 'FEMALE',
 					},
 					audioConfig: {
 						audioEncoding: 'MP3',

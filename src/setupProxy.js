@@ -21,4 +21,14 @@ module.exports = (app) => {
 			},
 		})
 	);
+	app.use(
+		'/backend',
+		createProxyMiddleware({
+			target: 'https://sgu-hci.p-e.kr',
+			changeOrigin: true,
+			pathRewrite: {
+				'^/backend': '/',
+			},
+		})
+	);
 };

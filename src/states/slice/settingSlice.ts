@@ -11,9 +11,9 @@ interface ISettingState {
 
 const initialState: ISettingState = {
 	language: LANGUAGE.KR,
-	voiceActivationVolume: 60,
-	voiceDeactivationVolume: 60,
-	voiceDeacitvationInterval: 600,
+	voiceActivationVolume: 70,
+	voiceDeactivationVolume: 70,
+	voiceDeacitvationInterval: 3000,
 };
 
 const settingSlice = createSlice({

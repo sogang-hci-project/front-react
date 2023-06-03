@@ -17,9 +17,17 @@ export enum ServiceType {
 	GCLOUD_STT = 'GCLOUD_STT',
 	PAPAGO_TRANS = 'PAPAGO_TRANS',
 	LOCAL_STT = 'LOCAL_STT',
+	BACKEND = 'BACKEND',
+	BACKEND_INIT = 'BACKEND_INIT',
 }
 
 export enum LANGUAGE {
 	US = 'en-US',
 	KR = 'ko-KR',
+}
+
+export enum LocalPATH {
+	INTERACT = 'interact',
+	PROBE = 'probe',
+	SETTING = 'setting',
 }

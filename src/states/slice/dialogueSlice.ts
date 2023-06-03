@@ -4,10 +4,12 @@ import { SystemStatus } from '~/types/common';
 
 interface DialogueState {
 	status: SystemStatus;
+	userMessage: string;
 }
 
 const initialState: DialogueState = {
 	status: SystemStatus.PAUSE,
+	userMessage: '',
 };
 
 const dialogueSlice = createSlice({
@@ -20,9 +22,13 @@ const dialogueSlice = createSlice({
 		setStatusBypassPause: (state, action: PayloadAction<SystemStatus>) => {
 			if (state.status !== SystemStatus.PAUSE) state.status = action.payload;
 		},
+		setUserMesasge: (state, action: PayloadAction<string>) => {
+			state.userMessage = action.payload;
+		},
 	},
 });
 
-export const { setStatus, setStatusBypassPause } = dialogueSlice.actions;
+export const { setStatus, setStatusBypassPause, setUserMesasge } =
+	dialogueSlice.actions;
 
 export default dialogueSlice.reducer;

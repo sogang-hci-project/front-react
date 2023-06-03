@@ -40,6 +40,8 @@ function UserMessage({ message, systemStatus }: IUserMessageProps) {
 				return '청취 중';
 			} else if (systemStatus === SystemStatus.TRANSCRIBE) {
 				return <DotContainer>{onGenerateDot}</DotContainer>;
+			} else if (systemStatus === SystemStatus.SPEAK) {
+				return '에이전트 재생 중';
 			}
 			return '에러';
 		} else if (language === LANGUAGE.US) {
@@ -53,6 +55,8 @@ function UserMessage({ message, systemStatus }: IUserMessageProps) {
 				return 'Listening';
 			} else if (systemStatus === SystemStatus.TRANSCRIBE) {
 				return <DotContainer>{onGenerateDot}</DotContainer>;
+			} else if (systemStatus === SystemStatus.SPEAK) {
+				return 'Agent speaking';
 			}
 			return 'Error';
 		}
