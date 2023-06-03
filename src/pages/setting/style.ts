@@ -81,6 +81,12 @@ export const SettingItemTitle = styled('div')`
 
 export const SettingItemBody = styled('div')`
 	width: 100%;
+
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 0.5rem 0;
 `;
 
 export const SettingItemValue = styled('div')`
@@ -126,6 +132,28 @@ export const SettingSliderInput = styled('input')`
 		background: white;
 		cursor: pointer;
 	}
+`;
+
+export const SettingThresholdContainer = styled('div')`
+	width: 94%;
+	height: 100%;
+	position: absolute;
+`;
+
+interface ISettingThresholdIndicator {
+	boundary: number;
+}
+
+export const SettingThresholdIndicator = styled(
+	'div'
+)<ISettingThresholdIndicator>`
+	width: 2px;
+	height: 100%;
+	background-color: #d3d3d3;
+	box-shadow: 0 0px 4px 1px rgba(0, 0, 0, 0.2);
+	position: absolute;
+	top: 0px;
+	left: ${(props) => props.boundary}%;
 `;
 
 export const SettingTextInput = styled('input')`
