@@ -113,11 +113,11 @@ export function base64ToAudioBlob(audioString: string) {
 export async function playTextToAudio(text: string) {
 	const language = getSettingState().language;
 	if (language === LANGUAGE.KR) {
-		const data = (await postNaverTextToSpeech(text)) || new Uint8Array();
+		const data = await postNaverTextToSpeech(text);
 		const audioBlobUrl = unit8ArrayToUrl(data);
 		await playAudio(audioBlobUrl);
 	} else if (language === LANGUAGE.US) {
-		const audioString = (await getGoogleTextToSpeech(text)) || '';
+		const audioString = await getGoogleTextToSpeech(text);
 		const audioBlobUrl = base64ToAudioBlob(audioString);
 		await playAudio(audioBlobUrl);
 	}
