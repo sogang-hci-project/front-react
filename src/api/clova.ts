@@ -38,6 +38,13 @@ function concatenate(arrays: Uint8Array[]) {
 }
 
 export async function postNaverTextToSpeech(text: string) {
+	if (/^\s*$/.test(text)) {
+		handleError({
+			message: 'empty tts input',
+			origin: ServiceType.CLOVA_STT,
+		});
+		return new Uint8Array();
+	}
 	const textToSpeechVoice = (() => {
 		const location = window.location.href.split('/').pop();
 		if (location === LocalPATH.INTERACT) {
@@ -79,7 +86,7 @@ export async function postNaverTextToSpeech(text: string) {
 			message: (error as Error).message,
 			origin: ServiceType.CLOVA_TTS,
 		});
-		return;
+		return new Uint8Array();
 	}
 }
 

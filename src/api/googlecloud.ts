@@ -95,9 +95,16 @@ export async function getGoogleTranscript(blobString: string) {
 	}
 }
 
-export async function getGoogleTextToSpeech(inputText: string) {
-	const langauge = getSettingState().language;
+export async function getGoogleTextToSpeech(text: string) {
+	if (/^\s*$/.test(text)) {
+		handleError({
+			message: 'empty tts input',
+			origin: ServiceType.GCLOUD_TTS,
+		});
+		return '';
+	}
 
+	const langauge = getSettingState().language;
 	const textToSpeechVoice = (() => {
 		const location = window.location.href.split('/').pop();
 		if (location === LocalPATH.INTERACT) {
@@ -130,7 +137,7 @@ export async function getGoogleTextToSpeech(inputText: string) {
 				headers: transcriptHeader,
 				body: JSON.stringify({
 					input: {
-						text: inputText,
+						text,
 					},
 					voice: {
 						languageCode: langauge,

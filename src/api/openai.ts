@@ -41,7 +41,7 @@ context.push({
 const promptBase = `You're a person named Helenos. You're now introduced a new person in art museum picturing picasso's Guernica. Reply to person's message then add question and get to know each other. Make reference on the context provided below to generate life-like dialogue. Finish the sentence as Helenos only.`;
 
 export async function generateAgentDialogue(friendMessage: string) {
-	if (friendMessage.length === 0)
+	if (/^\s*$/.test(friendMessage))
 		handleError({
 			message: 'OpenAI query is empty',
 			origin: ServiceType.OPENAI,

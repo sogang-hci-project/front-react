@@ -94,7 +94,7 @@ export async function progressSession(message: string) {
 		);
 
 		const data = res.data as ISessionDataResponse;
-		const regex = /Question:.*?/;
+		const regex = /Question:.*/;
 
 		const urlParams = new URLSearchParams(data.nextStage);
 		const isAdditional = urlParams.get('additional');
