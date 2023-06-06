@@ -23,6 +23,12 @@ dataParam.append('speed', '-1');
 dataParam.append('pitch', '0');
 dataParam.append('end-pitch', '-2');
 
+const naverApiUrl = setValueOnEnvironment(
+	'/naver',
+	'https://naveropenapi.apigw.ntruss.com',
+	'https://naveropenapi.apigw.ntruss.com'
+);
+
 function concatenate(arrays: Uint8Array[]) {
 	let totalLength = 0;
 	for (const arr of arrays) {
@@ -54,6 +60,7 @@ export async function postNaverTextToSpeech(text: string) {
 		}
 		return setValueOnLanguage('nwontak', 'clara', 'nwontak');
 	})();
+
 	dataParam.delete('speaker');
 	dataParam.append('speaker', textToSpeechVoice);
 
@@ -61,7 +68,7 @@ export async function postNaverTextToSpeech(text: string) {
 		dataParam.delete('text');
 		dataParam.append('text', text);
 
-		const res = await fetch('/naver/tts-premium/v1/tts', {
+		const res = await fetch(`${naverApiUrl}/tts-premium/v1/tts`, {
 			method: 'POST',
 			headers: textToSpeechHeader,
 			body: dataParam,
@@ -104,12 +111,6 @@ speechToTextHeader.append(
 const speechToTextQueries = {
 	lang: setValueOnLanguage('Kor', 'Eng', 'Eng'),
 };
-
-const naverApiUrl = setValueOnEnvironment(
-	'/naver',
-	'https://naveropenapi.apigw.ntruss.com',
-	'https://naveropenapi.apigw.ntruss.com'
-);
 
 interface INaverSpeechToTextResult {
 	text: string;
