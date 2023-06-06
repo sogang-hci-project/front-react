@@ -29,12 +29,14 @@ import {
 	setVoiceActivationVolume,
 	setVoiceDeactivationInterval,
 	setVoiceDeactivationVolume,
+	setVoiceSpeed,
 } from '~/states/slice/settingSlice';
 
 function Setting() {
 	const dispatch = useAppDispatch();
-	const [language, va, vd, vdi] = useAppSelector((state) => [
+	const [language, vs, va, vd, vdi] = useAppSelector((state) => [
 		state.setting.language,
+		state.setting.voiceSpeed,
 		state.setting.voiceActivationVolume,
 		state.setting.voiceDeactivationVolume,
 		state.setting.voiceDeacitvationInterval,
@@ -44,11 +46,13 @@ function Setting() {
 	const [activation, setActivation] = useState<number>(va);
 	const [deactivation, setDeactivation] = useState<number>(vd);
 	const [actInterval, setActInterval] = useState<number>(vdi);
+	const [speed, setSpeed] = useState<number>(vs);
 	const toolBarName = setValueOnLanguage('설정', 'Setting', 'Setting');
 	const settingName = {
 		langaugeCode: setValueOnLanguage('언어', 'Language', 'Language'),
 		english: setValueOnLanguage('영어', 'English', 'English'),
 		korean: setValueOnLanguage('한국어', 'Korean', 'Korean'),
+		speed: setValueOnLanguage('속도', 'Speed', 'Speed'),
 		activation: setValueOnLanguage(
 			'음성 활성화 기준',
 			'Recording Activation Threshold',
@@ -80,10 +84,16 @@ function Setting() {
 		}
 	}
 
+	function handleSetVoiceSpeed(e: React.ChangeEvent<HTMLInputElement>) {
+		const newSpeed = parseInt(e.target.value);
+		if (newSpeed <= 5 && 0.1 < newSpeed) setSpeed(newSpeed);
+	}
+
 	const handleApplySetting = () => {
 		dispatch(setVoiceActivationVolume(activation));
 		dispatch(setVoiceDeactivationVolume(deactivation));
 		dispatch(setVoiceDeactivationInterval(actInterval));
+		dispatch(setVoiceSpeed(speed));
 		navigate(-1);
 	};
 
@@ -116,6 +126,12 @@ function Setting() {
 									{settingName.korean}
 								</SettingDropdownOption>
 							</SettingDropdownSelect>
+						</SettingItemValue>
+					</SettingItem>
+					<SettingItem>
+						<SettingItemTitle>{settingName.speed}</SettingItemTitle>
+						<SettingItemValue>
+							<SettingTextInput value={speed} onChange={handleSetVoiceSpeed} />
 						</SettingItemValue>
 					</SettingItem>
 					<SettingItem>

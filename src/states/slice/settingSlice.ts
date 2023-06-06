@@ -7,6 +7,7 @@ interface ISettingState {
 	voiceActivationVolume: number;
 	voiceDeactivationVolume: number;
 	voiceDeacitvationInterval: number;
+	voiceSpeed: number;
 }
 
 const initialState: ISettingState = {
@@ -14,6 +15,7 @@ const initialState: ISettingState = {
 	voiceActivationVolume: 70,
 	voiceDeactivationVolume: 70,
 	voiceDeacitvationInterval: 3000,
+	voiceSpeed: 1,
 };
 
 const settingSlice = createSlice({
@@ -32,6 +34,9 @@ const settingSlice = createSlice({
 		setVoiceDeactivationInterval: (state, action: PayloadAction<number>) => {
 			state.voiceDeacitvationInterval = action.payload;
 		},
+		setVoiceSpeed: (state, action: PayloadAction<number>) => {
+			state.voiceSpeed = action.payload;
+		},
 	},
 });
 
@@ -40,6 +45,7 @@ export const {
 	setVoiceActivationVolume,
 	setVoiceDeactivationVolume,
 	setVoiceDeactivationInterval,
+	setVoiceSpeed,
 } = settingSlice.actions;
 
 export default settingSlice.reducer;

@@ -37,3 +37,4 @@ export const getDialogueStatus = () => store.getState().dialogue.status;
 export const getSettingState = () => store.getState().setting;
 export const getSessionStage = () => store.getState().session.stage;
 export const getSessionId = () => store.getState().session.id;
+export const getVoiceSpeed = () => store.getState().setting.voiceSpeed;
