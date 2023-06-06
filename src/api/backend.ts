@@ -1,10 +1,11 @@
 import {
 	getSessionId,
 	getSessionStage,
+	getSettingState,
 	setSessionId,
 	setSessionStage,
 } from '~/states/store';
-import { ServiceType } from '~/types/common';
+import { LANGUAGE, ServiceType } from '~/types/common';
 import { setValueOnEnvironment } from '~/utils/common';
 import { handleError } from '~/utils/error';
 import axios from 'axios';
@@ -28,7 +29,6 @@ export async function getSession() {
 		const data = res.data as IGetSessionDataResponse;
 		setSessionId(data.sessionID);
 		setSessionStage(data.nextStage);
-		console.log(data);
 	} catch (error) {
 		alert('Session initialization failed, reload the page');
 		console.error(error);
@@ -45,19 +45,19 @@ interface IStartSessionResponse {
 }
 
 export async function startSession() {
+	const langauge = getSettingState().language;
+	const langCode = langauge === LANGUAGE.KR ? 'ko' : 'en';
 	try {
 		const sessionId = getSessionId();
 		const res = await axios.get(`${backendApiUrl}/api/v1/session/pre`, {
-			params: { sessionID: sessionId },
+			params: { sessionID: sessionId, lang: langCode },
 		});
-		console.log(res);
 		const data = res.data as IStartSessionResponse;
 		setSessionStage(data.nextStage);
 		return data.contents.agent;
 	} catch (error) {
-		console.error(error);
 		handleError({
-			message: 'start session error',
+			message: (error as Error).message,
 			origin: ServiceType.BACKEND_INIT,
 		});
 		return '';
@@ -80,6 +80,9 @@ interface ISessionDataResponse {
 }
 
 export async function progressSession(message: string) {
+	const langauge = getSettingState().language;
+	const langCode = langauge === LANGUAGE.KR ? 'ko' : 'en';
+
 	try {
 		const sessionId = getSessionId();
 		const currentStage = getSessionStage();
@@ -90,32 +93,58 @@ export async function progressSession(message: string) {
 			{
 				user: message,
 			},
-			{ params: { sessionID: sessionId } }
+			{ params: { sessionID: sessionId, lang: langCode } }
 		);
 
 		const data = res.data as ISessionDataResponse;
-		const regex = /Question:.*/;
 
 		const urlParams = new URLSearchParams(data.nextStage);
 		const isAdditional = urlParams.get('additional');
 		if (data.contents.answer) {
-			const tempAnswer = data.contents.answer || '';
-			const finalAnswer = tempAnswer.replace(regex, '');
-			agentMessage.push(finalAnswer || '');
+			agentMessage.push(data.contents.answer || '');
 		} else {
 			agentMessage.push(data.contents.agent);
 		}
-		if (data.contents.quiz) {
-			agentMessage.push(data.contents.quiz || '');
-		} else {
+		if (data.VTS_QUESTION) {
 			agentMessage.push(data.VTS_QUESTION || '');
+		} else {
+			agentMessage.push(data.contents.quiz || '');
 		}
 		setSessionStage(data.nextStage);
 		return agentMessage.join('. ');
 	} catch (error) {
-		console.error(error);
 		handleError({
-			message: 'start session error',
+			message: (error as Error).message,
+			origin: ServiceType.BACKEND,
+		});
+		return '';
+	}
+}
+
+interface ITranslationResponse {
+	message: string;
+	translatedText: string;
+}
+
+export async function postBackendTranslation(
+	text: string,
+	source: LANGUAGE,
+	target: LANGUAGE
+) {
+	try {
+		const lang = source === LANGUAGE.KR ? 'ko' : 'en';
+		const res = await axios.post(
+			`${backendApiUrl}/api/v1/util/translate`,
+			{
+				text,
+			},
+			{ params: { lang } }
+		);
+		const translatedText = (res.data as ITranslationResponse).translatedText;
+		return translatedText;
+	} catch (error) {
+		handleError({
+			message: (error as Error).message,
 			origin: ServiceType.BACKEND,
 		});
 		return '';

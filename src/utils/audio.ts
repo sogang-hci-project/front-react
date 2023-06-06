@@ -2,6 +2,7 @@ import { SystemStatus, LANGUAGE } from '~/types/common';
 import { getGoogleTextToSpeech } from '@api/googlecloud';
 import { postNaverTextToSpeech } from '~/api/clova';
 import {
+	getVoiceSpeed,
 	getDialogueStatus,
 	getSettingState,
 	setDialogueStateBypassPause,
@@ -18,12 +19,14 @@ const timeoutRef: ITimeoutRef = { current: null };
 export function playAudio(src: string) {
 	if (src.length === 0) return;
 	audio.src = src;
+	const audioSpeed = getVoiceSpeed();
 	return new Promise<void>((resolve) => {
 		const playButton = document.createElement('button');
 		playButton.onclick = () => {
 			void audio.play();
 		};
 		audio.volume = 0.5;
+		audio.playbackRate = audioSpeed;
 		audio.onended = () => resolve();
 		playButton.click();
 	});

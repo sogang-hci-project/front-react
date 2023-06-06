@@ -8,11 +8,15 @@ import {
 import { RxMixerVertical } from 'react-icons/rx';
 import { IoTelescopeOutline } from 'react-icons/io5';
 import useAppNavigate from '~/hooks/useAppNavigate';
-import { useAppSelector } from '~/states/store';
-import { LANGUAGE } from '~/types/common';
+import { useAppDispatch, useAppSelector } from '~/states/store';
+import { LANGUAGE, SystemStatus } from '~/types/common';
+import { setStage } from '~/states/slice/sessionSlice';
+import { setUserMesasge } from '~/states/slice/dialogueSlice';
 
 function Toolbar() {
 	const navigate = useAppNavigate();
+	const dispatch = useAppDispatch();
+
 	const [painter, painting] = useAppSelector((state) => {
 		if (state.setting.language === LANGUAGE.KR)
 			return [
@@ -26,10 +30,16 @@ function Toolbar() {
 			];
 	});
 
+	function handleNavigate() {
+		dispatch(setStage(SystemStatus.READY));
+		dispatch(setUserMesasge(''));
+		navigate('/probe');
+	}
+
 	return (
 		<ToolbarWrapper>
 			<ToolbarButton>
-				<IoTelescopeOutline onClick={() => navigate('/probe')} />
+				<IoTelescopeOutline onClick={handleNavigate} />
 			</ToolbarButton>
 			<TitleWrapper>
 				<PaintingName>{painting}</PaintingName>

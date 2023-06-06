@@ -30,7 +30,6 @@ import {
 import useWhisperRecognition from '~/hooks/useWhisperRecognition';
 import { getSession, startSession } from '~/api/backend';
 import { setUserMesasge } from '~/states/slice/dialogueSlice';
-
 const clickSound = new Audio('/sound/toggle.mp3');
 
 void getSession();

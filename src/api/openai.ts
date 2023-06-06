@@ -1,6 +1,6 @@
 import { setValueOnEnvironment, setValueOnLanguage } from '~/utils/common';
 import { handleError } from '@utils/error';
-import { ServiceType } from '~/types/common';
+import { LANGUAGE, ServiceType } from '~/types/common';
 
 interface IChatCompletion {
 	id: string;
@@ -29,7 +29,7 @@ interface IChatContextItem {
 }
 
 const MAX_QUERY_COUNT = 100;
-const MAX_TOKEN_COUNT = setValueOnLanguage(64, 64, 64);
+const MAX_MESSAGE_TOKEN_COUNT = setValueOnLanguage(64, 64, 64);
 
 const context = new Array<IChatContextItem>();
 
@@ -67,7 +67,7 @@ export async function generateAgentDialogue(friendMessage: string) {
 			body: JSON.stringify({
 				model: 'gpt-3.5-turbo',
 				messages: [{ role: 'user', content: query }],
-				max_tokens: MAX_TOKEN_COUNT,
+				max_tokens: MAX_MESSAGE_TOKEN_COUNT,
 			}),
 		});
 		const data = (await res.json()) as IChatCompletion;
@@ -120,6 +120,43 @@ export async function getWhisperTranscript(audioFile: File) {
 		const uint8res = (await reader?.read())?.value || new Uint8Array();
 		const result = new TextDecoder().decode(uint8res);
 		return (JSON.parse(result) as IWhisperTranscript).text || '';
+	} catch (error) {
+		handleError({
+			message: (error as Error).message,
+			origin: ServiceType.OPENAI,
+		});
+		return '';
+	}
+}
+
+const MAX_TRANSLATE_TOKEN_COUNT = 200;
+
+export async function postOpenAITranslation(
+	text: string,
+	source: LANGUAGE,
+	target: LANGUAGE
+) {
+	const langSource = source === LANGUAGE.KR ? 'Korean' : 'English';
+	const langTarget = target === LANGUAGE.KR ? 'Korean' : 'English';
+
+	const prompt =
+		`Convert following text from ${langSource} to ${langTarget}: ` + text;
+
+	try {
+		const res = await fetch('https://api.openai.com/v1/chat/completions', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${process.env.REACT_APP_OPEN_AI_API_KEY || ''}`,
+			},
+			body: JSON.stringify({
+				model: 'gpt-3.5-turbo',
+				messages: [{ role: 'user', content: prompt }],
+				max_tokens: MAX_TRANSLATE_TOKEN_COUNT,
+			}),
+		});
+		const data = (await res.json()) as IChatCompletion;
+		return data.choices[0].message.content || '';
 	} catch (error) {
 		handleError({
 			message: (error as Error).message,
