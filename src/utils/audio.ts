@@ -7,6 +7,7 @@ import {
 	getSettingState,
 	setDialogueStateBypassPause,
 } from '~/states/store';
+import { postBackendSpeechToText } from '~/api/backend';
 
 interface ITimeoutRef {
 	current: null | NodeJS.Timeout;
@@ -116,9 +117,8 @@ export function base64ToAudioBlob(audioString: string) {
 export async function playTextToAudio(text: string) {
 	const language = getSettingState().language;
 	if (language === LANGUAGE.KR) {
-		const data = await postNaverTextToSpeech(text);
-		const audioBlobUrl = unit8ArrayToUrl(data);
-		await playAudio(audioBlobUrl);
+		const data = await postBackendSpeechToText(text);
+		await playAudio(data);
 	} else if (language === LANGUAGE.US) {
 		const audioString = await getGoogleTextToSpeech(text);
 		const audioBlobUrl = base64ToAudioBlob(audioString);

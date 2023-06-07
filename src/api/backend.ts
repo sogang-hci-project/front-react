@@ -5,8 +5,8 @@ import {
 	setSessionId,
 	setSessionStage,
 } from '~/states/store';
-import { LANGUAGE, ServiceType } from '~/types/common';
-import { setValueOnEnvironment } from '~/utils/common';
+import { LANGUAGE, LocalPATH, ServiceType } from '~/types/common';
+import { setValueOnEnvironment, setValueOnLanguage } from '~/utils/common';
 import { handleError } from '~/utils/error';
 import axios from 'axios';
 
@@ -108,7 +108,8 @@ export async function progressSession(message: string) {
 		if (data.VTS_QUESTION) {
 			agentMessage.push(data.VTS_QUESTION || '');
 		} else {
-			agentMessage.push(data.contents.quiz || '');
+			if (data.contents.quiz !== '정의되지 않음')
+				agentMessage.push(data.contents.quiz || '');
 		}
 		setSessionStage(data.nextStage);
 		return agentMessage.join('. ');
@@ -142,6 +143,47 @@ export async function postBackendTranslation(
 		);
 		const translatedText = (res.data as ITranslationResponse).translatedText;
 		return translatedText;
+	} catch (error) {
+		handleError({
+			message: (error as Error).message,
+			origin: ServiceType.BACKEND,
+		});
+		return '';
+	}
+}
+
+interface IBackendSpeechToTextResponse {
+	decodedAudio: {
+		type: string;
+		data: Array<number>;
+	};
+	message: string;
+}
+
+export async function postBackendSpeechToText(text: string) {
+	const textToSpeechVoice = (() => {
+		const location = window.location.href.split('/').pop();
+		if (location === LocalPATH.INTERACT) {
+			return setValueOnLanguage('nwontak', 'clara', 'nwontak');
+		} else if (location === LocalPATH.PROBE) {
+			return setValueOnLanguage('vhyeri', 'clara', 'vhyeri');
+		}
+		return setValueOnLanguage('nwontak', 'clara', 'nwontak');
+	})();
+
+	try {
+		const res = await axios.post(`${backendApiUrl}/api/v1/util/texttospeech`, {
+			text,
+			voice: textToSpeechVoice,
+		});
+		const url = URL.createObjectURL(
+			new Blob([
+				new Uint8Array(
+					(res.data as IBackendSpeechToTextResponse).decodedAudio.data
+				),
+			])
+		);
+		return url;
 	} catch (error) {
 		handleError({
 			message: (error as Error).message,
