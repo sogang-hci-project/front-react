@@ -116,14 +116,14 @@ export async function getGoogleTextToSpeech(text: string) {
 		} else if (location === LocalPATH.PROBE) {
 			return setValueOnLanguage(
 				'ko-KR-Standard-A',
-				'en-US-Neural2-H',
-				'en-US-Neural2-H'
+				'en-US-Neural2-I',
+				'en-US-Neural2-I'
 			);
 		}
 		return setValueOnLanguage(
 			'ko-KR-Standard-A',
-			'en-US-Neural2-H',
-			'en-US-Neural2-H'
+			'en-US-Neural2-I',
+			'en-US-Neural2-I'
 		);
 	})();
 
@@ -142,7 +142,7 @@ export async function getGoogleTextToSpeech(text: string) {
 					voice: {
 						languageCode: langauge,
 						name: textToSpeechVoice,
-						ssmlGender: 'FEMALE',
+						ssmlGender: 'MALE',
 					},
 					audioConfig: {
 						audioEncoding: 'MP3',
