@@ -88,9 +88,9 @@ function AgentCanvas({ systemStatus, voiceVolume }: AgentCanvasProps) {
 				{/** 시각적 도움을 받기 위해 축을 생성합니다 */}
 				{/* <primitive object={new THREE.AxesHelper(10)} /> */}
 				{/* <OrbitControls /> */}
-				<EffectComposer>
+				{/* <EffectComposer>
 					<Bloom luminanceThreshold={0} luminanceSmoothing={0.9} height={300} />
-				</EffectComposer>
+				</EffectComposer> */}
 			</Canvas>
 		</AgentCanvasWrapper>
 	);

@@ -46,7 +46,7 @@ export async function generateAgentDialogue(friendMessage: string) {
 			message: 'OpenAI query is empty',
 			origin: ServiceType.OPENAI,
 		});
-	if (friendMessage.length > MAX_QUERY_COUNT)
+	if ((friendMessage || '').length > MAX_QUERY_COUNT)
 		handleError({
 			message: 'OpenAI query exceeds maximum length',
 			origin: ServiceType.OPENAI,

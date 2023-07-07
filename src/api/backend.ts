@@ -12,23 +12,25 @@ import axios from 'axios';
 
 const backendApiUrl = setValueOnEnvironment(
 	'/backend',
-	'https://sgu-hci.p-e.kr',
-	'https://sgu-hci.p-e.kr'
+	'http://3.39.228.156',
+	'http://3.39.228.156'
 );
 
 interface IGetSessionDataResponse {
-	currentStage: string;
 	message: string;
-	nextStage: string;
-	sessionID: string;
+	data: {
+		currentStage: string;
+		nextStage: string;
+		sessionID: string;
+	};
 }
 
 export async function getSession() {
 	try {
-		const res = await axios.get(`${backendApiUrl}/api/v1/session/init`);
+		const res = await axios.post(`${backendApiUrl}/api/v1/greeting/0`);
 		const data = res.data as IGetSessionDataResponse;
-		setSessionId(data.sessionID);
-		setSessionStage(data.nextStage);
+		setSessionId(data.data.sessionID);
+		setSessionStage(data.data.nextStage);
 	} catch (error) {
 		alert('Session initialization failed, reload the page');
 		console.error(error);
@@ -37,11 +39,13 @@ export async function getSession() {
 
 interface IStartSessionResponse {
 	message: string;
-	contents: {
-		agent: string;
+	data: {
+		contents: {
+			agent: string;
+		};
+		currentStage: string;
+		nextStage: string;
 	};
-	currentStage: string;
-	nextStage: string;
 }
 
 export async function startSession() {
@@ -49,12 +53,19 @@ export async function startSession() {
 	const langCode = langauge === LANGUAGE.KR ? 'ko' : 'en';
 	try {
 		const sessionId = getSessionId();
-		const res = await axios.get(`${backendApiUrl}/api/v1/session/pre`, {
-			params: { sessionID: sessionId, lang: langCode },
-		});
+		const res = await axios.post(
+			`${backendApiUrl}/api/v1/greeting/1`,
+			{
+				user: 'Hello',
+			},
+			{
+				params: { sessionID: sessionId, lang: langCode },
+			}
+		);
 		const data = res.data as IStartSessionResponse;
-		setSessionStage(data.nextStage);
-		return data.contents.agent;
+		setSessionStage(data.data.nextStage);
+		return data.data.contents.agent;
+		return '';
 	} catch (error) {
 		handleError({
 			message: (error as Error).message,
@@ -66,17 +77,13 @@ export async function startSession() {
 
 interface ISessionDataResponse {
 	message: string;
-	user: string;
-	VTS_QUESTION?: string;
-	contents: {
-		agent: string;
-		answer?: string;
-		quiz?: string;
+	data: {
+		contents: {
+			agent: string;
+		};
+		currentStage: string;
+		nextStage: string;
 	};
-	source: string;
-	relevantSource: string;
-	currentStage: string;
-	nextStage: string;
 }
 
 export async function progressSession(message: string) {
@@ -86,7 +93,6 @@ export async function progressSession(message: string) {
 	try {
 		const sessionId = getSessionId();
 		const currentStage = getSessionStage();
-		const agentMessage = new Array<string>();
 
 		const res = await axios.post(
 			`${backendApiUrl}/api/v1${currentStage}`,
@@ -98,21 +104,8 @@ export async function progressSession(message: string) {
 
 		const data = res.data as ISessionDataResponse;
 
-		const urlParams = new URLSearchParams(data.nextStage);
-		const isAdditional = urlParams.get('additional');
-		if (data.contents.answer) {
-			agentMessage.push(data.contents.answer || '');
-		} else {
-			agentMessage.push(data.contents.agent);
-		}
-		if (data.VTS_QUESTION) {
-			agentMessage.push(data.VTS_QUESTION || '');
-		} else {
-			if (data.contents.quiz !== '정의되지 않음')
-				agentMessage.push(data.contents.quiz || '');
-		}
-		setSessionStage(data.nextStage);
-		return agentMessage.join('. ');
+		setSessionStage(data.data.nextStage);
+		return data.data.contents.agent;
 	} catch (error) {
 		handleError({
 			message: (error as Error).message,
@@ -164,11 +157,12 @@ export async function postBackendSpeechToText(text: string) {
 	const textToSpeechVoice = (() => {
 		const location = window.location.href.split('/').pop();
 		if (location === LocalPATH.INTERACT) {
-			return setValueOnLanguage('nwontak', 'clara', 'nwontak');
+			return setValueOnLanguage('nkyuwon', 'clara', 'nkyuwon');
 		} else if (location === LocalPATH.PROBE) {
 			return setValueOnLanguage('vhyeri', 'clara', 'vhyeri');
 		}
-		return setValueOnLanguage('nwontak', 'clara', 'nwontak');
+		return setValueOnLanguage('nkyuwon', 'clara', 'nkyuwon');
+		//nsiyoon //njihwan //nkyuwon
 	})();
 
 	try {

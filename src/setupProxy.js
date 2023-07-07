@@ -24,7 +24,7 @@ module.exports = (app) => {
 	app.use(
 		'/backend',
 		createProxyMiddleware({
-			target: 'https://sgu-hci.p-e.kr',
+			target: 'http://3.39.228.156',
 			changeOrigin: true,
 			pathRewrite: {
 				'^/backend': '/',
