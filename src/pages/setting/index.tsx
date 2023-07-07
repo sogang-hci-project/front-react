@@ -179,7 +179,7 @@ function Setting() {
 							<SettingSliderInput
 								type="range"
 								min="1000"
-								max="5000"
+								max="8000"
 								value={actInterval}
 								onChange={(e) => {
 									setActInterval(parseInt(e.target.value));
