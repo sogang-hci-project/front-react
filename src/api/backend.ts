@@ -12,8 +12,8 @@ import axios from 'axios';
 
 const backendApiUrl = setValueOnEnvironment(
 	'/backend',
-	'http://3.39.228.156',
-	'http://3.39.228.156'
+	'https://sg-hci.n-e.kr',
+	'https://sg-hci.n-e.kr'
 );
 
 interface IGetSessionDataResponse {
