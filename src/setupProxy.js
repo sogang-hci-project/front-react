@@ -24,11 +24,12 @@ module.exports = (app) => {
 	app.use(
 		'/backend',
 		createProxyMiddleware({
-			target: 'https://sg-hci.n-e.kr',
+			target: 'https://163.239.109.58:13502',
 			changeOrigin: true,
 			pathRewrite: {
 				'^/backend': '/',
 			},
+			secure: false,
 		})
 	);
 };

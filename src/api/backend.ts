@@ -11,9 +11,9 @@ import { handleError } from '~/utils/error';
 import axios from 'axios';
 
 const backendApiUrl = setValueOnEnvironment(
-	'/backend',
-	'https://sg-hci.n-e.kr',
-	'https://sg-hci.n-e.kr'
+	'https://163.239.109.58:13502',
+	'https://163.239.109.58:13502',
+	'https://163.239.109.58:13502'
 );
 
 interface IGetSessionDataResponse {
@@ -146,10 +146,11 @@ export async function postBackendTranslation(
 }
 
 interface IBackendSpeechToTextResponse {
-	decodedAudio: {
-		type: string;
-		data: Array<number>;
-	};
+	decodedAudio: Array<number>;
+	// decodedAudio: {
+	// 	type: string;
+	// 	data: Array<number>;
+	// };
 	message: string;
 }
 
@@ -166,18 +167,16 @@ export async function postBackendSpeechToText(text: string) {
 	})();
 
 	try {
-		const res = await axios.post(`${backendApiUrl}/api/v1/util/texttospeech`, {
-			text,
-			voice: textToSpeechVoice,
-		});
-		const url = URL.createObjectURL(
-			new Blob([
-				new Uint8Array(
-					(res.data as IBackendSpeechToTextResponse).decodedAudio.data
-				),
-			])
+		const res = await axios.post(
+			`${backendApiUrl}/api/v1/util/texttospeech`,
+			{
+				text,
+				voice: textToSpeechVoice,
+			},
+			{ responseType: 'blob' }
 		);
-		return url;
+		const audioUrl = URL.createObjectURL(res.data as Blob);
+		return audioUrl;
 	} catch (error) {
 		handleError({
 			message: (error as Error).message,

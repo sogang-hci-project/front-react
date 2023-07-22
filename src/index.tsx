@@ -15,12 +15,15 @@ import { LocalPATH } from './types/common';
 
 const root = createRoot(document.getElementById('root') as HTMLElement);
 
-const router = createBrowserRouter([
-	{ path: '/', element: <App /> },
-	{ path: LocalPATH.INTERACT, element: <Interact /> },
-	{ path: LocalPATH.SETTING, element: <Setting /> },
-	{ path: LocalPATH.PROBE, element: <Probe /> },
-]);
+const router = createBrowserRouter(
+	[
+		{ path: '/', element: <App /> },
+		{ path: LocalPATH.INTERACT, element: <Interact /> },
+		{ path: LocalPATH.SETTING, element: <Setting /> },
+		{ path: LocalPATH.PROBE, element: <Probe /> },
+	],
+	{ basename: '/app' }
+);
 
 root.render(
 	<React.StrictMode>
