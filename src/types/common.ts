@@ -26,6 +26,11 @@ export enum LANGUAGE {
 	KR = 'ko-KR',
 }
 
+export enum MODE {
+	NORMAL = 'normal',
+	GRAPH = 'graph',
+}
+
 export enum LocalPATH {
 	INTERACT = 'interact',
 	PROBE = 'probe',

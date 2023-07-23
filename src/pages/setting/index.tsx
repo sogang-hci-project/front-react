@@ -22,10 +22,11 @@ import { RxCaretLeft, RxEnter } from 'react-icons/rx';
 import { setValueOnLanguage } from '~/utils/common';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { LANGUAGE } from '~/types/common';
+import { LANGUAGE, MODE } from '~/types/common';
 import { useAppDispatch, useAppSelector } from '~/states/store';
 import {
 	setLanguage,
+	setMode,
 	setVoiceActivationVolume,
 	setVoiceDeactivationInterval,
 	setVoiceDeactivationVolume,
@@ -34,24 +35,29 @@ import {
 
 function Setting() {
 	const dispatch = useAppDispatch();
-	const [language, vs, va, vd, vdi] = useAppSelector((state) => [
+	const [language, vs, va, vd, vdi, md] = useAppSelector((state) => [
 		state.setting.language,
 		state.setting.voiceSpeed,
 		state.setting.voiceActivationVolume,
 		state.setting.voiceDeactivationVolume,
 		state.setting.voiceDeacitvationInterval,
+		state.setting.mode,
 	]);
 	const navigate = useNavigate();
 
 	const [activation, setActivation] = useState<number>(va);
 	const [deactivation, setDeactivation] = useState<number>(vd);
 	const [actInterval, setActInterval] = useState<number>(vdi);
+	const [currentMode, setCurrentMode] = useState<MODE>(md);
 	const [speed, setSpeed] = useState<number>(vs);
 	const toolBarName = setValueOnLanguage('설정', 'Setting', 'Setting');
 	const settingName = {
 		langaugeCode: setValueOnLanguage('언어', 'Language', 'Language'),
+		mode: setValueOnLanguage('모드', 'Mode', 'Mode'),
 		english: setValueOnLanguage('영어', 'English', 'English'),
 		korean: setValueOnLanguage('한국어', 'Korean', 'Korean'),
+		normal: setValueOnLanguage('일반', 'Normal', 'Normal'),
+		graph: setValueOnLanguage('그래프', 'Graph', 'Graph'),
 		speed: setValueOnLanguage('속도', 'Speed', 'Speed'),
 		activation: setValueOnLanguage(
 			'음성 활성화 기준',
@@ -89,11 +95,17 @@ function Setting() {
 		if (newSpeed <= 5 && 0.1 < newSpeed) setSpeed(newSpeed);
 	}
 
+	function handleSetMode(e: React.ChangeEvent<HTMLSelectElement>) {
+		const newMode = e.target.value as MODE;
+		setCurrentMode(newMode);
+	}
+
 	const handleApplySetting = () => {
 		dispatch(setVoiceActivationVolume(activation));
 		dispatch(setVoiceDeactivationVolume(deactivation));
 		dispatch(setVoiceDeactivationInterval(actInterval));
 		dispatch(setVoiceSpeed(speed));
+		dispatch(setMode(currentMode));
 		navigate(-1);
 	};
 
@@ -124,6 +136,22 @@ function Setting() {
 								</SettingDropdownOption>
 								<SettingDropdownOption value={LANGUAGE.KR}>
 									{settingName.korean}
+								</SettingDropdownOption>
+							</SettingDropdownSelect>
+						</SettingItemValue>
+					</SettingItem>
+					<SettingItem>
+						<SettingItemTitle>{settingName.mode}</SettingItemTitle>
+						<SettingItemValue>
+							<SettingDropdownSelect
+								value={currentMode}
+								onChange={handleSetMode}
+							>
+								<SettingDropdownOption value={MODE.NORMAL}>
+									{settingName.normal}
+								</SettingDropdownOption>
+								<SettingDropdownOption value={MODE.GRAPH}>
+									{settingName.graph}
 								</SettingDropdownOption>
 							</SettingDropdownSelect>
 						</SettingItemValue>

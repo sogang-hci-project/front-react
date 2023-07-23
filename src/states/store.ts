@@ -38,3 +38,4 @@ export const getSettingState = () => store.getState().setting;
 export const getSessionStage = () => store.getState().session.stage;
 export const getSessionId = () => store.getState().session.id;
 export const getVoiceSpeed = () => store.getState().setting.voiceSpeed;
+export const getMode = () => store.getState().setting.mode;

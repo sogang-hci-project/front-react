@@ -27,7 +27,7 @@ interface IGetSessionDataResponse {
 
 export async function getSession() {
 	try {
-		const res = await axios.post(`${backendApiUrl}/api/v1/greeting/0`);
+		const res = await axios.post(`${backendApiUrl}/api/v1/register`);
 		const data = res.data as IGetSessionDataResponse;
 		setSessionId(data.data.sessionID);
 		setSessionStage(data.data.nextStage);
@@ -50,11 +50,12 @@ interface IStartSessionResponse {
 
 export async function startSession() {
 	const langauge = getSettingState().language;
+	const mode = getSettingState().mode;
 	const langCode = langauge === LANGUAGE.KR ? 'ko' : 'en';
 	try {
 		const sessionId = getSessionId();
 		const res = await axios.post(
-			`${backendApiUrl}/api/v1/greeting/1`,
+			`${backendApiUrl}/api/v1/${mode}/greeting/0`,
 			{
 				user: 'Hello',
 			},
@@ -88,6 +89,7 @@ interface ISessionDataResponse {
 
 export async function progressSession(message: string) {
 	const langauge = getSettingState().language;
+	const mode = getSettingState().mode;
 	const langCode = langauge === LANGUAGE.KR ? 'ko' : 'en';
 
 	try {
@@ -95,7 +97,7 @@ export async function progressSession(message: string) {
 		const currentStage = getSessionStage();
 
 		const res = await axios.post(
-			`${backendApiUrl}/api/v1${currentStage}`,
+			`${backendApiUrl}/api/v1/${mode}${currentStage}`,
 			{
 				user: message,
 			},
