@@ -17,7 +17,7 @@ const initialState: ISettingState = {
 	voiceActivationVolume: 70,
 	voiceDeactivationVolume: 70,
 	voiceDeacitvationInterval: 3000,
-	voiceSpeed: 1,
+	voiceSpeed: 0.8,
 };
 
 const settingSlice = createSlice({

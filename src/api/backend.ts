@@ -105,15 +105,18 @@ export async function progressSession(message: string) {
 		);
 
 		const data = res.data as ISessionDataResponse;
-
 		setSessionStage(data.data.nextStage);
-		return data.data.contents.agent;
+
+		if (data.data.nextStage === '/end') {
+			return { message: data.data.contents.agent, active: false };
+		}
+		return { message: data.data.contents.agent, active: true };
 	} catch (error) {
 		handleError({
 			message: (error as Error).message,
 			origin: ServiceType.BACKEND,
 		});
-		return '';
+		return { message: '', active: true };
 	}
 }
 

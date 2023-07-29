@@ -78,11 +78,14 @@ export async function progressDialogue(
 	console.log('User Message: ', message);
 	const systemStatus = getDialogueStatus();
 	if (systemStatus !== SystemStatus.GENERATE) return;
-	const answer = await progressSession(message);
+	const { message: answer, active } = await progressSession(message);
 	setAgentMessage(answer);
 	setDialogueStateBypassPause(SystemStatus.SPEAK);
 	await playTextToAudio(answer);
 	console.log('Agent Answer: ', answer);
-	setDialogueStateBypassPause(SystemStatus.WAIT);
-	// }
+	if (active) {
+		setDialogueStateBypassPause(SystemStatus.WAIT);
+	} else {
+		setDialogueStateBypassPause(SystemStatus.PAUSE);
+	}
 }
