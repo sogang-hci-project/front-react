@@ -121,8 +121,7 @@ export async function progressSession(message: string) {
 }
 
 interface ITranslationResponse {
-	message: string;
-	translatedText: string;
+	text: string;
 }
 
 export async function postBackendTranslation(
@@ -139,7 +138,7 @@ export async function postBackendTranslation(
 			},
 			{ params: { lang } }
 		);
-		const translatedText = (res.data as ITranslationResponse).translatedText;
+		const translatedText = (res.data as ITranslationResponse).text;
 		return translatedText;
 	} catch (error) {
 		handleError({
@@ -152,14 +151,10 @@ export async function postBackendTranslation(
 
 interface IBackendSpeechToTextResponse {
 	decodedAudio: Array<number>;
-	// decodedAudio: {
-	// 	type: string;
-	// 	data: Array<number>;
-	// };
 	message: string;
 }
 
-export async function postBackendSpeechToText(text: string) {
+export async function postBackendTextToSpeech(text: string) {
 	const textToSpeechVoice = (() => {
 		const location = window.location.href.split('/').pop();
 		if (location === LocalPATH.INTERACT) {
@@ -182,6 +177,35 @@ export async function postBackendSpeechToText(text: string) {
 		);
 		const audioUrl = URL.createObjectURL(res.data as Blob);
 		return audioUrl;
+	} catch (error) {
+		handleError({
+			message: (error as Error).message,
+			origin: ServiceType.BACKEND,
+		});
+		return '';
+	}
+}
+
+interface IBackendSpeechToTextResponse {
+	text: string;
+}
+
+export async function postBackendSpeechToText(audioFile: File) {
+	const formData = new FormData();
+	formData.append('file', audioFile);
+
+	try {
+		const res = await axios.post<IBackendSpeechToTextResponse>(
+			`${backendApiUrl}/api/v1/util/speechtotext`,
+			formData,
+			{
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'multipart/form-data',
+				},
+			}
+		);
+		return res.data.text;
 	} catch (error) {
 		handleError({
 			message: (error as Error).message,

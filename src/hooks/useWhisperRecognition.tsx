@@ -8,6 +8,7 @@ import {
 import { getWhisperTranscript } from '~/api/openai';
 import { handleError } from '~/utils/error';
 import { setUserMesasge } from '~/states/slice/dialogueSlice';
+import { postBackendSpeechToText } from '~/api/backend';
 
 const chunks: Blob[] = [];
 const INTERVAL = 2000;
@@ -78,10 +79,14 @@ function useWhisperRecognition({ stream }: IUseWhisperRecognitionProps) {
 			const audioFile = new File([audioBlob], 'voice.mp3', {
 				type: 'audio/mp3',
 			});
-			void getWhisperTranscript(audioFile).then((script) => {
+			void postBackendSpeechToText(audioFile).then((script) => {
 				dispatch(setUserMesasge(script));
 				dispatch(setDialogueStateBypassPause(SystemStatus.GENERATE));
 			});
+			// void getWhisperTranscript(audioFile).then((script) => {
+			// 	dispatch(setUserMesasge(script));
+			// 	dispatch(setDialogueStateBypassPause(SystemStatus.GENERATE));
+			// });
 		}
 	}, [audioBlob]);
 }
