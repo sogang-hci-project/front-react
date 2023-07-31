@@ -80,8 +80,10 @@ function useWhisperRecognition({ stream }: IUseWhisperRecognitionProps) {
 				type: 'audio/mp3',
 			});
 			void postBackendSpeechToText(audioFile).then((script) => {
-				dispatch(setUserMesasge(script));
-				dispatch(setDialogueStateBypassPause(SystemStatus.GENERATE));
+				if (script !== '') {
+					dispatch(setUserMesasge(script));
+					dispatch(setDialogueStateBypassPause(SystemStatus.GENERATE));
+				}
 			});
 			// void getWhisperTranscript(audioFile).then((script) => {
 			// 	dispatch(setUserMesasge(script));

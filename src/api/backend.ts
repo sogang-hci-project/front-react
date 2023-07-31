@@ -187,7 +187,8 @@ export async function postBackendTextToSpeech(text: string) {
 }
 
 interface IBackendSpeechToTextResponse {
-	text: string;
+	status: string;
+	message: string;
 }
 
 export async function postBackendSpeechToText(audioFile: File) {
@@ -205,7 +206,15 @@ export async function postBackendSpeechToText(audioFile: File) {
 				},
 			}
 		);
-		return res.data.text;
+		if (res.data.status === 'True' && res.data.message !== '') {
+			return res.data.message;
+		} else {
+			handleError({
+				message: 'SpeechToText Failure',
+				origin: ServiceType.BACKEND,
+			});
+			return '';
+		}
 	} catch (error) {
 		handleError({
 			message: (error as Error).message,
